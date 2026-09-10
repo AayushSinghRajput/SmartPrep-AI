@@ -8,7 +8,7 @@ from core.config import settings
 
 # 🔁 Change model/provider ONLY HERE
 def get_llm(
-    provider: str = "azure",   # 👈 switch here: gemini | groq | azure
+    provider: str | None = None,   # 👈 defaults to settings.LLM_PROVIDER: gemini | groq | azure
     temperature: float = 0.3,
     structured: bool = False,
     output_schema=None,
@@ -17,14 +17,15 @@ def get_llm(
     Central LLM factory.
     Switch provider/model here without touching services.
     """
+    selected_provider = (provider or settings.LLM_PROVIDER).lower()
 
     # -------------------------------
     # Google Gemini (default)
     # -------------------------------
-    if provider == "gemini":
+    if selected_provider == "gemini":
         print("Using Google Gemini LLM")
         llm = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash",
+            model="gemini-1.5-flash",
             google_api_key=settings.GOOGLE_API_KEY,
             temperature=temperature,
         )
@@ -33,7 +34,7 @@ def get_llm(
     # -------------------------------
     # Groq (comment preserved)
     # -------------------------------
-    elif provider == "groq":
+    elif selected_provider == "groq":
         print("Using Groq LLM")
         llm = ChatGroq(
             model_name="llama-3.3-70b-versatile",
@@ -45,7 +46,7 @@ def get_llm(
     # -------------------------------
     # Azure OpenAI (NEW)
     # -------------------------------
-    elif provider == "azure":
+    elif selected_provider == "azure":
         print("Using Azure OpenAI LLM")
         llm = AzureChatOpenAI(
             azure_deployment=settings.AZURE_OPENAI_DEPLOYMENT,  # e.g. "gpt-5"
@@ -57,7 +58,7 @@ def get_llm(
         
 
     else:
-        raise ValueError(f"Unsupported LLM provider: {provider}")
+        raise ValueError(f"Unsupported LLM provider: {selected_provider}")
 
     # -------------------------------
     # Structured output (if supported)

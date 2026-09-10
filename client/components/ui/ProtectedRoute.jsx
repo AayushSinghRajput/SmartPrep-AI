@@ -9,10 +9,10 @@ export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth(); // Get current user and loading state from auth context
   const router = useRouter(); // Router instance for redirects
 
-  // Redirect unauthenticated users to the home page once loading is done
+  // Redirect unauthenticated users to the login page once loading is done
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/"); // Navigate home if user is not authenticated
+      router.push("/login"); // Navigate to login page if user is not authenticated
     }
   }, [user, loading, router]);
 
