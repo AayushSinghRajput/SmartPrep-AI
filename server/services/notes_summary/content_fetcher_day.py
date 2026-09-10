@@ -2,7 +2,7 @@
 from collections import defaultdict
 from typing import Dict, List
 from db.config import db
-from core.llm import get_llm
+from core.llm import get_llm, extract_response_text
 from prompts.notes_summary.build_bullet_prompt import build_bullet_prompt
 
 
@@ -13,7 +13,7 @@ def extract_topic_bullets(topic: str, content: str) -> str:
     llm = get_llm(temperature=0.2)  # low temperature for factual extraction
     prompt = build_bullet_prompt(topic, content)
     response = llm.invoke(prompt)
-    return response.text.strip()
+    return extract_response_text(response)
 
 
 # ---------------------------

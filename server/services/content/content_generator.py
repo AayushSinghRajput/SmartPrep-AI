@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from core.llm import get_llm
+from core.llm import get_llm, extract_response_text
 from db.config import db
 from services.content.image_generator import generate_image_from_content,generate_image_from_topic
 from services.content.content_fetcher import fetch_subtopic_pdf_content
@@ -119,7 +119,7 @@ async def generate_topic_content(
     prompt = content_prompt(raw_content)
     llm = get_llm(temperature=0.4)
     response = llm.invoke(prompt)
-    final_content = response.text.strip()
+    final_content = extract_response_text(response)
 
     # -------------------------------------------------
     # 5️⃣ GENERATE IMAGES (COMMON)

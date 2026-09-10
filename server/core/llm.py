@@ -25,7 +25,7 @@ def get_llm(
     if selected_provider == "gemini":
         print("Using Google Gemini LLM")
         llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
+            model="gemini-3.8-flash",
             google_api_key=settings.GOOGLE_API_KEY,
             temperature=temperature,
         )
@@ -37,7 +37,7 @@ def get_llm(
     elif selected_provider == "groq":
         print("Using Groq LLM")
         llm = ChatGroq(
-            model_name="llama-3.3-70b-versatile",
+            model_name="qwen/qwen3.6-27b",
             temperature=temperature,
             groq_api_key=settings.GROQ_API_KEY,
         )
@@ -53,7 +53,7 @@ def get_llm(
             azure_endpoint=settings.AZURE_OPENAI_ENDPOINT,
             api_key=settings.AZURE_OPENAI_API_KEY,
             api_version=settings.AZURE_OPENAI_API_VERSION,
-            # temperature=temperature,
+            temperature=temperature,
         )
         
 
@@ -67,3 +67,25 @@ def get_llm(
         return llm.with_structured_output(output_schema)
 
     return llm
+
+
+def extract_response_text(response) -> str:
+    """Extract plain text string safely from an LLM response object."""
+    if hasattr(response, "content"):
+        content = response.content
+        if isinstance(content, str):
+            return content.strip()
+        elif isinstance(content, list):
+            parts = []
+            for item in content:
+                if isinstance(item, str):
+                    parts.append(item)
+                elif isinstance(item, dict) and "text" in item:
+                    parts.append(item["text"])
+                else:
+                    parts.append(str(item))
+            return "".join(parts).strip()
+    if hasattr(response, "text") and isinstance(response.text, str):
+        return response.text.strip()
+    return str(response).strip()
+
