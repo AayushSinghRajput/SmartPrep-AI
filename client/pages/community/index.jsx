@@ -1,67 +1,65 @@
 import { useEffect, useState } from "react";
-import PostCard from "../../components/Community/PostCard"; // Component to display individual posts
-import { getAllPosts } from "../../api/community"; // API call to fetch all posts
-import { useAuth } from "../../context/AuthContext"; // Auth context for user info
+import PostCard from "../../components/Community/PostCard";
+import { getAllPosts } from "../../api/community";
+import { useAuth } from "../../context/AuthContext";
+import { FiUsers, FiMessageSquare } from "react-icons/fi";
+import Loader from "../../components/ui/Loader";
 
 export default function CommunityPage() {
-  // State to store all posts fetched from the API
   const [posts, setPosts] = useState([]);
-  
-  // Get current user and loading state from AuthContext
   const { user, loading } = useAuth();
-  const currentUser = user; // Make a clear reference to current user
 
-  // Fetch posts once user is available
   useEffect(() => {
-    if (!user) return; // Only fetch posts if user is logged in
+    if (!user) return;
 
     const fetchPosts = async () => {
       try {
-        const data = await getAllPosts(); // Fetch posts from backend
-        setPosts(data); // Store posts in state
+        const data = await getAllPosts();
+        setPosts(data || []);
       } catch (err) {
         console.error("Error fetching posts:", err);
       }
     };
 
     fetchPosts();
-  }, [user]); // Re-run if the user changes
+  }, [user]);
 
-  // Show loading / login prompt while checking auth
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-gray-500 text-lg">
-          Please Login to view the posts.
-        </p>
-      </div>
-    );
-  }
+  if (loading) return <Loader />;
 
-  // If there are no posts, show a friendly message
-  if (posts.length === 0) {
-    return (
-      <div className="flex flex-col justify-center items-center h-screen px-4">
-        <p className="text-gray-500 text-lg font-medium text-center">
-          No posts yet!
-        </p>
-      </div>
-    );
-  }
-
-  // Otherwise render posts in a responsive grid
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6 text-center">Community Feed</h1>
-      
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => (
-          <PostCard
-            key={`post-${post.id || post._id}`} // Unique key for each post
-            post={post} // Pass the post data
-            currentUser={currentUser} // Pass the current user for actions like edit/delete
-          />
-        ))}
+    <div className="bg-slate-50 min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8 text-center max-w-xl mx-auto">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-3">
+            <FiUsers className="w-3.5 h-3.5" /> Peer Discussion Network
+          </span>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            Student Community Forum
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Share study insights, ask doubt questions, and collaborate with fellow +2 Science students.
+          </p>
+        </div>
+
+        {posts.length === 0 ? (
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-12 text-center max-w-md mx-auto shadow-sm">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-3">
+              <FiMessageSquare size={22} />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 mb-1">No Posts Found</h3>
+            <p className="text-xs text-slate-500">Be the first to start a study discussion in the forum.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => (
+              <PostCard
+                key={`post-${post.id || post._id}`}
+                post={post}
+                currentUser={user}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

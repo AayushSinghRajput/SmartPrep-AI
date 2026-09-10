@@ -1,3 +1,4 @@
+import Head from "next/head";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router"; // Hook to get current route
 import Navbar from "../components/layout/Navbar"; // Custom Navbar component
@@ -20,7 +21,12 @@ function AppLayout({ Component, pageProps }: AppProps) {
 
   return (
     // Main layout container
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 to-purple-50">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased">
+      <Head>
+        <title>SmartPrep AI - High Retention EdTech Platform</title>
+        <meta name="description" content="Personalized AI-powered prep suite for +2 Science students and entrance exam candidates." />
+        <link rel="icon" href="/logo.jpeg" type="image/jpeg" />
+      </Head>
       {/* Render Navbar only on allowed routes */}
       {showNavbar && <Navbar />}
 

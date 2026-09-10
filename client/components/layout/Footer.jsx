@@ -1,56 +1,52 @@
-"use client"; // Client-side Next.js component
+"use client";
 
-import { motion } from "framer-motion"; // For animation effects
-import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from "react-icons/fa"; // Social media icons
-import Company_Logo from "../../assets/images/Company_Logo.png"; // Company logo image
-import Image from "next/image"; // Next.js optimized Image component
+import { motion } from "framer-motion";
+import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from "react-icons/fa";
+import logoImg from "../../assets/images/logo.jpeg";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative bg-gradient-to-r from-indigo-700 via-purple-700 to-indigo-800 text-white py-12 mt-0">
-      
-      {/* Background decorative radial gradient with low opacity */}
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,white,transparent)]"></div>
-
-      {/* Main content container */}
-      <div className="relative max-w-7xl mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+    <footer className="bg-slate-900 text-slate-300 border-t border-slate-800 py-12 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           
           {/* Brand section */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }} // Animate in from below
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.4 }}
+            className="md:col-span-1"
           >
-            <div className="flex items-center gap-2 mb-3">
-              {/* Logo image */}
-              <div className="relative h-10 w-10 rounded-lg overflow-hidden shadow bg-white p-1.5">
-                <Image src={Company_Logo} alt="SmartED Logo" fill className="object-contain" />
+            <Link href="/" className="inline-block mb-3">
+              <div className="relative h-10 w-40 bg-white/90 rounded-xl p-1 border border-slate-800 shadow-sm">
+                <Image src={logoImg} alt="SmartPrep AI Logo" fill className="object-contain" />
               </div>
-              <h2 className="text-2xl font-bold">SmartPrep AI</h2>
-            </div>
-            <p className="text-gray-200">
-              Personalized AI-powered learning platform for +2 Science students.
-              Learn smarter, revise faster, and succeed with SmartPrep AI.
+            </Link>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Personalized AI-powered study companion optimized for high-retention learning and higher education exam prep.
             </p>
           </motion.div>
 
           {/* Quick Links section */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
+            transition={{ delay: 0.1, duration: 0.4 }}
           >
-            <h3 className="text-xl font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              {["Home", "Dashboard", "About", "Contact"].map((link, i) => (
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-3">Navigation</h3>
+            <ul className="space-y-2 text-sm">
+              {[
+                { name: "Home", href: "/" },
+                { name: "Dashboard", href: "/dashboard" },
+                { name: "About", href: "/about" },
+                { name: "Contact", href: "/contact" }
+              ].map((link, i) => (
                 <li key={i}>
-                  <a
-                    href={link === "Home" ? "/" : `/${link.toLowerCase()}`} // Dynamic routing for pages
-                    className="hover:text-yellow-300 transition"
-                  >
-                    {link}
-                  </a>
+                  <Link href={link.href} className="hover:text-indigo-400 transition-colors">
+                    {link.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -58,44 +54,44 @@ export default function Footer() {
 
           {/* Resources section */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <h3 className="text-xl font-semibold mb-4">Resources</h3>
-            <ul className="space-y-2">
-              <li><a href="/dashboard" className="hover:text-yellow-300 transition">Entrance Prep</a></li>
-              <li><a href="/dashboard" className="hover:text-yellow-300 transition">Study Materials</a></li>
-              <li><a href="/dashboard" className="hover:text-yellow-300 transition">AI Quiz Generator</a></li>
-              <li><a href="/community" className="hover:text-yellow-300 transition">Student Community</a></li>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-3">Study Suite</h3>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="/dashboard" className="hover:text-indigo-400 transition-colors">Entrance Prep</Link></li>
+              <li><Link href="/dashboard" className="hover:text-indigo-400 transition-colors">Interactive Notes</Link></li>
+              <li><Link href="/dashboard" className="hover:text-indigo-400 transition-colors">AI Quiz Engine</Link></li>
+              <li><Link href="/community" className="hover:text-indigo-400 transition-colors">Peer Study Forum</Link></li>
             </ul>
           </motion.div>
 
           {/* Social Media section */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
+            transition={{ delay: 0.3, duration: 0.4 }}
           >
-            <h3 className="text-xl font-semibold mb-4">Follow Us</h3>
-            <div className="flex gap-4 text-2xl">
-              <a href="#" className="hover:text-yellow-300 transition"><FaFacebook /></a>
-              <a href="#" className="hover:text-yellow-300 transition"><FaInstagram /></a>
-              <a href="#" className="hover:text-yellow-300 transition"><FaTwitter /></a>
-              <a href="#" className="hover:text-yellow-300 transition"><FaLinkedin /></a>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-3">Connect</h3>
+            <div className="flex gap-4 text-xl text-slate-400">
+              <a href="#" className="hover:text-indigo-400 transition-colors"><FaFacebook /></a>
+              <a href="#" className="hover:text-indigo-400 transition-colors"><FaInstagram /></a>
+              <a href="#" className="hover:text-indigo-400 transition-colors"><FaTwitter /></a>
+              <a href="#" className="hover:text-indigo-400 transition-colors"><FaLinkedin /></a>
             </div>
           </motion.div>
         </div>
 
         {/* Bottom copyright bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.8 }}
-          className="mt-12 border-t border-gray-600 pt-6 text-center text-sm text-gray-300"
-        >
-          © {new Date().getFullYear()} SmartPrep AI. All rights reserved.
-        </motion.div>
+        <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
+          <p>© {new Date().getFullYear()} SmartPrep AI. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-slate-400 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-slate-400 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-slate-400 transition-colors">Security</a>
+          </div>
+        </div>
       </div>
     </footer>
   );

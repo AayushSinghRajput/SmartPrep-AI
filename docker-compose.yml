@@ -16,7 +16,7 @@ services:
       MONGO_URI: mongodb://mongo:27017
       PORT: 8000
     volumes:
-      - ./server/ml_model:/app/ml_model:ro
+      - ./server:/app
     ports:
       - "8000:8000"
     depends_on:

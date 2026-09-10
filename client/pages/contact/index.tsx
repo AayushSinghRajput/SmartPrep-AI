@@ -1,35 +1,22 @@
-"use client"; // Client-side React component
+"use client";
 
-// -----------------------------
-// IMPORTS
-// -----------------------------
-import { useState } from "react"; // React state hook
-import { submitContactForm } from "../../api/contact"; // API function to submit contact form
-import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa"; // Icons for contact info
+import { useState } from "react";
+import { submitContactForm } from "../../api/contact";
+import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import { FiMessageSquare, FiSend, FiCheckCircle } from "react-icons/fi";
 
-// -----------------------------
-// COMPONENT: ContactPage
-// -----------------------------
 export default function ContactPage() {
-  // -----------------------------
-  // STATE
-  // -----------------------------
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
-  }); // Stores form inputs
-  const [loading, setLoading] = useState(false); // Tracks submission state
-  const [showSuccess, setShowSuccess] = useState(false); // Show success message after submission
-  const [error, setError] = useState(""); // Tracks submission errors
+  });
+  const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [error, setError] = useState("");
 
-  // -----------------------------
-  // HANDLERS
-  // -----------------------------
-  
-  // Updates state as user types in input fields or textarea
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -38,189 +25,166 @@ export default function ContactPage() {
     }));
   };
 
-  // Handles form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent page reload
-    setLoading(true); // Show loading state
-    setError(""); // Reset previous errors
+    e.preventDefault();
+    setLoading(true);
+    setError("");
     try {
-      await submitContactForm(formData); // Call backend API
-      setShowSuccess(true); // Show success message
-      setFormData({ name: "", email: "", message: "" }); // Reset form fields
-      setTimeout(() => setShowSuccess(false), 3000); // Hide success message after 3s
+      await submitContactForm(formData);
+      setShowSuccess(true);
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => setShowSuccess(false), 4000);
     } catch (err: any) {
-      setError(err.message || "Something went wrong!"); // Show error message
+      setError(err.message || "Something went wrong!");
     } finally {
-      setLoading(false); // Stop loading state
+      setLoading(false);
     }
   };
 
-  // -----------------------------
-  // RENDER
-  // -----------------------------
   return (
-    <div className="min-h-screen px-4 pt-20 pb-0 bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white">
-      {/* Heading Section */}
-      <div className="text-center max-w-3xl mx-auto mb-12">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-          We'd love to hear from you
+    <div className="bg-slate-50 min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8 text-slate-900">
+      
+      {/* HEADING */}
+      <div className="text-center max-w-2xl mx-auto mb-12">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-3">
+          <FiMessageSquare className="w-3.5 h-3.5" /> Support & Inquiries
+        </span>
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-3">
+          Get in Touch with SmartPrep AI
         </h1>
-        <p className="text-gray-300 text-lg sm:text-xl">
-          Whether you're curious about features, a demo, or anything else —
-          we're ready to answer all your questions.
+        <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
+          Have questions about your study plans, features, or institution onboarding? We're here to assist.
         </p>
       </div>
 
-      {/* Grid: Contact Form & Contact Info */}
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* GRID CONTAINER */}
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
         
-        {/* ----------------------------- */}
-        {/* Contact Form Card */}
-        {/* ----------------------------- */}
-        <div
-          className="relative
-                     bg-white/[0.09] backdrop-blur-2xl
-                     p-6 sm:p-8 rounded-3xl
-                     border border-white/20
-                     shadow-[0_30px_80px_rgba(0,0,0,0.65)]
-                     before:content-['']
-                     before:absolute before:inset-0 before:rounded-3xl
-                     before:bg-gradient-to-b
-                     before:from-white/20 before:via-transparent before:to-black/35
-                     before:pointer-events-none"
-        >
-          <h2 className="text-2xl font-semibold text-white mb-4">
-            Let's Connect
-          </h2>
+        {/* CONTACT FORM */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 mb-4">Send Us a Message</h2>
 
-          {/* Contact Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name Input */}
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              placeholder="Name"
-              required
-              className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="e.g. Aayush Rajput"
+                  required
+                  className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+                />
+              </div>
 
-            {/* Email Input */}
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Email"
-              required
-              className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="student@example.com"
+                  required
+                  className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+                />
+              </div>
 
-            {/* Message Textarea */}
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleInputChange}
-              placeholder="Message"
-              rows={4}
-              required
-              className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            ></textarea>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
+                  Message
+                </label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  placeholder="Tell us how we can help..."
+                  rows={4}
+                  required
+                  className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+                />
+              </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full
-                         bg-blue-500 hover:bg-blue-600
-                         text-white font-semibold
-                         py-2 px-4 rounded-lg
-                         shadow-md shadow-black/30
-                         transition-all duration-300 ease-out
-                         hover:shadow-lg hover:shadow-black/40
-                         hover:-translate-y-0.5
-                         active:scale-95
-                         focus:outline-none focus:ring-2 focus:ring-blue-400/40"
-            >
-              {loading ? "Sending..." : "Send Message"}
-            </button>
-
-            {/* Success & Error Messages */}
-            {showSuccess && (
-              <p className="text-green-400 text-sm pt-2">
-                Message sent successfully!
-              </p>
-            )}
-            {error && <p className="text-red-400 text-sm pt-2">{error}</p>}
-          </form>
-        </div>
-
-        {/* ----------------------------- */}
-        {/* Contact Information Card */}
-        {/* ----------------------------- */}
-        <div
-          className="relative
-                     bg-white/[0.09] backdrop-blur-2xl
-                     p-6 sm:p-8 rounded-3xl
-                     border border-white/20
-                     shadow-[0_30px_80px_rgba(0,0,0,0.65)]
-                     before:content-['']
-                     before:absolute before:inset-0 before:rounded-3xl
-                     before:bg-gradient-to-b
-                     before:from-white/20 before:via-transparent before:to-black/35
-                     before:pointer-events-none"
-        >
-          <h2 className="text-2xl font-semibold text-white mb-4">
-            Contact Information
-          </h2>
-
-          {/* Contact Details */}
-          <div className="text-gray-300 space-y-4 text-lg">
-            {/* Email */}
-            <p className="flex items-center gap-2">
-              <FaEnvelope className="text-blue-400 w-5 h-5" />
-              Email:{" "}
-              <a
-                href="mailto:smartprep.ai@gmail.com"
-                className="text-blue-400 hover:underline"
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-semibold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm transition-all text-sm"
               >
-                smartprep.ai@gmail.com
-              </a>
-            </p>
+                {loading ? "Sending..." : <><FiSend className="w-4 h-4" /> Send Message</>}
+              </button>
 
-            {/* Phone */}
-            <p className="flex items-center gap-2">
-              <FaPhone className="text-blue-400 w-5 h-5" />
-              Phone:{" "}
-              <a
-                href="tel:+9779860123456"
-                className="text-blue-400 hover:underline"
-              >
-                +977 9860123456
-              </a>
-            </p>
-
-            {/* Address */}
-            <p className="flex items-center gap-2">
-              <FaMapMarkerAlt className="text-blue-400 w-5 h-5" />
-              Address: Dharan, Nepal
-            </p>
-          </div>
-
-          {/* Google Map Embed */}
-          <div className="mt-6">
-            <iframe
-              title="Google Map"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.0512321654443!2d85.30956277530676!3d27.71101717619325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb1909ce8b070e%3A0xd5f3fbd021c684de!2sKathmandu%20Durbar%20Square!5e0!3m2!1sen!2snp!4v1691490193246!5m2!1sen!2snp"
-              width="100%"
-              height="200"
-              allowFullScreen
-              loading="lazy"
-              className="rounded-lg border-0"
-            ></iframe>
+              {showSuccess && (
+                <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-200 px-3.5 py-2.5 rounded-xl text-xs font-semibold">
+                  <FiCheckCircle className="w-4 h-4" /> Message sent successfully! We'll reply soon.
+                </div>
+              )}
+              {error && <p className="text-rose-600 text-xs font-semibold">{error}</p>}
+            </form>
           </div>
         </div>
+
+        {/* CONTACT INFORMATION CARD */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 mb-6">Contact Information</h2>
+
+            <div className="space-y-5 text-sm text-slate-600">
+              <div className="flex items-start gap-3">
+                <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 mt-0.5">
+                  <FaEnvelope className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Email</span>
+                  <a href="mailto:smartprep.ai@gmail.com" className="font-semibold text-indigo-600 hover:underline text-base">
+                    smartprep.ai@gmail.com
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 mt-0.5">
+                  <FaPhone className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Phone</span>
+                  <a href="tel:+9779860123456" className="font-semibold text-indigo-600 hover:underline text-base">
+                    +977 9860123456
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 mt-0.5">
+                  <FaMapMarkerAlt className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-semibold text-slate-400 block uppercase tracking-wider">Location</span>
+                  <span className="font-semibold text-slate-800 text-base">Dharan, Nepal</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Map Embed */}
+            <div className="mt-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+              <iframe
+                title="Google Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.0512321654443!2d85.30956277530676!3d27.71101717619325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb1909ce8b070e%3A0xd5f3fbd021c684de!2sKathmandu%20Durbar%20Square!5e0!3m2!1sen!2snp!4v1691490193246!5m2!1sen!2snp"
+                width="100%"
+                height="180"
+                allowFullScreen
+                loading="lazy"
+                className="border-0"
+              />
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

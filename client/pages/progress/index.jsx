@@ -1,130 +1,110 @@
-"use client"; // Client-side React component
+"use client";
 
-// Import React hooks and necessary libraries
 import { useState, useEffect } from "react";
-import { Doughnut } from "react-chartjs-2"; // Doughnut chart component
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js"; // Chart.js modules
-import { Loader2, AlertCircle } from "lucide-react"; // Icons for loading & alerts
-import { getUserStudyPlans } from "../../lib/api"; // API call to fetch user study plans
-import toast from "react-hot-toast"; // Notification library
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Loader2, AlertCircle } from "lucide-react";
+import { getUserStudyPlans } from "../../lib/api";
+import toast from "react-hot-toast";
+import { FiBookOpen, FiCheckCircle, FiClock, FiTarget } from "react-icons/fi";
 
-// Register required Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// ---------------------------
-// Component: ProgressCard
-// Renders a single course card with progress visuals
-// ---------------------------
 function ProgressCard({ course }) {
-  const currentProgress = course.progress || 0; // Default to 0 if progress not provided
+  const currentProgress = course.progress || 0;
 
-  // Chart data configuration for the doughnut chart
   const doughnutData = {
-    labels: ["Completed", "Remaining"], // Labels for chart segments
+    labels: ["Completed", "Remaining"],
     datasets: [
       {
-        data: [currentProgress, 100 - currentProgress], // Dynamic progress & remaining
-        backgroundColor: ["#6366F1", "#E0E7FF"], // Segment colors
-        hoverBackgroundColor: ["#4F46E5", "#F1F5F9"], // Colors on hover
+        data: [currentProgress, 100 - currentProgress],
+        backgroundColor: ["#4F46E5", "#F1F5F9"],
+        hoverBackgroundColor: ["#4338CA", "#E2E8F0"],
         borderWidth: 0,
-        cutout: "80%", // Makes the chart a donut
+        cutout: "78%",
       },
     ],
   };
 
   const chartOptions = {
     plugins: {
-      tooltip: { enabled: false }, // Disable tooltips for cleaner look
-      legend: { display: false }, // Hide legend
+      tooltip: { enabled: false },
+      legend: { display: false },
     },
-    maintainAspectRatio: false, // Allow responsive sizing
+    maintainAspectRatio: false,
   };
 
   return (
-    <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300 max-w-md mx-auto mb-6 w-full">
-      {/* Header: Course Name, Icon, Category & Duration */}
-      <div className="flex justify-between items-start mb-6">
-        <div>
-          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-            <span className="p-2 bg-indigo-50 rounded-xl text-xl leading-none">
-              {course.icon || "📖"} {/* Display course icon or default */}
+    <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition-all duration-200 flex flex-col justify-between">
+      <div>
+        <div className="flex justify-between items-start mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center text-lg font-bold">
+              {course.icon || "📖"}
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-900 line-clamp-1">{course.name}</h2>
+              <p className="text-xs text-slate-500 font-medium">{course.category || "Study Plan"}</p>
+            </div>
+          </div>
+          <span className="bg-slate-100 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg border border-slate-200">
+            {course.duration}
+          </span>
+        </div>
+
+        <div className="relative w-[150px] h-[150px] mx-auto flex items-center justify-center mb-6">
+          <Doughnut key={course.progress} data={doughnutData} options={chartOptions} />
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-extrabold text-slate-900 leading-none">
+              {course.progress}%
             </span>
-            {course.name} {/* Course name */}
-          </h2>
-          <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest ml-1">
-            {course.category || "Study Plan"} {/* Course category */}
-          </p>
+            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mt-1">
+              Completed
+            </span>
+          </div>
         </div>
-        <span className="bg-slate-900 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-tighter">
-          {course.duration} {/* Duration of the course */}
+
+        <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden mb-6">
+          <div
+            className="bg-indigo-600 h-full rounded-full transition-all duration-500"
+            style={{ width: `${course.progress}%` }}
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center pt-4 border-t border-slate-100 text-xs">
+        <div>
+          <span className="text-slate-400 font-medium block text-[11px]">Units Progress</span>
+          <span className="font-semibold text-slate-800">
+            {course.lessonsCompleted} / {course.totalLessons} Units
+          </span>
+        </div>
+
+        <span
+          className={`font-semibold px-2.5 py-1 rounded-full text-xs border ${
+            course.progress === 100
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+              : "bg-indigo-50 text-indigo-700 border-indigo-200"
+          }`}
+        >
+          {course.progress === 100 ? "Completed" : "In Progress"}
         </span>
-      </div>
-
-      {/* Circular Progress (Doughnut Chart) */}
-      <div className="relative w-[180px] h-[180px] mx-auto flex items-center justify-center mb-6">
-        <Doughnut key={course.progress} data={doughnutData} options={chartOptions} />
-        {/* Centered percentage text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-black text-slate-900 leading-none">
-            {course.progress}% {/* Show numeric progress */}
-          </span>
-          <span className="text-[10px] font-bold text-slate-400 uppercase mt-1">
-            Finished
-          </span>
-        </div>
-      </div>
-
-      {/* Horizontal Progress Bar */}
-      <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden mb-4">
-        <div
-          className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-full rounded-full transition-all duration-1000 ease-out"
-          style={{ width: `${course.progress}%` }} // Width reflects progress
-        ></div>
-      </div>
-
-      {/* Milestones & Status */}
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-            Milestones
-          </span>
-          <span className="text-sm font-bold text-indigo-600">
-            {course.lessonsCompleted} / {course.totalLessons} Units {/* Progress in units */}
-          </span>
-        </div>
-        <div className="text-right">
-          <span
-            className={`text-xs font-black px-2 py-1 rounded-md ${
-              course.progress === 100
-                ? "bg-emerald-100 text-emerald-700"
-                : "bg-indigo-50 text-indigo-700"
-            }`}
-          >
-            {course.progress === 100 ? "COMPLETED" : "IN PROGRESS"} {/* Status badge */}
-          </span>
-        </div>
       </div>
     </div>
   );
 }
 
-// ---------------------------
-// Component: ProgressTracker
-// Fetches user's courses and renders a list of ProgressCards
-// ---------------------------
 export default function ProgressTracker() {
-  const [courseData, setCourseData] = useState([]); // Holds all user courses
-  const [loading, setLoading] = useState(true); // Loading state for API call
-  const [showAll, setShowAll] = useState(false); // Toggle to show all courses
+  const [courseData, setCourseData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
 
-  // Fetch user study plans from API
   useEffect(() => {
     const fetchProgress = async () => {
       try {
         setLoading(true);
         const res = await getUserStudyPlans();
         if (res && res.success && res.data) {
-          // Map backend data into frontend-friendly format
           const mappedData = res.data.map((plan) => {
             let total = 0;
             let completed = 0;
@@ -134,7 +114,7 @@ export default function ProgressTracker() {
                 day.topics.forEach((topic) => {
                   topic.subtopics.forEach((sub) => {
                     total++;
-                    if (sub.completed) completed++; // Count completed units
+                    if (sub.completed) completed++;
                   });
                 });
               });
@@ -144,8 +124,8 @@ export default function ProgressTracker() {
               id: plan._id,
               name: plan.subject || "Untitled Plan",
               category: plan.category || "Academic Plan",
-              progress: plan.progress || 0, // Backend-provided progress
-              duration: `Day ${plan.schedule?.length || 0}`, // Total days
+              progress: plan.progress || 0,
+              duration: `${plan.schedule?.length || 0} Days`,
               lessonsCompleted: completed,
               totalLessons: total,
               icon: "📚",
@@ -153,88 +133,79 @@ export default function ProgressTracker() {
           });
           setCourseData(mappedData);
         } else {
-          setCourseData([]); // No plans found
+          setCourseData([]);
         }
       } catch (error) {
-        toast.error("Failed to load progress metrics"); // Show toast on failure
+        toast.error("Failed to load progress metrics");
         console.error("Fetch Error:", error);
       } finally {
-        setLoading(false); // Stop loading spinner
+        setLoading(false);
       }
     };
 
     fetchProgress();
 
-    // Refetch progress when user refocuses the tab
     window.addEventListener("focus", fetchProgress);
     return () => window.removeEventListener("focus", fetchProgress);
   }, []);
 
-  // Loading state UI
   if (loading)
     return (
-      <div className="flex flex-col items-center justify-center min-h-[500px]">
-        <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mb-6" />
-        <div className="text-center">
-          <h3 className="text-lg font-bold text-slate-800 tracking-tight">
-            Syncing Progress
-          </h3>
-          <p className="text-slate-400 text-sm">
-            Calculating your study metrics...
+      <div className="flex flex-col items-center justify-center min-h-[400px] bg-slate-50 pt-20">
+        <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mb-4" />
+        <h3 className="text-base font-semibold text-slate-800">Syncing Progress Analytics</h3>
+      </div>
+    );
+
+  if (courseData.length === 0)
+    return (
+      <div className="bg-slate-50 min-h-screen pt-24 pb-12 px-4 sm:px-6">
+        <div className="max-w-xl mx-auto flex flex-col items-center justify-center text-center p-12 bg-white rounded-3xl border border-slate-200 shadow-sm">
+          <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4">
+            <FiBookOpen size={24} />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900">No Learning Metrics Yet</h3>
+          <p className="text-sm text-slate-500 mt-2 max-w-sm">
+            Generate your first PDF study schedule from the dashboard to track your day-by-day progress here.
           </p>
         </div>
       </div>
     );
 
-  // Empty state UI when no courses exist
-  if (courseData.length === 0)
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[500px] text-center p-12 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200">
-        <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-sm mb-6">
-          <AlertCircle className="text-slate-300" size={40} />
-        </div>
-        <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">
-          No Analytics Available
-        </h3>
-        <p className="text-slate-500 mt-3 max-w-sm mx-auto leading-relaxed">
-          You haven't started any study plans yet. Generate a roadmap from a PDF to track your journey here.
-        </p>
-      </div>
-    );
-
-  // Determine which courses to display (first 3 or all)
   const visibleCourses = showAll ? courseData : courseData.slice(0, 3);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      {/* Page header */}
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">
-          Learning Journey
-        </h1>
-        <p className="text-slate-500 font-medium">
-          Visualizing your academic growth across all modules
-        </p>
-      </div>
-
-      {/* Course cards grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {visibleCourses.map((course) => (
-          <ProgressCard key={course.id} course={course} />
-        ))}
-      </div>
-
-      {/* Show more / show less button if more than 3 courses */}
-      {courseData.length > 3 && (
-        <div className="text-center mt-16">
-          <button
-            onClick={() => setShowAll(!showAll)}
-            className="px-12 py-4 bg-slate-900 text-white rounded-2xl hover:bg-indigo-600 transition-all shadow-xl font-bold uppercase tracking-[0.2em] text-xs"
-          >
-            {showAll ? "Show Featured" : `Expand Library (${courseData.length})`}
-          </button>
+    <div className="bg-slate-50 min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8 text-center max-w-2xl mx-auto">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-3">
+            <FiTarget className="w-3.5 h-3.5" /> Learning Analytics
+          </span>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            Academic Mastery & Progress
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Real-time completion tracking across all active textbooks and course plans.
+          </p>
         </div>
-      )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {visibleCourses.map((course) => (
+            <ProgressCard key={course.id} course={course} />
+          ))}
+        </div>
+
+        {courseData.length > 3 && (
+          <div className="text-center mt-10">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="px-6 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl shadow-sm transition-all"
+            >
+              {showAll ? "Show Featured" : `View All (${courseData.length})`}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

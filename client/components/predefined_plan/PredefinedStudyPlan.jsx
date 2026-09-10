@@ -2,12 +2,27 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import books from "../../assets/data/topviewedbooks.json";
 import { getGlobalPlan } from "../../api/predefined";
 import StudyPlanModal from "./StudyPlanModal";
 import toast from "react-hot-toast";
 import { colors } from "../../constants/colors";
 import { FaBookOpen, FaStar } from "react-icons/fa";
+
+import physicsImg from "../../assets/images/physics.jpg";
+import chemistryImg from "../../assets/images/chemistry.webp";
+import biologyImg from "../../assets/images/biology.jpg";
+import englishImg from "../../assets/images/English.jpg";
+import aiImg from "../../assets/images/ai.jpeg";
+
+const subjectImages = {
+  Physics: physicsImg,
+  Chemistry: chemistryImg,
+  Biology: biologyImg,
+  English: englishImg,
+  Mathematics: aiImg,
+};
 
 export default function PredefinedStudyPlan() {
   const [showAll, setShowAll] = useState(false);
@@ -164,12 +179,13 @@ export default function PredefinedStudyPlan() {
 
                     {/* Book Image */}
                     <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={book.img}
+                      <Image
+                        src={subjectImages[book.subject] || aiImg}
                         alt={book.subject}
-                        className="w-full h-full object-cover "
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent"></div>
 
                       {/* Progress Bar - if completion exists */}
                       {book.completion && (
