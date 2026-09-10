@@ -14,6 +14,7 @@ services:
       - ./server/.env
     environment:
       MONGO_URI: mongodb://mongo:27017
+      PORT: 8000
     volumes:
       - ./server/ml_model:/app/ml_model:ro
     ports:

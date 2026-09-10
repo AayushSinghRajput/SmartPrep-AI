@@ -48,11 +48,18 @@ export const googleLogin = async (credential) => {
 
 // Function to get the currently logged-in user's data
 export const getCurrentUser = async () => {
-  const response = await fetch(`${API_URL}/auth/me`, {
-    method: "GET", // GET request since we are fetching data
-    credentials: "include", // Include cookies to identify user session
-  });
-  return response.json(); // Parse and return user data as JSON
+  try {
+    const response = await fetch(`${API_URL}/auth/me`, {
+      method: "GET", // GET request since we are fetching data
+      credentials: "include", // Include cookies to identify user session
+    });
+    if (!response.ok) {
+      return { success: false, user: null };
+    }
+    return await response.json(); // Parse and return user data as JSON
+  } catch (error) {
+    return { success: false, user: null };
+  }
 };
 
 // Function to log out the current user

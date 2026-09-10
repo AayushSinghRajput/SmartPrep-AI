@@ -35,7 +35,7 @@ app = FastAPI(
 # Allow CORS (Optional)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # frontend URL
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # frontend URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -59,3 +59,10 @@ app.include_router(voice_chat.router)
 @app.get("/")
 def root():
     return {"message": "Backend is running"}
+
+
+if __name__ == "__main__":
+    import os
+    import uvicorn
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)

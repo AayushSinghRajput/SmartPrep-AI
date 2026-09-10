@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     # LLM providers
+    LLM_PROVIDER: str = "gemini"
     GOOGLE_API_KEY: str | None = None
     GROQ_API_KEY: str | None = None
     AZURE_OPENAI_API_KEY: str | None = None
@@ -29,10 +30,11 @@ class Settings(BaseSettings):
     TESSERACT_PATH: str | None = None
 
 
+    PORT: int = 8000
     ENV: str = "development"
 
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="forbid"
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
 
 
