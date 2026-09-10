@@ -24,6 +24,7 @@ pydantic
 pydantic-settings
 pandas
 langchain_openai
+openai
 langchain_huggingface
 sentence-transformers
 faiss-cpu

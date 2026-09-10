@@ -12,8 +12,7 @@ def get_relevant_docs(pdf_hash: str, query: str):
             embeddings,
             allow_dangerous_deserialization=True
         )
+        return vector_db.similarity_search(query, k=2)
     except Exception as e:
-        print(f"❌ Error loading vector store for PDF hash-- Pls Upload again pdf ---{pdf_hash}: {e}")
-
-
-    return vector_db.similarity_search(query, k=2)
+        print(f"❌ RAG vector store not found for PDF hash {pdf_hash}: {e}")
+        return []

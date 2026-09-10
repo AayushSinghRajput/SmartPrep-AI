@@ -1,5 +1,5 @@
 from services.notes_summary.content_fetcher_day import fetch_day_content
-from core.llm import get_llm
+from core.llm import get_llm, extract_response_text
 from datetime import datetime
 from db.config import db
 
@@ -82,7 +82,7 @@ async def generate_day_notes(
     # 4️⃣ Generate notes
     llm = get_llm(temperature=0.3)
     response = llm.invoke(prompt)
-    notes = response.text.strip()
+    notes = extract_response_text(response)
 
     # 5️⃣ Store in MongoDB
     await db.day_notes.update_one(
