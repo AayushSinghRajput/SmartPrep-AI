@@ -1,157 +1,140 @@
 import React, { useEffect, useState } from "react";
-import AOS from "aos"; // Animate On Scroll library
+import AOS from "aos";
 import "aos/dist/aos.css";
-import Lottie from "lottie-react"; // For animation
-import { FaCheckCircle, FaStar, FaQuestionCircle } from "react-icons/fa";
-import studentAnimation from "../../animations/student.json"; // Lottie animation JSON
+import Lottie from "lottie-react";
+import { FaCheckCircle, FaStar, FaQuestionCircle, FaChevronDown } from "react-icons/fa";
+import studentAnimation from "../../animations/student.json";
 
 export default function About() {
-  // State to manage which FAQ is currently open
   const [faqOpen, setFaqOpen] = useState(null);
 
-  // Initialize AOS (Animate On Scroll) when component mounts
   useEffect(() => {
-    AOS.init({ duration: 1000 }); // Animation duration: 1000ms
+    AOS.init({ duration: 800, once: true });
   }, []);
 
-  // Function to toggle FAQ items open/closed
   const toggleFAQ = (index) => {
-    setFaqOpen(faqOpen === index ? null : index); // Close if already open, else open
+    setFaqOpen(faqOpen === index ? null : index);
   };
 
-  // Array of FAQ objects with question and answer
   const faqs = [
     {
       question: "How does SmartPrep AI work?",
       answer:
-        "Upload your notes in PDF format, and SmartPrep AI will use AI to explain the content and generate quizzes to help you revise.",
+        "Upload your notes or textbook in PDF format, and SmartPrep AI generates a day-by-day structured study schedule, interactive note summaries, and auto-generated multiple-choice quizzes to streamline your revision.",
     },
     {
-      question: "Do I need to sign up to use it?",
+      question: "Do I need an account to track my progress?",
       answer:
-        "Yes, creating a free account helps you save your quizzes and track your progress.",
+        "Yes, creating a free account saves your uploaded books, day-wise quiz scores, and personalized learning milestones.",
     },
     {
-      question: "Can I use it on my phone?",
+      question: "Is SmartPrep AI optimized for mobile study sessions?",
       answer:
-        "Absolutely! SmartPrep AI is fully responsive and works well on mobile, tablet, and desktop devices.",
+        "SmartPrep AI is built with responsive layout grids designed for laptops, tablets, and smartphones.",
     },
   ];
 
   return (
-    <div className="relative min-h-screen bg-white overflow-hidden px-6 py-20">
-      {/* -----------------------------
-          Background Lottie Animation
-          Positioned behind content with blur and low opacity
-      ----------------------------- */}
-      <div
-        className="absolute inset-0 -z-10 opacity-20 pointer-events-none"
-        style={{ filter: "blur(4px)" }}
-      >
-        <Lottie
-          animationData={studentAnimation}
-          loop={true}
-          style={{ width: "100%", height: "100%" }}
-        />
-      </div>
-
-      {/* -----------------------------
-          Main content container
-      ----------------------------- */}
-      <div className="relative max-w-5xl mx-auto text-gray-800">
-        {/* Flex container for About text and animation */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-10">
-          {/* Left side: About Text */}
-          <div className="md:w-1/2" data-aos="fade-right">
-            <h2 className="text-3xl font-bold text-indigo-700 mb-4">
-              About <span className="text-purple-600">SmartPrep AI</span>
-            </h2>
-            <p className="text-lg mb-4">
-              <strong>SmartPrep AI</strong> is a personalized learning platform
-              mainly focused on <strong>+2 science students</strong>, helping
-              them succeed in their studies and ace entrance exams. It teaches
-              students based on their <strong>learning capability</strong> using
-              smart AI algorithms.
+    <div className="bg-slate-50 min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto">
+        
+        {/* HERO SECTION */}
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-10 bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-10 shadow-sm mb-12">
+          <div data-aos="fade-right">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-4">
+              EdTech Learning Suite
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-4 leading-tight">
+              About <span className="text-indigo-600">SmartPrep AI</span>
+            </h1>
+            <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-4">
+              SmartPrep AI is a high-retention learning platform tailored for higher education and +2 Science students.
             </p>
-            <p className="text-md text-gray-700">
-              SmartPrep AI empowers students to learn smarter by simplifying
-              complex topics, personalizing their study path, and generating
-              instant multiple-choice quizzes from uploaded notes. Whether
-              you're preparing for board exams or entrance tests, SmartPrep AI
-              supports your journey with AI-powered tools.
+            <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
+              We eliminate study fatigue by turning dense textbooks into structured daily milestones, instant flashcards, and adaptive exam practice.
             </p>
           </div>
 
-          {/* Right side: Lottie Animation */}
-          <div className="md:w-1/2" data-aos="fade-left">
-            <Lottie
-              animationData={studentAnimation}
-              loop={true}
-              className="w-full h-auto"
-            />
+          <div data-aos="fade-left" className="flex justify-center">
+            <div className="w-full max-w-md bg-slate-50 rounded-2xl p-4 border border-slate-100">
+              <Lottie animationData={studentAnimation} loop={true} className="w-full h-auto" />
+            </div>
           </div>
         </div>
 
-        {/* -----------------------------
-            Features Section
-        ----------------------------- */}
-        <h2
-          className="text-2xl font-semibold mt-16 mb-4 flex items-center gap-2"
-          data-aos="fade-up"
-        >
-          <FaStar className="text-amber-400" />
-          Features You’ll Love
-        </h2>
-        <ul
-          className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10"
-          data-aos="fade-up"
-          data-aos-delay="100"
-        >
-          {[
-            "Upload PDFs and extract notes instantly",
-            "AI-powered concept explanation",
-            "Auto-generated multiple-choice quizzes",
-            "Adaptive learning based on your progress",
-            "Focus on +2 Science and entrance exam prep",
-            "Chatbot for topic-specific doubts",
-          ].map((feature, index) => (
-            <li key={index} className="flex items-start gap-3">
-              <FaCheckCircle className="text-indigo-500 mt-1" />
-              <span className="text-lg">{feature}</span>
-            </li>
-          ))}
-        </ul>
+        {/* BENTO FEATURES GRID */}
+        <div className="mb-12" data-aos="fade-up">
+          <div className="flex items-center gap-2 mb-6">
+            <FaStar className="text-indigo-600 w-5 h-5" />
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
+              Platform Capabilities
+            </h2>
+          </div>
 
-        {/* -----------------------------
-            FAQ Section
-            Toggleable questions and answers
-        ----------------------------- */}
-        <div className="mt-12" data-aos="fade-up">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <FaQuestionCircle className="text-blue-500 w-6 h-6" />
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+            {[
+              { title: "PDF Schedule Generator", desc: "Turns syllabus PDFs into day-by-day structured study plans automatically." },
+              { title: "AI Concept Explanations", desc: "Simplifies complex academic concepts with clear markdown & math rendering." },
+              { title: "Adaptive MCQ Engine", desc: "Generates topic-specific quizzes with instant explanations to test recall." },
+              { title: "Progress Analytics", desc: "Tracks day-wise accuracy, performance progress, and study completion metrics." },
+              { title: "Science & Entrance Focused", desc: "Designed for +2 Science board exams and competitive entrance preparation." },
+              { title: "Interactive Doubt Assistant", desc: "Context-aware AI chatbot trained to answer questions on your specific course material." },
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 font-semibold text-sm">
+                    {index + 1}
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-base mb-1.5">{feature.title}</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">{feature.desc}</p>
+                </div>
+                <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-indigo-600">
+                  <FaCheckCircle className="w-3.5 h-3.5" /> Included in Suite
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* FAQ ACCORDION */}
+        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm" data-aos="fade-up">
+          <div className="flex items-center gap-2 mb-6">
+            <FaQuestionCircle className="text-indigo-600 w-5 h-5" />
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              Frequently Asked Questions
+            </h2>
+          </div>
+
+          <div className="space-y-3">
             {faqs.map((item, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-xl p-4 shadow-sm"
+                className="border border-slate-200/80 rounded-xl overflow-hidden transition-colors"
               >
-                {/* Question button */}
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full text-left font-medium text-indigo-600 text-lg focus:outline-none"
+                  className="w-full flex items-center justify-between p-4 text-left font-semibold text-slate-900 text-sm sm:text-base hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
-                  {item.question}
+                  <span>{item.question}</span>
+                  <FaChevronDown
+                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                      faqOpen === index ? "rotate-180 text-indigo-600" : ""
+                    }`}
+                  />
                 </button>
-                {/* Show answer only if this FAQ is open */}
                 {faqOpen === index && (
-                  <p className="mt-2 text-gray-700">{item.answer}</p>
+                  <div className="px-4 pb-4 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3 bg-slate-50/50">
+                    {item.answer}
+                  </div>
                 )}
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );

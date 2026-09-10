@@ -1,57 +1,70 @@
 "use client";
 
 import Image from "next/image";
-import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiBookOpen } from "react-icons/fi";
 import { useState } from "react";
 import { updateBookImage, deletePdfAndData } from "../../api/pdf";
 import CylindricalProgress from "./CylindricalProgress";
 import DayPerformaceBar from "./DayPerformanceBar";
+
+import physicsImg from "../../assets/images/physics.jpg";
+import chemistryImg from "../../assets/images/chemistry.webp";
+import biologyImg from "../../assets/images/biology.jpg";
+import englishImg from "../../assets/images/English.jpg";
+import aiImg from "../../assets/images/ai.jpeg";
 
 interface DayWiseScore {
   day: number;
   score: number;
   total_questions: number;
 }
+
 interface StudyBookCardProps {
   book?: {
     id?: number;
     pdf_hash?: string;
     name?: string;
     image?: string;
-    performance_progress?: number; // performance progress
-    study_progress?: number; //for dashboard progress
+    performance_progress?: number;
+    study_progress?: number;
     day_wise_scores?: DayWiseScore[];
   };
   variant?: "dashboard" | "performance";
   onClick?: () => void;
-  allowImageEdit?: boolean; // controls whether the edit icon is shown
-  onDelete?: (pdf_hash: string) => void; // callback for delete
+  allowImageEdit?: boolean;
+  onDelete?: (pdf_hash: string) => void;
 }
 
 export default function StudyBookCard({
   book,
   variant = "dashboard",
   onClick,
-  allowImageEdit = true, // default: allow editing
-  onDelete, // callback for delete
+  allowImageEdit = true,
+  onDelete,
 }: StudyBookCardProps) {
-  const fallbackImage = "/images/Company_Logo.png";
+  const getSmartFallbackImage = (bookName: string) => {
+    const lower = (bookName || "").toLowerCase();
+    if (lower.includes("physic")) return physicsImg;
+    if (lower.includes("chem")) return chemistryImg;
+    if (lower.includes("bio")) return biologyImg;
+    if (lower.includes("eng")) return englishImg;
+    return aiImg;
+  };
 
-  const [currentImage, setCurrentImage] = useState<string>(
-    book?.image || fallbackImage,
-  );
+  const name = book?.name ?? "Untitled Book";
+  const defaultImage = book?.image || getSmartFallbackImage(name);
+
+  const [currentImage, setCurrentImage] = useState<any>(defaultImage);
   const [uploading, setUploading] = useState(false);
 
   const performance_progress = book?.performance_progress ?? 0;
   const studyProgress = book?.study_progress ?? 0;
-  const name = book?.name ?? "Untitled Book";
   const pdf_hash = book?.pdf_hash ?? "";
 
   const isLocalImage = currentImage.startsWith("/");
 
-  // ================= IMAGE UPLOAD HANDLER =================
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     event.stopPropagation();
 
@@ -86,7 +99,7 @@ export default function StudyBookCard({
 
     try {
       await deletePdfAndData(pdf_hash);
-      onDelete?.(pdf_hash); // 🔥 update UI from parent
+      onDelete?.(pdf_hash);
     } catch (error) {
       console.error(error);
       alert("Failed to delete book");
@@ -95,17 +108,17 @@ export default function StudyBookCard({
 
   // ================= PERFORMANCE VARIANT =================
   if (variant === "performance") {
-    const size = 140;
+    const size = 120;
     const strokeWidth = 8;
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference * (1 - performance_progress / 100);
 
     return (
-      <div className="flex flex-col items-center gap-4 bg-white rounded-2xl shadow-md p-6">
-        <div className="relative w-[140px] h-[140px]">
+      <div className="flex flex-col items-center gap-4 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:border-slate-300 transition-all">
+        <div className="relative w-[120px] h-[120px]">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative w-[80px] h-[80px] rounded-full overflow-hidden">
+            <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden border border-slate-100 shadow-inner">
               <Image
                 src={currentImage}
                 alt={name}
@@ -125,7 +138,7 @@ export default function StudyBookCard({
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke="#E5E7EB"
+              stroke="#F1F5F9"
               strokeWidth={strokeWidth}
               fill="transparent"
             />
@@ -133,7 +146,7 @@ export default function StudyBookCard({
               cx={size / 2}
               cy={size / 2}
               r={radius}
-              stroke="#6366F1"
+              stroke="#4F46E5"
               strokeWidth={strokeWidth}
               strokeDasharray={circumference}
               strokeDashoffset={offset}
@@ -143,7 +156,10 @@ export default function StudyBookCard({
           </svg>
         </div>
 
-        <h3 className="text-lg font-bold text-gray-800 text-center">{name}</h3>
+        <div className="text-center">
+          <h3 className="text-base font-bold text-slate-900 line-clamp-1">{name}</h3>
+          <span className="text-xs text-indigo-600 font-semibold">{performance_progress}% Score</span>
+        </div>
         <DayPerformaceBar data={book?.day_wise_scores || []} />
       </div>
     );
@@ -153,64 +169,75 @@ export default function StudyBookCard({
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-2xl shadow-md hover:shadow-lg transition
-                 p-2 flex flex-col gap-4 cursor-pointer relative"
+      className="bg-white rounded-2xl border border-slate-200/80 p-3 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-200 flex flex-col justify-between cursor-pointer group relative"
     >
-      <div className="relative w-full h-52 rounded-xl overflow-hidden">
-        <Image
-          src={currentImage}
-          alt={name}
-          fill
-          className="object-cover"
-          unoptimized={isLocalImage}
-        />
+      <div>
+        <div className="relative w-full h-44 rounded-xl overflow-hidden bg-slate-100 border border-slate-100">
+          <Image
+            src={currentImage}
+            alt={name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            unoptimized={isLocalImage}
+          />
 
-        {/* Only show edit if allowed */}
-        {allowImageEdit && (
-          <>
-            {/* Image upload input */}
-            <input
-              type="file"
-              id={`file-input-${pdf_hash}`}
-              accept="image/*"
-              className="hidden"
-              onClick={(e) => e.stopPropagation()}
-              onChange={handleFileChange}
-            />
+          {allowImageEdit && (
+            <>
+              <input
+                type="file"
+                id={`file-input-${pdf_hash}`}
+                accept="image/*"
+                className="hidden"
+                onClick={(e) => e.stopPropagation()}
+                onChange={handleFileChange}
+              />
 
-            <div className="absolute top-2 right-2 flex gap-2">
-              {/* EDIT ICON */}
-              <button
-                type="button"
-                title="Change book image"
-                className="bg-white/90 p-2 rounded-full shadow
-                   hover:bg-indigo-600 hover:text-white transition"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  document.getElementById(`file-input-${pdf_hash}`)?.click();
-                }}
-              >
-                {uploading ? "..." : <FiEdit size={14} />}
-              </button>
+              <div className="absolute top-2 right-2 flex gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                <button
+                  type="button"
+                  title="Change book image"
+                  className="bg-white/90 backdrop-blur-sm p-1.5 rounded-lg text-slate-700 shadow-sm border border-slate-200/80 hover:bg-indigo-600 hover:text-white transition-all"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    document.getElementById(`file-input-${pdf_hash}`)?.click();
+                  }}
+                >
+                  {uploading ? "..." : <FiEdit size={13} />}
+                </button>
 
-              {/* DELETE ICON */}
-              <button
-                type="button"
-                title="Delete book"
-                className="bg-white/90 p-2 rounded-full shadow
-                   hover:bg-red-600 hover:text-white transition"
-                onClick={handleDelete}
-              >
-                <FiTrash2 size={14} />
-              </button>
-            </div>
-          </>
-        )}
+                <button
+                  type="button"
+                  title="Delete book"
+                  className="bg-white/90 backdrop-blur-sm p-1.5 rounded-lg text-slate-700 shadow-sm border border-slate-200/80 hover:bg-rose-600 hover:text-white transition-all"
+                  onClick={handleDelete}
+                >
+                  <FiTrash2 size={13} />
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="pt-3 px-1">
+          <h3 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+            {name}
+          </h3>
+        </div>
       </div>
 
-      <h3 className="text-lg font-bold text-gray-800 truncate px-1">{name}</h3>
-      {studyProgress > 0 && <CylindricalProgress value={studyProgress} />}
+      <div className="pt-3 px-1">
+        {studyProgress > 0 ? (
+          <CylindricalProgress value={studyProgress} />
+        ) : (
+          <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
+            <span>Ready to start</span>
+            <span className="text-indigo-600 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+              Open <FiBookOpen className="w-3 h-3" />
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

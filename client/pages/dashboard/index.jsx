@@ -1,57 +1,42 @@
-"use client"; // Client-side React component
+"use client";
 
-// -----------------------------
-// IMPORTS
-// -----------------------------
-import { useState } from "react"; // React hook for state
-import { FiPlus } from "react-icons/fi"; // Plus icon for upload button
-import { toast } from "react-hot-toast"; // Toast notifications
+import { useState } from "react";
+import { FiPlus } from "react-icons/fi";
+import { toast } from "react-hot-toast";
 
-import ProtectedRoute from "../../components/ui/ProtectedRoute"; // Wraps content to restrict to logged-in users
-import Sidebar from "../../components/layout/Sidebar"; // Sidebar navigation
-import DashboardContent from "../../components/dashboard/DashboardContent"; // Upload & dashboard content modal
-import StudyBooksGrid from "../../components/dashboard/StudyBooksGrid"; // Grid of study books
-import Service from "../service"; // Main learning service component
-import MockTest from "../../components/mock/MockTest"; // Mock test module
-import { useAuth } from "../../context/AuthContext"; // User authentication context
-import { getBookSchedule } from "../../api/pdf"; // API to fetch schedule for a PDF
-import CommunityPage from "../../components/Community/CommunityPage"; // Community section
-import EntranceNews from "../../components/entrance_news/EntranceNews"; // Entrance exam news section
+import ProtectedRoute from "../../components/ui/ProtectedRoute";
+import Sidebar from "../../components/layout/Sidebar";
+import DashboardContent from "../../components/dashboard/DashboardContent";
+import StudyBooksGrid from "../../components/dashboard/StudyBooksGrid";
+import Service from "../service";
+import MockTest from "../../components/mock/MockTest";
+import { useAuth } from "../../context/AuthContext";
+import { getBookSchedule } from "../../api/pdf";
+import CommunityPage from "../../components/Community/CommunityPage";
+import EntranceNews from "../../components/entrance_news/EntranceNews";
 
-// -----------------------------
-// COMPONENT: Dashboard
-// -----------------------------
 export default function Dashboard() {
-  // -----------------------------
-  // STATE
-  // -----------------------------
-  const [activeTab, setActiveTab] = useState("dashboard"); // Current active tab
-  const [showServiceView, setShowServiceView] = useState(false); // Whether Service component is visible
-  const [showUploadPopup, setShowUploadPopup] = useState(false); // Show/hide book upload modal
-  const [aiPlan, setAiPlan] = useState(null); // Current selected/uploaded AI-generated plan
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [showServiceView, setShowServiceView] = useState(false);
+  const [showUploadPopup, setShowUploadPopup] = useState(false);
+  const [aiPlan, setAiPlan] = useState(null);
 
-  const { user } = useAuth(); // Get logged-in user info
+  const { user } = useAuth();
 
-  // -----------------------------
-  // HANDLERS
-  // -----------------------------
-
-  // Triggered after a successful PDF upload
   const handleUploadSuccess = (data) => {
-    setAiPlan(data); // Store the plan data
-    setShowServiceView(true); // Open Service component
-    setShowUploadPopup(false); // Close the upload modal
+    setAiPlan(data);
+    setShowServiceView(true);
+    setShowUploadPopup(false);
 
     if (data?.pdf_hash) {
-      localStorage.setItem("lastBookHash", data.pdf_hash); // Save last uploaded book
+      localStorage.setItem("lastBookHash", data.pdf_hash);
     }
   };
 
-  // Fetch schedule from backend for a clicked book
   const fetchBookSchedule = async (pdf_hash) => {
     if (!pdf_hash) return;
 
-    const toastId = toast.loading("Fetching schedule..."); // Show loading toast
+    const toastId = toast.loading("Fetching schedule...");
 
     try {
       const { success, schedule, book_name, image, pdf_url, message } =
@@ -70,16 +55,15 @@ export default function Dashboard() {
         schedule: schedule || [],
       });
 
-      setShowServiceView(true); // Show the service component
-      localStorage.setItem("lastBookHash", pdf_hash); // Store last accessed book
-      toast.success("Schedule loaded!", { id: toastId }); // Success toast
+      setShowServiceView(true);
+      localStorage.setItem("lastBookHash", pdf_hash);
+      toast.success("Schedule loaded!", { id: toastId });
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong", { id: toastId });
     }
   };
 
-  // Handles click on a book in the grid
   const handleBookClick = (book) => {
     if (!book?.pdf_hash) {
       toast.error("PDF not found");
@@ -88,47 +72,34 @@ export default function Dashboard() {
     fetchBookSchedule(book.pdf_hash);
   };
 
-  // -----------------------------
-  // RENDER HELPERS
-  // -----------------------------
   const renderContent = () => {
-    // Show Service view if plan is selected or uploaded
     if (showServiceView && aiPlan) {
       return <Service planData={aiPlan} activeTab={activeTab} />;
     }
 
-    // Render Mock Test component
     if (activeTab === "mock") {
       return <MockTest />;
     }
 
-    // Render Community page
     if (activeTab === "community") {
       return <CommunityPage />;
     }
 
-    // Render Entrance News page
     if (activeTab === "entranceNews") {
       return <EntranceNews />;
     }
 
-    // Default: Study Books grid
     return (
       <StudyBooksGrid activeTab={activeTab} onBookClick={handleBookClick} />
     );
   };
 
-  // Show upload button only in Dashboard tab and when Service is not open
   const showUploadButton = activeTab === "dashboard" && !showServiceView;
 
-  // -----------------------------
-  // RENDER
-  // -----------------------------
   return (
     <ProtectedRoute>
-      <div className="pt-4">
+      <div className="bg-slate-50 min-h-screen pt-16">
         <div className="flex min-h-[calc(100vh-4rem)]">
-          {/* Sidebar navigation */}
           <Sidebar
             user={user}
             activeTab={activeTab}
@@ -136,36 +107,28 @@ export default function Dashboard() {
             setShowServiceView={setShowServiceView}
           />
 
-          {/* Main content area */}
-          <div className="flex-1 px-6 py-6 relative mt-20">
-            {/* Upload Button */}
+          <div className="flex-1 px-4 sm:px-6 py-6 relative">
             {showUploadButton && (
-              <button
-                onClick={() => setShowUploadPopup(true)}
-                className="absolute top-2 right-6 flex items-center gap-2
-                           bg-indigo-600 text-white px-4 py-2 rounded-full
-                           hover:bg-indigo-700 transition z-10"
-              >
-                <FiPlus /> {/* Plus icon */}
-                Upload New Book
-              </button>
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={() => setShowUploadPopup(true)}
+                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                >
+                  <FiPlus className="w-4 h-4" /> Upload New Book
+                </button>
+              </div>
             )}
 
-            {/* Render appropriate content based on activeTab and service state */}
             {renderContent()}
           </div>
         </div>
 
-        {/* Upload Popup Modal */}
         {showUploadPopup && (
-          <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-            <div
-              className="bg-white rounded-3xl w-full max-w-3xl
-                            max-h-[90vh] overflow-y-auto p-6 md:p-8"
-            >
+          <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 sm:p-8">
               <DashboardContent
-                onUploadSuccess={handleUploadSuccess} // Callback after successful upload
-                onClose={() => setShowUploadPopup(false)} // Close modal
+                onUploadSuccess={handleUploadSuccess}
+                onClose={() => setShowUploadPopup(false)}
               />
             </div>
           </div>
