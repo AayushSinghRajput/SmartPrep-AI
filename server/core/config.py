@@ -17,15 +17,15 @@ class Settings(BaseSettings):
     MONGO_LOCAL_URI: str = "mongodb://localhost:27017"
     MONGO_ATLAS_URI: str | None = None
     MONGO_URI: str | None = "mongodb://localhost:27017"
-    DB_NAME: str
-    JWT_SECRET: str
+    DB_NAME: str = "smartprep-ai"
+    JWT_SECRET: str = "smartprep_jwt_secret_key_change_in_prod"
     JWT_ALGORITHM: str = "HS256"
     GOOGLE_OAUTH_CLIENT_ID: str | None = None
 
     #Cloudinary
-    CLOUDINARY_CLOUD_NAME : str
-    CLOUDINARY_API_KEY : str
-    CLOUDINARY_API_SECRET : str
+    CLOUDINARY_CLOUD_NAME : str | None = None
+    CLOUDINARY_API_KEY : str | None = None
+    CLOUDINARY_API_SECRET : str | None = None
 
     # Pinecone Vector Store
     PINECONE_API_KEY: str | None = None
