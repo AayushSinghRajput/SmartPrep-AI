@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { sendChatMessage } from "../api/chat";
+import { sendChatMessage } from "../services/chat";
 import { useAuth } from "../context/AuthContext";
 
 /**

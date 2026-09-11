@@ -11,7 +11,7 @@ import StudyBooksGrid from "../../components/dashboard/StudyBooksGrid";
 import Service from "../service";
 import MockTest from "../../components/mock/MockTest";
 import { useAuth } from "../../context/AuthContext";
-import { getBookSchedule } from "../../api/pdf";
+import { getBookSchedule } from "../../services/pdf";
 import CommunityPage from "../../components/Community/CommunityPage";
 import EntranceNews from "../../components/entrance_news/EntranceNews";
 

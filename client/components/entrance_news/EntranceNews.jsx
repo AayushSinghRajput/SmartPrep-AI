@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { fetchIOENews, fetchIOMNews } from "../../api/entrance_news";
+import { fetchIOENews, fetchIOMNews } from "../../services/entrance_news";
 
 const EntranceNews = () => {
   const [news, setNews] = useState([]);        // store news items

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { createPost } from "../../api/community"; // API function to create post
+import { createPost } from "../../services/community"; // API function to create post
 
 /**
  * Popup modal to submit a new post with optional images

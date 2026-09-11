@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { submitMCQScore } from "../api/performance";
+import { submitMCQScore } from "../services/performance";
 
 /**
  * useMCQ Hook

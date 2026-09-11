@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { submitContactForm } from "../../api/contact";
+import { submitContactForm } from "../../services/contact";
 import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
 import { FiMessageSquare, FiSend, FiCheckCircle } from "react-icons/fi";
 

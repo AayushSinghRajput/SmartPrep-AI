@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { FiEdit, FiTrash2, FiBookOpen } from "react-icons/fi";
 import { useState } from "react";
-import { updateBookImage, deletePdfAndData } from "../../api/pdf";
+import { updateBookImage, deletePdfAndData } from "../../services/pdf";
 import CylindricalProgress from "./CylindricalProgress";
 import DayPerformaceBar from "./DayPerformanceBar";
 

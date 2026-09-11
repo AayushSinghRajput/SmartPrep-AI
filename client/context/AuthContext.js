@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser, registerUser, googleLogin, getCurrentUser, logoutUser } from "../api/auth";
+import { loginUser, registerUser, googleLogin, getCurrentUser, logoutUser } from "../services/auth";
 
 // ---------------------------
 // Auth context

@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { generateContent } from "../api/content";
-import { summarizeDayNotes } from "../api/note";
-import { generateMCQs } from "../api/mcq";
-import { updateProgress } from "../api/progress";
-import { fetchPerformance } from "../api/performance";
+import { generateContent } from "../services/content";
+import { summarizeDayNotes } from "../services/note";
+import { generateMCQs } from "../services/mcq";
+import { updateProgress } from "../services/progress";
+import { fetchPerformance } from "../services/performance";
 
 //  Add `mode` to distinguish "study" vs "mcq" / "notes"
 export function useServiceLogic(planData, mode = "study") {

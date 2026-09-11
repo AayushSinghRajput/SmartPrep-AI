@@ -6,7 +6,7 @@ import {
   addComment,
   updateCommunityPost,
   deleteCommunityPost,
-} from "../../api/community";
+} from "../../services/community";
 import {
   FaEdit,
   FaTrash,

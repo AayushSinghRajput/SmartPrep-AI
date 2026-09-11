@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { getMyPosts } from "../../api/community";
+import { getMyPosts } from "../../services/community";
 import PostButton from "./PostButton";
 import PostPopup from "./PostPopup";
 import UserPosts from "./UserPosts";

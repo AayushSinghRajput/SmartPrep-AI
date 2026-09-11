@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PostCard from "../../components/Community/PostCard";
-import { getAllPosts } from "../../api/community";
+import { getAllPosts } from "../../services/community";
 import { useAuth } from "../../context/AuthContext";
 import { FiUsers, FiMessageSquare } from "react-icons/fi";
 import Loader from "../../components/ui/Loader";

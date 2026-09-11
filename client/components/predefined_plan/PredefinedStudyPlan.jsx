@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import books from "../../assets/data/topviewedbooks.json";
-import { getGlobalPlan } from "../../api/predefined";
+import { getGlobalPlan } from "../../services/predefined";
 import StudyPlanModal from "./StudyPlanModal";
 import toast from "react-hot-toast";
 import { colors } from "../../constants/colors";

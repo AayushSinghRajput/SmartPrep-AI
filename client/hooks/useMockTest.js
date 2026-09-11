@@ -1,6 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { getMockTest } from "../api/mock";
+import { getMockTest } from "../services/mock";
 import { calculateScore } from "../utils/calculateScore";
 
 /**

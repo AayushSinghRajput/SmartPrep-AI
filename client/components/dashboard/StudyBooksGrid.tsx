@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import StudyBookCard from "../ui/Card";
-import { getUserBooks } from "../../api/pdf";
+import { getUserBooks } from "../../services/pdf";
 import Loader from "../ui/Loader";
 import { TAB_HEADERS } from "../../lib/studygridconstants";
-import { fetchPerformance } from "../../api/performance";
+import { fetchPerformance } from "../../services/performance";
 import { FiBookOpen, FiZap, FiTrendingUp, FiArrowRight, FiTarget, FiClock } from "react-icons/fi";
 
 interface StudyBook {
