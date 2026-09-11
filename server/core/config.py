@@ -14,7 +14,9 @@ class Settings(BaseSettings):
     GOOGLE_SEARCH_API_KEY: str | None = None
     GOOGLE_SEARCH_ENGINE_ID: str | None = None
     # Database & auth
-    MONGO_URI: str
+    MONGO_LOCAL_URI: str = "mongodb://localhost:27017"
+    MONGO_ATLAS_URI: str | None = None
+    MONGO_URI: str | None = "mongodb://localhost:27017"
     DB_NAME: str
     JWT_SECRET: str
     JWT_ALGORITHM: str = "HS256"
@@ -24,6 +26,10 @@ class Settings(BaseSettings):
     CLOUDINARY_CLOUD_NAME : str
     CLOUDINARY_API_KEY : str
     CLOUDINARY_API_SECRET : str
+
+    # Pinecone Vector Store
+    PINECONE_API_KEY: str | None = None
+    PINECONE_INDEX_NAME: str = "smartprep-ai"
 
     # ---------------- OCR ----------------
     POPPLER_PATH: str | None = None

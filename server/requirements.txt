@@ -27,7 +27,9 @@ langchain_openai
 openai
 langchain_huggingface
 sentence-transformers
-faiss-cpu
+pinecone
+langchain-pinecone
+simsimd
 python-multipart
 pytesseract
 pdf2image

@@ -1,5 +1,6 @@
-from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_pinecone import Pinecone
+from core.config import settings
 
 
 def get_relevant_docs(pdf_hash: str, query: str):
@@ -7,12 +8,12 @@ def get_relevant_docs(pdf_hash: str, query: str):
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
     try:
-        vector_db = FAISS.load_local(
-            f"vector_store/{pdf_hash}",
-            embeddings,
-            allow_dangerous_deserialization=True
+        vector_db = Pinecone.from_existing_index(
+            index_name=settings.PINECONE_INDEX_NAME,
+            embedding=embeddings,
+            namespace=pdf_hash
         )
         return vector_db.similarity_search(query, k=2)
     except Exception as e:
-        print(f"❌ RAG vector store not found for PDF hash {pdf_hash}: {e}")
+        print(f"❌ Pinecone vector store retrieval error for PDF hash {pdf_hash}: {e}")
         return []

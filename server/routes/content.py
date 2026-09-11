@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+import traceback
 from schemas.Content import ContentGenerationRequest, ContentResponse
 from services.content.content_generator import generate_topic_content
 
@@ -14,17 +15,16 @@ async def generate_content(payload: ContentGenerationRequest):
             subtopic_index=payload.subtopic_index
         )
         return ContentResponse(
-        status="success",
-        day_number=payload.day_number,
-        topic_index=payload.topic_index,
-        chapter=result["chapter"],
-        topic=result["topic"],
-        content=result["content"],
-        page_range=result["page_range"],
-        cached=result["cached"],
-        images=result.get("images") 
-        
-    )
-
+            status="success",
+            day_number=payload.day_number,
+            topic_index=payload.topic_index,
+            chapter=result["chapter"],
+            topic=result["topic"],
+            content=result["content"],
+            page_range=result["page_range"],
+            cached=result["cached"],
+            images=result.get("images") 
+        )
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

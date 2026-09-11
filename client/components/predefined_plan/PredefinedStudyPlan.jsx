@@ -43,12 +43,17 @@ export default function PredefinedStudyPlan() {
     setLoadingCardId(id);
     try {
       const data = await getGlobalPlan(subject);
-      setSelectedPlan(data);
+      if (data && data.schedule) {
+        setSelectedPlan(data);
+        toast.success(`${subject} plan loaded successfully!`);
+      } else {
+        setSelectedPlan({ subject, schedule: [] });
+      }
       setIsModalOpen(true);
-      toast.success(`${subject} plan loaded successfully!`);
     } catch (error) {
       console.error("Failed to fetch plan:", error);
-      toast.error("Study plan not found for this subject yet.");
+      setSelectedPlan({ subject, schedule: [] });
+      setIsModalOpen(true);
     } finally {
       setLoading(false);
       setLoadingCardId(null);

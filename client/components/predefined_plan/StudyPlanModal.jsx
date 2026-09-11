@@ -58,68 +58,76 @@ export default function StudyPlanModal({ plan, onClose }) {
           {/* Left Sidebar: Navigation */}
           <div className="w-1/3 border-r border-slate-200 bg-white overflow-y-auto custom-scrollbar shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
             <div className="p-6 space-y-4">
-              {plan.schedule.map((dayData) => (
-                <div key={dayData.day} className="group">
-                  <button
-                    onClick={() => setActiveDay(activeDay === dayData.day ? null : dayData.day)}
-                    className={`w-full p-4 flex justify-between items-center rounded-2xl transition-all duration-300 ${
-                      activeDay === dayData.day 
-                      ? "bg-indigo-600 text-white shadow-indigo-200 shadow-xl translate-x-1" 
-                      : "bg-slate-50 hover:bg-slate-100 text-slate-700"
-                    }`}
-                  >
-                    <span className="font-bold flex items-center gap-4">
-                      <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black ${
-                        activeDay === dayData.day ? "bg-white/20" : "bg-white shadow-sm"
-                      }`}>
-                        {dayData.day}
-                      </span>
-                      Day {dayData.day}
-                    </span>
-                    <motion.span 
-                      animate={{ rotate: activeDay === dayData.day ? 180 : 0 }}
-                      className="text-xs opacity-50"
+              {plan?.schedule && plan.schedule.length > 0 ? (
+                plan.schedule.map((dayData) => (
+                  <div key={dayData.day} className="group">
+                    <button
+                      onClick={() => setActiveDay(activeDay === dayData.day ? null : dayData.day)}
+                      className={`w-full p-4 flex justify-between items-center rounded-2xl transition-all duration-300 ${
+                        activeDay === dayData.day 
+                        ? "bg-indigo-600 text-white shadow-indigo-200 shadow-xl translate-x-1" 
+                        : "bg-slate-50 hover:bg-slate-100 text-slate-700"
+                      }`}
                     >
-                      ▼
-                    </motion.span>
-                  </button>
-
-                  <AnimatePresence>
-                    {activeDay === dayData.day && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden bg-indigo-50/30 rounded-b-2xl -mt-2 pt-4 px-2 pb-2 border-x border-b border-indigo-100"
+                      <span className="font-bold flex items-center gap-4">
+                        <span className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black ${
+                          activeDay === dayData.day ? "bg-white/20" : "bg-white shadow-sm"
+                        }`}>
+                          {dayData.day}
+                        </span>
+                        Day {dayData.day}
+                      </span>
+                      <motion.span 
+                        animate={{ rotate: activeDay === dayData.day ? 180 : 0 }}
+                        className="text-xs opacity-50"
                       >
-                        {dayData.topics.map((topic, tIdx) => (
-                          <div key={tIdx} className="mb-2">
-                            <div className="px-4 py-2 text-[10px] font-black text-indigo-400 uppercase tracking-widest">
-                              {topic.title}
+                        ▼
+                      </motion.span>
+                    </button>
+
+                    <AnimatePresence>
+                      {activeDay === dayData.day && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden bg-indigo-50/30 rounded-b-2xl -mt-2 pt-4 px-2 pb-2 border-x border-b border-indigo-100"
+                        >
+                          {dayData.topics.map((topic, tIdx) => (
+                            <div key={tIdx} className="mb-2">
+                              <div className="px-4 py-2 text-[10px] font-black text-indigo-400 uppercase tracking-widest">
+                                {topic.title}
+                              </div>
+                              <div className="flex flex-col gap-1">
+                                {topic.subtopics.map((sub, sIdx) => (
+                                  <button
+                                    key={sIdx}
+                                    onClick={() => setSelectedSubtopic(sub)}
+                                    className={`text-left px-4 py-3 text-sm rounded-xl transition-all flex items-center gap-3 ${
+                                      selectedSubtopic?.title === sub.title 
+                                      ? "bg-white text-indigo-600 shadow-sm font-bold" 
+                                      : "text-slate-500 hover:text-slate-800 hover:bg-white/50"
+                                    }`}
+                                  >
+                                    <div className={`w-1.5 h-1.5 rounded-full ${selectedSubtopic?.title === sub.title ? "bg-indigo-600" : "bg-slate-300"}`} />
+                                    {sub.title}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
-                            <div className="flex flex-col gap-1">
-                              {topic.subtopics.map((sub, sIdx) => (
-                                <button
-                                  key={sIdx}
-                                  onClick={() => setSelectedSubtopic(sub)}
-                                  className={`text-left px-4 py-3 text-sm rounded-xl transition-all flex items-center gap-3 ${
-                                    selectedSubtopic?.title === sub.title 
-                                    ? "bg-white text-indigo-600 shadow-sm font-bold" 
-                                    : "text-slate-500 hover:text-slate-800 hover:bg-white/50"
-                                  }`}
-                                >
-                                  <div className={`w-1.5 h-1.5 rounded-full ${selectedSubtopic?.title === sub.title ? "bg-indigo-600" : "bg-slate-300"}`} />
-                                  {sub.title}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-slate-400">
+                  <div className="text-4xl mb-3">📅</div>
+                  <p className="font-bold text-slate-600 text-sm">No Schedule Yet</p>
+                  <p className="text-xs mt-1">Study plan for {plan?.subject || "this subject"} is coming soon.</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
@@ -173,16 +181,23 @@ export default function StudyPlanModal({ plan, onClose }) {
                 >
                   <div className="relative">
                     <div className="w-40 h-40 bg-indigo-50 rounded-full flex items-center justify-center mb-8 animate-pulse" />
-                    <span className="text-7xl absolute inset-0 flex items-center justify-center">🎯</span>
+                    <span className="text-7xl absolute inset-0 flex items-center justify-center">
+                      {plan?.schedule && plan.schedule.length > 0 ? "🎯" : "📚"}
+                    </span>
                   </div>
-                  <h3 className="text-3xl font-black text-slate-900">Select a Lesson</h3>
+                  <h3 className="text-3xl font-black text-slate-900">
+                    {plan?.schedule && plan.schedule.length > 0 ? "Select a Lesson" : "No Content Available"}
+                  </h3>
                   <p className="text-slate-400 max-w-xs mt-4 font-medium leading-relaxed">
-                    Your 30-day chemistry roadmap is ready. Choose a day from the left to begin your study session.
+                    {plan?.schedule && plan.schedule.length > 0 
+                      ? `Your 30-day ${plan?.subject || "subject"} roadmap is ready. Choose a day from the left to begin your study session.`
+                      : `Study plan content for ${plan?.subject || "this subject"} is currently empty.`}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
+
 
         </div>
       </motion.div>
