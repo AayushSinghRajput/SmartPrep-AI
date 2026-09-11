@@ -32,14 +32,26 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Allow CORS (Optional)
+from core.config import settings
+
+# Configure dynamic CORS origins
+raw_origins = settings.ALLOWED_ORIGINS
+if raw_origins == "*":
+    origins = ["*"]
+else:
+    origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+    if "http://localhost:3000" not in origins:
+        origins.append("http://localhost:3000")
+    if "http://127.0.0.1:3000" not in origins:
+        origins.append("http://127.0.0.1:3000")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # frontend URLs
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)   
+)
 
 app.include_router(auth.router)
 app.include_router(pdf.router)
