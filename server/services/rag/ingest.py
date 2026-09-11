@@ -1,6 +1,6 @@
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import Pinecone
 from pinecone import Pinecone as PineconeClient, ServerlessSpec
 from core.config import settings
@@ -17,7 +17,7 @@ def ensure_pinecone_index():
             print(f"🌲 Pinecone index '{settings.PINECONE_INDEX_NAME}' not found. Creating it automatically...")
             pc.create_index(
                 name=settings.PINECONE_INDEX_NAME,
-                dimension=384,
+                dimension=768,
                 metric="cosine",
                 spec=ServerlessSpec(cloud="aws", region="us-east-1")
             )
@@ -40,8 +40,9 @@ async def ingest_pdf_for_rag(pdf_hash: str, pdf_bytes: bytes):
         )
         docs = splitter.split_documents(documents)
 
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        embeddings = GoogleGenerativeAIEmbeddings(
+            model="models/text-embedding-004",
+            google_api_key=settings.GOOGLE_API_KEY
         )
 
         ensure_pinecone_index()

@@ -1,11 +1,12 @@
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_pinecone import Pinecone
 from core.config import settings
 
 
 def get_relevant_docs(pdf_hash: str, query: str):
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    embeddings = GoogleGenerativeAIEmbeddings(
+        model="models/text-embedding-004",
+        google_api_key=settings.GOOGLE_API_KEY
     )
     try:
         vector_db = Pinecone.from_existing_index(
