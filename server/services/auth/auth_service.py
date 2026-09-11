@@ -12,6 +12,9 @@ users_collection = db["users"]
 # Cookie name for JWT
 COOKIE_NAME = "access_token"
 
+# Detect production environment
+IS_PRODUCTION = settings.ENV == "production"
+
 
 # ---------------------------
 # Helper: Set JWT in HttpOnly cookie
@@ -20,10 +23,10 @@ def _set_auth_cookie(response: Response, token: str):
     response.set_cookie(
         key=COOKIE_NAME,
         value=token,
-        httponly=True,           # JS cannot access this cookie
-        secure=False,            # True in production (HTTPS only)
-        samesite="lax",          # Prevent CSRF in most cases
-        max_age=60 * 60 * 24 * 7 # 7 days
+        httponly=True,                                    # JS cannot access this cookie
+        secure=IS_PRODUCTION,                             # HTTPS only in production
+        samesite="none" if IS_PRODUCTION else "lax",      # cross-origin in prod, lax in dev
+        max_age=60 * 60 * 24 * 7                          # 7 days
     )
 
 
@@ -137,7 +140,11 @@ async def google_login_user(response: Response, credential: str):
 # Logout user (delete cookie)
 # ---------------------------
 def logout_user(response: Response):
-    response.delete_cookie(COOKIE_NAME)
+    response.delete_cookie(
+        key=COOKIE_NAME,
+        secure=IS_PRODUCTION,
+        samesite="none" if IS_PRODUCTION else "lax",
+    )
     return {
         "success": True,
         "statusCode": 200,
