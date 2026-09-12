@@ -1,0 +1,41 @@
+# SmartPrep-AI — Coding Guidelines & Rules
+
+## Project Overview
+**SmartPrep-AI** is an AI-powered entrance examination and learning platform built specifically for **+2 Science students across Nepal** preparing for board examinations and competitive entrance tests (such as **IOE** for Engineering and **CEE / IOM** for Medicine).
+
+The platform transforms textbooks/PDFs into structured daily study schedules, delivers adaptive lessons with mathematical formula rendering, provides 24/7 RAG-based AI doubt resolution, and generates dynamic MCQs and timed mock tests.
+
+### Architecture & Tech Stack
+- **Frontend (`./client`)**: Next.js (App router/Pages router), React 19, Tailwind CSS, KaTeX (for mathematical/scientific equation rendering), Chart.js (progress analytics), Lucide React.
+- **Backend (`./server`)**: Python (FastAPI), Pydantic schemas, MongoDB (Motor/PyMongo), FAISS vector store for RAG, Cloudinary for PDF uploads, Tesseract OCR for scanned documents.
+- **AI/ML Layer**: LLM integrations (Gemini / Groq / OpenAI), custom MCQ generation, distractor generation, and semantic search over textbook content.
+
+---
+
+## Coding Standards & Guidelines
+
+### 1. Backend (FastAPI / Python)
+- **Code Style**: Follow PEP 8 with strict typing annotations (`typing.Optional`, `typing.List`, `pydantic.BaseModel`).
+- **Environment**: Use `./server/myenv` virtual environment. Keep `./server/requirements.txt` updated.
+- **Architecture**: Strict separation of concerns:
+  - `server/routes/`: Route declarations and HTTP status codes only.
+  - `server/schemas/`: Pydantic input/output models and request validation.
+  - `server/services/`: Core business logic, textbook processing, mock exam engines, and RAG pipelines.
+  - `server/db/`: Database configuration and MongoDB collection helpers.
+- **Error Handling**: Always use FastAPI `HTTPException` with informative error details.
+
+### 2. Frontend (Next.js / React)
+- **Code Style**: TypeScript/ESLint compliance, modern functional components, and React hooks.
+- **Scientific Content**: Any mathematical, physics, or chemical formula MUST support proper **KaTeX** formatting (delimiters `$..$` or `$$..$$`).
+- **Styling**: Maintain clean, responsive, and accessible UI with Tailwind CSS.
+- **API Communication**: Centralize API requests in `client/services/` with proper error handling and toast notifications (`react-hot-toast`).
+
+### 3. Nepal Entrance Exam Context & Domains
+- Mock tests and question banks must support Nepal-specific entrance test structures:
+  - **IOE Entrance**: Mathematics, Physics, Chemistry, English.
+  - **CEE / Medical Entrance**: Physics, Chemistry, Biology (Botany & Zoology), Mental Agility.
+- Maintain accurate day-wise scheduling logic aligned with the standard NEB (+2 Science) syllabus.
+
+### 4. Safety & Verification
+- Verify code syntax and run typechecks/lints before committing.
+- Never commit secrets, database URIs, or AI API keys into version control (use `.env`).

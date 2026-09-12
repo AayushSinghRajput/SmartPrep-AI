@@ -18,7 +18,9 @@ export default function MockTest() {
     currentQuestion,    // Index of current question
     answers,            // User's selected answers
     score,              // Calculated score
+    scoreDetails,       // Detailed score breakdown (correct, incorrect, penalty)
     showResult,         // Boolean: show result screen
+    isLoading,          // Boolean: network loading/submitting state
     startTest,          // Function to start test
     selectAnswer,       // Function to select an answer
     nextQuestion,       // Move to next question
@@ -26,6 +28,7 @@ export default function MockTest() {
     submitTest,         // Submit test manually
     resetMockTest,      // Reset all mock test state
   } = useMockTest();
+
 
   const [countdown, setCountdown] = useState(null); // Countdown before test starts
   const [selectedExam, setSelectedExam] = useState(null); // Currently selected exam type
@@ -82,11 +85,47 @@ export default function MockTest() {
   // ------------------------- RESULT SCREEN -------------------------
   if (showResult) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-emerald-50">
-        <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md">
-          <h1 className="text-3xl font-bold text-emerald-600 mb-4">🎉 Test Completed</h1>
-          <p className="text-2xl font-semibold mb-6">Score: {score}</p>
-          <button className="px-6 py-2 bg-indigo-600 text-white rounded-xl" onClick={handleRetakeTest}>
+      <div className="min-h-screen flex items-center justify-center bg-emerald-50 p-4">
+        <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md w-full">
+          <h1 className="text-3xl font-bold text-emerald-600 mb-2">🎉 Test Completed</h1>
+          <p className="text-sm text-gray-500 mb-6">
+            {examData?.mock_title || `${selectedExam} Mock Exam`}
+          </p>
+
+          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-6">
+            <p className="text-xs text-emerald-700 font-semibold uppercase tracking-wider mb-1">
+              Final Net Score
+            </p>
+            <p className="text-4xl font-extrabold text-emerald-700">
+              {score}
+              {scoreDetails?.maxMarks ? (
+                <span className="text-lg text-emerald-500 font-medium"> / {scoreDetails.maxMarks}</span>
+              ) : null}
+            </p>
+          </div>
+
+          {scoreDetails && (
+            <div className="grid grid-cols-2 gap-3 text-left mb-6 text-sm">
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <span className="text-xs text-gray-500 block">Correct Answers</span>
+                <span className="font-bold text-emerald-600">+{scoreDetails.correctCount}</span>
+              </div>
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <span className="text-xs text-gray-500 block">Incorrect Answers</span>
+                <span className="font-bold text-red-600">{scoreDetails.wrongCount}</span>
+              </div>
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <span className="text-xs text-gray-500 block">Negative Penalty</span>
+                <span className="font-bold text-rose-600">-{scoreDetails.negativePenalty}</span>
+              </div>
+              <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <span className="text-xs text-gray-500 block">Unattempted</span>
+                <span className="font-bold text-gray-600">{scoreDetails.unattemptedCount}</span>
+              </div>
+            </div>
+          )}
+
+          <button className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white font-medium rounded-xl shadow" onClick={handleRetakeTest}>
             Retake Test
           </button>
         </div>
@@ -173,14 +212,24 @@ export default function MockTest() {
                 Previous
               </button>
 
-              <button onClick={handleManualSubmit} className="px-6 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700">
-                Submit Test
+              <button
+                onClick={handleManualSubmit}
+                disabled={isLoading}
+                className="px-6 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50"
+              >
+                {isLoading ? "Submitting..." : "Submit Test"}
               </button>
 
-              <button onClick={currentQuestion === examData.questions.length - 1 ? submitTest : nextQuestion}
-                      className="px-6 py-2 bg-indigo-600 text-white rounded-xl">
-                {currentQuestion === examData.questions.length - 1 ? "Submit" : "Next"}
+              <button
+                onClick={currentQuestion === examData.questions.length - 1 ? submitTest : nextQuestion}
+                disabled={isLoading}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-xl disabled:opacity-50"
+              >
+                {currentQuestion === examData.questions.length - 1
+                  ? (isLoading ? "Submitting..." : "Submit")
+                  : "Next"}
               </button>
+
             </div>
           </>
         )}

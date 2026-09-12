@@ -36,3 +36,11 @@ __pycache__/
 .DS_Store
 .vscode/
 .idea/
+
+# =========================
+# AI / Agent Tools & Logs
+# =========================
+.agents/
+.gsd/
+progress.txt
+

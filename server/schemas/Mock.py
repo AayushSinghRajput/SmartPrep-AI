@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Dict
+from typing import List, Dict, Optional
 from enum import Enum
 
 
@@ -45,3 +45,11 @@ class Mock(BaseModel):
                 "questions": []
             }
         }
+
+
+class MockSubmission(BaseModel):
+    mock_id: str
+    mock_type: MockType
+    answers: Dict[str, str]  # question index or ID mapped to selected option
+    submission_id: Optional[str] = None
+

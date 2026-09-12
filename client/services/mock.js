@@ -43,3 +43,23 @@ export const getMockTest = async (mock_type) => {
     throw error;
   }
 };
+
+// ---------------------------
+// Submit mock test data (Authoritative evaluation)
+// ---------------------------
+export const submitMockTest = async (submissionData) => {
+  try {
+    const response = await fetch(`${API_URL}/exams/submit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(submissionData),
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    throw error;
+  }
+};
