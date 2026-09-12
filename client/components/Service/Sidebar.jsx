@@ -11,6 +11,8 @@ export default function Sidebar({
   actions = {},
   mode = "study", // "study" | "mcq" | "notes"
   selectedDay = null,
+  isCollapsed = false,
+  onToggleCollapse,
 }) {
   const {
     toggleDayExpand,
@@ -24,48 +26,63 @@ export default function Sidebar({
     if (!level) return null;
 
     // Normalize level to match badge keys
-    const normalizedLevel = level.toLowerCase(); // e.g., Good -> good
+    const normalizedLevel = level.toLowerCase();
 
     const styles = {
-      bad: "bg-red-100 text-red-600",
-      medium: "bg-yellow-100 text-yellow-700",
-      good: "bg-green-100 text-green-600",
+      bad: "bg-rose-50 text-rose-600 border border-rose-200",
+      medium: "bg-amber-50 text-amber-700 border border-amber-200",
+      good: "bg-emerald-50 text-emerald-600 border border-emerald-200",
     };
 
     return (
       <span
-        className={`text-[10px] px-2 py-0.5 rounded-full font-semibold capitalize ${styles[normalizedLevel]}`}
+        className={`text-[10px] px-2 py-0.5 rounded-full font-semibold capitalize ${styles[normalizedLevel] || styles.medium}`}
       >
         {normalizedLevel}
       </span>
     );
   };
 
-  // 🔎 Debug: show correct field mapping
-  console.log(
-    "Sidebar performance levels:",
-    localSchedule.map((d) => ({
-      day: d.day,
-      level: d.performance_level, // ✅ corrected field
-    })),
-  );
-
   return (
-    <div className="w-1/4 border-r p-4 overflow-y-auto bg-slate-50">
+    <aside
+      className={`h-full border-r border-[var(--border-primary)] bg-[var(--bg-card)] transition-all duration-300 ease-in-out flex-shrink-0 z-20 ${
+        isCollapsed
+          ? "w-0 p-0 opacity-0 overflow-hidden border-r-0"
+          : "w-full md:w-80 lg:w-96 p-4 overflow-y-auto opacity-100"
+      }`}
+    >
       {/* Header */}
-      <div className="mb-6 p-4 bg-indigo-600 rounded-2xl text-white shadow-lg">
-        <h2 className="text-lg font-bold truncate">
+      <div className="mb-5 p-4 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-2xl text-white shadow-sm border border-indigo-500/30">
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-200 bg-indigo-800/50 px-2 py-0.5 rounded-full">
+            Course Curriculum
+          </span>
+          {onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              className="text-indigo-200 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+              title="Collapse Curriculum"
+            >
+              <ChevronRight size={16} className="rotate-180" />
+            </button>
+          )}
+        </div>
+        <h2 className="text-base font-bold truncate">
           {metaData.subject || "Study Material"}
         </h2>
-        <p className="text-xs opacity-75 mt-1">
-          {localSchedule.length} days • {getTotalSubtopics(localSchedule)}{" "}
-          subtopics
+        <p className="text-xs text-indigo-100/80 mt-0.5">
+          {localSchedule.length} Days • {getTotalSubtopics(localSchedule)} Subtopics
         </p>
       </div>
 
-      <h3 className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-        Course Content
-      </h3>
+      <div className="flex items-center justify-between px-2 mb-3">
+        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          Study Units & Days
+        </h3>
+        <span className="text-[11px] font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">
+          {mode.toUpperCase()}
+        </span>
+      </div>
 
       <div className="space-y-2">
         {localSchedule.map((dayItem, dayIndex) => {
@@ -84,8 +101,8 @@ export default function Sidebar({
                 }}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${
                   dayExpanded
-                    ? "bg-white border border-indigo-200 shadow-sm text-indigo-600"
-                    : "hover:bg-indigo-50 text-gray-700"
+                    ? "bg-[var(--accent-light)] border border-[var(--border-primary)] shadow-xs text-[var(--accent-primary)] font-semibold"
+                    : "hover:bg-[var(--accent-light)] text-[var(--text-primary)]"
                 }`}
                 disabled={loadingContent}
               >
@@ -174,8 +191,8 @@ export default function Sidebar({
                               }
                               className={`w-full text-left px-3 py-2 text-xs transition-all rounded-lg flex items-center justify-between ${
                                 isSelected
-                                  ? "bg-indigo-100 text-indigo-700 font-bold"
-                                  : "text-gray-500 hover:bg-gray-100"
+                                  ? "bg-indigo-600 text-white font-bold"
+                                  : "text-[var(--text-secondary)] hover:bg-[var(--accent-light)]"
                               }`}
                               disabled={loadingContent}
                             >
@@ -201,6 +218,6 @@ export default function Sidebar({
           );
         })}
       </div>
-    </div>
+    </aside>
   );
 }

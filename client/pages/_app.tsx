@@ -4,6 +4,7 @@ import { useRouter } from "next/router"; // Hook to get current route
 import Navbar from "../components/layout/Navbar"; // Custom Navbar component
 import Footer from "../components/layout/Footer"; // Custom Footer component
 import { AuthProvider } from "@/context/AuthContext"; // Context provider for authentication
+import { ThemeProvider } from "@/context/ThemeContext"; // Theme provider for Light, Dark, and Sepia
 import "../styles/globals.css"; // Global Tailwind / CSS styles
 import { Toaster } from "react-hot-toast"; // Toast notification library
 import { GoogleOAuthProvider } from "@react-oauth/google"; // "Continue with Google" support
@@ -21,11 +22,11 @@ function AppLayout({ Component, pageProps }: AppProps) {
 
   return (
     // Main layout container
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased">
+    <div className="min-h-screen flex flex-col bg-[var(--bg-page)] text-[var(--text-primary)] font-sans antialiased transition-colors duration-200">
       <Head>
         <title>SmartPrep AI - High Retention EdTech Platform</title>
         <meta name="description" content="Personalized AI-powered prep suite for +2 Science students and entrance exam candidates." />
-        <link rel="icon" href="/logo.jpeg" type="image/jpeg" />
+        <link rel="icon" href="/logo.png" type="image/png" />
       </Head>
       {/* Render Navbar only on allowed routes */}
       {showNavbar && <Navbar />}
@@ -50,10 +51,11 @@ export default function MyApp(props: AppProps) {
   return (
     // GoogleOAuthProvider enables the "Continue with Google" button on login/signup
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
-      {/* AuthProvider gives access to authentication context for all pages */}
-      <AuthProvider>
-        {/* AppLayout provides consistent layout with navbar/footer */}
-        <AppLayout {...props} />
+      <ThemeProvider>
+        {/* AuthProvider gives access to authentication context for all pages */}
+        <AuthProvider>
+          {/* AppLayout provides consistent layout with navbar/footer */}
+          <AppLayout {...props} />
 
         {/* Toast notifications container */}
         <Toaster
@@ -73,7 +75,8 @@ export default function MyApp(props: AppProps) {
             },
           }}
         />
-      </AuthProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </GoogleOAuthProvider>
   );
 }

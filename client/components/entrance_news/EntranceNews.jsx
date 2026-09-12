@@ -1,13 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  FiSearch,
+  FiExternalLink,
+  FiCalendar,
+  FiCheckCircle,
+  FiRefreshCw,
+  FiBookOpen,
+  FiActivity,
+} from "react-icons/fi";
 import { fetchIOENews, fetchIOMNews } from "../../services/entrance_news";
 
 const EntranceNews = () => {
-  const [news, setNews] = useState([]);        // store news items
-  const [loading, setLoading] = useState(false); // loading state
-  const [error, setError] = useState(null);    // error state
-  const [activeExam, setActiveExam] = useState(""); // current exam selected
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [activeExam, setActiveExam] = useState("IOE");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState("All");
 
-  // Fetch and set news for selected exam
   const handleFetchNews = async (exam) => {
     setLoading(true);
     setError(null);
@@ -24,148 +34,208 @@ const EntranceNews = () => {
     }
   };
 
-  // Helper function to get source name - use activeExam if source is unknown
+  useEffect(() => {
+    handleFetchNews("IOE");
+  }, []);
+
   const getSourceName = (source) => {
-    // If source exists and is not empty, use it
     if (source && source.trim() !== "") {
       return source;
     }
-    // Otherwise, fall back to the active exam name
-    return activeExam;
+    return activeExam === "IOE" ? "TU IOE Entrance Board" : "IOM Examination Board";
   };
 
+  const tags = ["All", "Admit Card", "Exam Date", "Result", "Quota / Form"];
+
+  const filteredNews = useMemo(() => {
+    return news.filter((item) => {
+      const matchesSearch =
+        (item.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.source || "").toLowerCase().includes(searchQuery.toLowerCase());
+
+      if (!matchesSearch) return false;
+
+      if (selectedTag === "All") return true;
+      if (selectedTag === "Admit Card") return (item.title || "").toLowerCase().includes("admit");
+      if (selectedTag === "Exam Date") return (item.title || "").toLowerCase().includes("date") || (item.title || "").toLowerCase().includes("schedule");
+      if (selectedTag === "Result") return (item.title || "").toLowerCase().includes("result") || (item.title || "").toLowerCase().includes("score");
+      if (selectedTag === "Quota / Form") return (item.title || "").toLowerCase().includes("form") || (item.title || "").toLowerCase().includes("quota") || (item.title || "").toLowerCase().includes("application");
+      return true;
+    });
+  }, [news, searchQuery, selectedTag]);
+
   return (
-    <div className="min-h-screen bg-indigo-50 p-4">
-      {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">
-          Entrance Exam News
-        </h1>
-        <p className="text-gray-600 text-center">
-          Latest updates for IOE and IOM entrance examinations
-        </p>
+    <div className="min-h-full pb-12">
+      
+      {/* Header Banner */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+              Live Official Entrance Bulletin
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+              Entrance Exam Updates & Notices
+            </h1>
+            <p className="text-sm text-slate-500 mt-0.5">
+              Verified notices, seat distribution, deadlines, and results for IOE and IOM.
+            </p>
+          </div>
+
+          <button
+            onClick={() => handleFetchNews(activeExam)}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-sm transition-all"
+          >
+            <FiRefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-indigo-600" : ""}`} />
+            <span>Refresh Bulletin</span>
+          </button>
+        </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex border-b border-gray-200 mb-8">
+      {/* Segmented Exam Switcher */}
+      <div className="bg-white p-1.5 rounded-2xl border border-slate-200/80 shadow-sm flex max-w-md mb-6">
         <button
           onClick={() => handleFetchNews("IOE")}
-          className={`flex-1 py-3 px-6 font-medium text-center transition-all ${
+          className={`flex-1 py-2.5 px-4 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-2 ${
             activeExam === "IOE"
-              ? "border-b-2 border-blue-600 text-blue-600 bg-blue-50"
-              : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              ? "bg-indigo-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
           }`}
         >
-          IOE News
+          <FiBookOpen className="w-4 h-4" />
+          <span>IOE Engineering (Pulchowk)</span>
         </button>
+
         <button
           onClick={() => handleFetchNews("IOM")}
-          className={`flex-1 py-3 px-6 font-medium text-center transition-all ${
+          className={`flex-1 py-2.5 px-4 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-2 ${
             activeExam === "IOM"
-              ? "border-b-2 border-blue-600 text-blue-600 bg-blue-50"
-              : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              ? "bg-indigo-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
           }`}
         >
-          IOM News
+          <FiActivity className="w-4 h-4" />
+          <span>IOM Medical (Maharajgunj)</span>
         </button>
       </div>
 
-      {/* Content Area */}
-      <div className="min-h-[300px]">
-        {/* Loading State */}
-        {loading && (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-            <p className="text-gray-600">Fetching latest news...</p>
-          </div>
-        )}
+      {/* Search & Tag Filter Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6">
+        {/* Search Bar */}
+        <div className="relative flex-1 max-w-md">
+          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Filter notices by keyword (e.g. Admit card, Syllabus, Merit)..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm transition-all"
+          />
+        </div>
 
-        {/* Error State */}
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
+        {/* Filter Chips */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          {tags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setSelectedTag(tag)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                selectedTag === tag
+                  ? "bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200"
+                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 mb-6 text-xs font-semibold text-rose-700">
+          {error}
+        </div>
+      )}
+
+      {/* Loading Skeleton States */}
+      {loading && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm animate-pulse space-y-3">
+              <div className="h-4 bg-slate-200 rounded w-3/4" />
+              <div className="h-3 bg-slate-100 rounded w-1/2" />
+              <div className="flex justify-between pt-2">
+                <div className="h-5 bg-slate-100 rounded-full w-24" />
+                <div className="h-4 bg-slate-100 rounded w-20" />
               </div>
             </div>
-          </div>
-        )}
+          ))}
+        </div>
+      )}
 
-        {/* News List */}
-        {!loading && news.length > 0 && (
-          <div className="grid gap-4 md:grid-cols-2">
-            {news.map((item) => (
-              <div
-                key={item._id}
-                className="bg-gray-50 rounded-lg border border-gray-200 p-5 hover:shadow-md transition-all duration-200 hover:border-blue-300"
+      {/* News List Bento Grid */}
+      {!loading && filteredNews.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {filteredNews.map((item) => (
+            <div
+              key={item._id || item.link}
+              className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:border-indigo-300 hover:shadow-md transition-all flex flex-col justify-between group"
+            >
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
               >
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block group"
-                >
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                <div className="flex items-start justify-between gap-3 mb-2">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-snug">
                     {item.title}
                   </h3>
-                  <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
-                    <div className="flex items-center">
-                      {/* Use getSourceName to handle unknown sources */}
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {getSourceName(item.source)}
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      <svg className="w-4 h-4 mr-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                      </svg>
+                  <FiExternalLink className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 flex-shrink-0 transition-colors mt-1" />
+                </div>
+
+                <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-xs">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <FiCheckCircle className="w-3 h-3 text-emerald-600" />
+                    {getSourceName(item.source)}
+                  </span>
+
+                  <div className="flex items-center text-slate-400 font-medium gap-1">
+                    <FiCalendar className="w-3.5 h-3.5" />
+                    <span>
                       {item.published_at
-                        ? new Date(item.published_at).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
+                        ? new Date(item.published_at).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
                           })
-                        : "N/A"}
-                    </div>
+                        : "Official Bulletin"}
+                    </span>
                   </div>
-                </a>
-              </div>
-            ))}
-          </div>
-        )}
+                </div>
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
 
-        {/* Empty State - when no news available */}
-        {!loading && news.length === 0 && activeExam && !error && (
-          <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-            </svg>
-            <h3 className="mt-2 text-lg font-medium text-gray-900">No News Available</h3>
-            <p className="mt-1 text-gray-500">There are no news items for {activeExam} at the moment.</p>
+      {/* Empty State */}
+      {!loading && filteredNews.length === 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
+            <FiBookOpen size={24} />
           </div>
-        )}
-
-        {/* Initial State - when no exam selected */}
-        {!activeExam && !loading && (
-          <div className="text-center py-12">
-            <svg className="mx-auto h-16 w-16 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-            </svg>
-            <h3 className="mt-2 text-lg font-medium text-gray-900">Select an Exam</h3>
-            <p className="mt-1 text-gray-500">Choose IOE or IOM to view the latest news</p>
-          </div>
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-500">
-        <p>News updates are fetched from official sources. Click on any news item to read more.</p>
-      </div>
+          <h3 className="text-base font-semibold text-slate-900 mb-1">No Matching Notices Found</h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            {searchQuery
+              ? `No entrance updates matched "${searchQuery}". Try clearing search filters.`
+              : `No official updates are currently active for ${activeExam}.`}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

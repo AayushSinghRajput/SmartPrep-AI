@@ -1,24 +1,102 @@
 @import "tailwindcss";
 
+:root,
+[data-theme="light"] {
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-muted: #f1f5f9;
+  --bg-navbar: rgba(255, 255, 255, 0.85);
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --border-primary: #e2e8f0;
+  --border-hover: #cbd5e1;
+  --accent-primary: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-light: #eef2ff;
+  --accent-text: #4338ca;
+  --code-bg: rgba(15, 23, 42, 0.06);
+  --code-text: #334155;
+  --katex-bg: rgba(79, 70, 229, 0.04);
+  --katex-border: #e0e7ff;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+  color-scheme: light;
+}
+
+[data-theme="dark"],
+html.dark {
+  --bg-page: #090d16;
+  --bg-card: #0f172a;
+  --bg-card-muted: #1e293b;
+  --bg-navbar: rgba(15, 23, 42, 0.88);
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-primary: #1e293b;
+  --border-hover: #334155;
+  --accent-primary: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-light: rgba(99, 102, 241, 0.16);
+  --accent-text: #a5b4fc;
+  --code-bg: rgba(255, 255, 255, 0.1);
+  --code-text: #e2e8f0;
+  --katex-bg: rgba(99, 102, 241, 0.08);
+  --katex-border: rgba(99, 102, 241, 0.25);
+  --scrollbar-thumb: #334155;
+  --scrollbar-thumb-hover: #475569;
+  color-scheme: dark;
+}
+
+[data-theme="sepia"],
+html.sepia {
+  --bg-page: #f5edd6;
+  --bg-card: #fcf6e8;
+  --bg-card-muted: #eae0c6;
+  --bg-navbar: rgba(245, 237, 214, 0.88);
+  --text-primary: #2e2319;
+  --text-secondary: #4a3c2e;
+  --text-muted: #796653;
+  --border-primary: #e0d2b4;
+  --border-hover: #cfbe9b;
+  --accent-primary: #b45309;
+  --accent-hover: #92400e;
+  --accent-light: rgba(180, 83, 9, 0.14);
+  --accent-text: #78350f;
+  --code-bg: rgba(74, 60, 46, 0.09);
+  --code-text: #4a3c2e;
+  --katex-bg: rgba(180, 83, 9, 0.06);
+  --katex-border: rgba(180, 83, 9, 0.2);
+  --scrollbar-thumb: #cfbe9b;
+  --scrollbar-thumb-hover: #b8a581;
+  color-scheme: light;
+}
+
 @layer base {
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
+}
+
+/* Theme transitions for containers */
+body, nav, aside, .bento-card, .reading-surface {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
 /* Flat 2.0 Bento Grid Cards */
 .bento-card {
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-primary);
   border-radius: 1rem;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
   transition: all 0.2s ease-in-out;
 }
 
 .bento-card:hover {
-  border-color: #cbd5e1;
+  border-color: var(--border-hover);
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
 }
 
@@ -66,19 +144,19 @@
 
 /* For code snippets */
 .ai-prose code {
-  background-color: rgba(15, 23, 42, 0.06);
+  background-color: var(--code-bg);
   padding: 0.15rem 0.4rem;
   border-radius: 4px;
   font-family: monospace;
-  color: #334155;
+  color: var(--code-text);
 }
 
 /* Centers display equations and adds breathing room */
 .ai-prose .katex-display {
   margin: 1.5rem 0;
   padding: 1rem;
-  background: rgba(79, 70, 229, 0.04); /* Light indigo tint */
-  border: 1px solid #e0e7ff;
+  background: var(--katex-bg);
+  border: 1px solid var(--katex-border);
   border-radius: 12px;
   overflow-x: auto;
   overflow-y: hidden;
@@ -88,14 +166,29 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Global scrollbar handling - Clean scrolling experience */
-* {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+/* Modern Sleek Scrollbars - Clean affordance without distraction */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-*::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 9999px;
+  transition: background 0.2s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 /* Ensure html and body take full height */
@@ -109,10 +202,49 @@ html, body {
 /* Allow content to be scrollable */
 .scrollable {
   overflow-y: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
-.scrollable::-webkit-scrollbar {
-  display: none;
+/* Reading Typography Scale */
+.reader-text-sm {
+  font-size: 0.925rem;
+  line-height: 1.7;
+}
+
+.reader-text-base {
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.reader-text-lg {
+  font-size: 1.18rem;
+  line-height: 1.85;
+}
+
+.reader-text-xl {
+  font-size: 1.3rem;
+  line-height: 1.9;
+}
+
+/* Glassmorphism Utilities */
+.glass-header {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Smooth Focus Animations */
+.zen-enter {
+  animation: zenFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes zenFadeIn {
+  from {
+    opacity: 0.8;
+    transform: scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

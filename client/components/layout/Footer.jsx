@@ -1,10 +1,7 @@
-"use client";
-
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from "react-icons/fa";
-import logoImg from "../../assets/images/logo.jpeg";
-import Image from "next/image";
-import Link from "next/link";
+import Logo from "../ui/Logo";
 
 export default function Footer() {
   return (
@@ -19,11 +16,9 @@ export default function Footer() {
             transition={{ duration: 0.4 }}
             className="md:col-span-1"
           >
-            <Link href="/" className="inline-block mb-3">
-              <div className="relative h-10 w-40 bg-white/90 rounded-xl p-1 border border-slate-800 shadow-sm">
-                <Image src={logoImg} alt="SmartPrep AI Logo" fill className="object-contain" />
-              </div>
-            </Link>
+            <div className="mb-4">
+              <Logo variant="light" size="md" href="/" />
+            </div>
             <p className="text-sm text-slate-400 leading-relaxed">
               Personalized AI-powered study companion optimized for high-retention learning and higher education exam prep.
             </p>

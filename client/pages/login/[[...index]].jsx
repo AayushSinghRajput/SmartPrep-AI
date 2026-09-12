@@ -7,8 +7,7 @@ import Link from "next/link";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
-import Image from "next/image";
-import logoImg from "../../assets/images/logo.jpeg";
+import Logo from "../../components/ui/Logo";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -66,11 +65,9 @@ export default function Login() {
       >
         {/* Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-block mb-3">
-            <div className="relative h-12 w-48 mx-auto">
-              <Image src={logoImg} alt="SmartPrep AI Logo" fill className="object-contain" priority />
-            </div>
-          </Link>
+          <div className="flex justify-center mb-4">
+            <Logo variant="dark" size="lg" href="/" />
+          </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome Back</h1>
           <p className="text-sm text-slate-500 mt-1">Sign in to your SmartPrep AI workspace</p>
         </div>

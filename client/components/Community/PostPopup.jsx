@@ -46,51 +46,68 @@ export default function PostPopup({ onClose, onPostSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
-      <div className="bg-white rounded-3xl w-full max-w-lg p-6 md:p-8">
-        <h2 className="text-xl font-bold mb-4">Create New Post</h2>
+    <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-xl w-full max-w-lg p-6 sm:p-8 relative">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900">Create Community Post</h2>
+            <p className="text-xs text-slate-500">Ask a question or share prep tips with fellow students.</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Post content */}
           <textarea
-            placeholder="Write your post..."
+            placeholder="What's on your mind? (e.g., How do you solve rotational dynamics Q4?)"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all resize-none"
             rows={4}
           />
 
           {/* Image upload */}
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleFileChange}
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+              Attach Diagrams or Question Photos (Optional)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileChange}
+              className="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer"
+            />
+          </div>
 
-          <div className="flex justify-end gap-2 mt-2">
+          <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-md border hover:bg-gray-100 transition"
+              className="px-4 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
+              className="px-5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 rounded-xl shadow-sm transition-all"
             >
-              {loading ? "Posting..." : "Post"}
+              {loading ? "Posting..." : "Publish Post"}
             </button>
           </div>
         </form>
 
         {/* Preview selected images */}
         {images.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2 pt-3 border-t border-slate-100">
             {images.map((img, idx) => (
-              <div key={idx} className="w-20 h-20 overflow-hidden rounded-md border">
+              <div key={idx} className="w-16 h-16 overflow-hidden rounded-xl border border-slate-200 shadow-sm">
                 <img
                   src={URL.createObjectURL(img)}
                   alt="preview"

@@ -110,18 +110,18 @@ export default function PostCard({
   const isAuthor = currentUser && currentUser.id === post.author.id;
 
   return (
-    <div className="bg-white shadow-lg rounded-xl p-4 flex flex-col justify-between">
+    <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:border-slate-300 transition-all flex flex-col justify-between">
       {/* Top: Author + Actions */}
       <div className="flex justify-between items-start mb-3">
-        <div className="flex items-center">
-          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500 flex items-center justify-center font-bold text-gray-700 bg-gray-300 text-lg">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-bold text-sm flex items-center justify-center flex-shrink-0 shadow-sm">
             {post.author.username[0].toUpperCase()}
           </div>
-          <div className="ml-3">
-            <div className="font-semibold text-gray-800">
+          <div>
+            <div className="font-bold text-slate-900 text-sm">
               {post.author.username}
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-[11px] font-medium text-slate-400">
               {post.created_at?.split("T")[0] || "Just now"}
             </div>
           </div>
@@ -195,30 +195,30 @@ export default function PostCard({
       </div>
 
       {/* Like & Comment Bar */}
-      <div className="flex flex-col mt-2">
-        <div className="flex items-center text-gray-600 text-sm mb-2 border-t border-b border-gray-200 py-2">
+      <div className="flex flex-col mt-3">
+        <div className="flex items-center text-slate-500 text-xs mb-2 border-t border-slate-100 pt-3">
           <button
             onClick={handleLike}
-            className={`flex-1 flex items-center justify-center space-x-1 font-semibold hover:text-blue-600 ${
-              liked ? "text-blue-600" : ""
+            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg font-semibold hover:bg-rose-50 transition-colors ${
+              liked ? "text-rose-600 bg-rose-50/60" : "hover:text-rose-600"
             }`}
           >
             {liked ? (
-              <FaHeart className="w-4 h-4" />
+              <FaHeart className="w-4 h-4 text-rose-600" />
             ) : (
               <FaRegHeart className="w-4 h-4" />
             )}
             <span>{liked ? "Liked" : "Like"}</span>
-            <span>({likesCount})</span>
+            <span className="text-[11px] opacity-75">({likesCount})</span>
           </button>
 
           <button
             onClick={toggleComments}
-            className="flex-1 flex items-center justify-center space-x-1 font-semibold hover:text-blue-600"
+            className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg font-semibold hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
           >
-            <FaComment className="w-4 h-4" />
-            <span>Comment</span>
-            <span>({commentsCount})</span>
+            <FaComment className="w-3.5 h-3.5" />
+            <span>Discussion</span>
+            <span className="text-[11px] opacity-75">({commentsCount})</span>
           </button>
         </div>
 

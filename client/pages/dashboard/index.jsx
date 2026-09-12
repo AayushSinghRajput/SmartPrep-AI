@@ -14,6 +14,7 @@ import { useAuth } from "../../context/AuthContext";
 import { getBookSchedule } from "../../services/pdf";
 import CommunityPage from "../../components/Community/CommunityPage";
 import EntranceNews from "../../components/entrance_news/EntranceNews";
+import SettingsView from "../../components/settings/SettingsView";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -74,7 +75,13 @@ export default function Dashboard() {
 
   const renderContent = () => {
     if (showServiceView && aiPlan) {
-      return <Service planData={aiPlan} activeTab={activeTab} />;
+      return (
+        <Service
+          planData={aiPlan}
+          activeTab={activeTab}
+          onBack={() => setShowServiceView(false)}
+        />
+      );
     }
 
     if (activeTab === "mock") {
@@ -89,16 +96,21 @@ export default function Dashboard() {
       return <EntranceNews />;
     }
 
+    if (activeTab === "settings") {
+      return <SettingsView />;
+    }
+
     return (
       <StudyBooksGrid activeTab={activeTab} onBookClick={handleBookClick} />
     );
   };
 
   const showUploadButton = activeTab === "dashboard" && !showServiceView;
+  const isFullBleed = showServiceView && Boolean(aiPlan);
 
   return (
     <ProtectedRoute>
-      <div className="bg-slate-50 min-h-screen pt-16">
+      <div className="bg-[var(--bg-page)] text-[var(--text-primary)] min-h-screen pt-16 transition-colors">
         <div className="flex min-h-[calc(100vh-4rem)]">
           <Sidebar
             user={user}
@@ -107,7 +119,7 @@ export default function Dashboard() {
             setShowServiceView={setShowServiceView}
           />
 
-          <div className="flex-1 px-4 sm:px-6 py-6 relative">
+          <div className={`flex-1 relative ${isFullBleed ? "p-0 overflow-hidden" : "px-4 sm:px-6 py-6"}`}>
             {showUploadButton && (
               <div className="flex justify-end mb-4">
                 <button
