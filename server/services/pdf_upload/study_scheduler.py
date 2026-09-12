@@ -7,8 +7,11 @@ from typing import List, Dict, Any
 
 def flatten_toc(data: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Flatten TOC into list of subtopics with page ranges."""
+    if not data or not isinstance(data, dict):
+        return []
+
     for key in ("table_of_contents", "tableOfContents", "toc"):
-        if key in data:
+        if key in data and isinstance(data[key], list):
             flat_topics = []
 
             for unit in data[key]:
@@ -41,7 +44,7 @@ def flatten_toc(data: Dict[str, Any]) -> List[Dict[str, Any]]:
 
             return flat_topics
 
-    raise ValueError("Unsupported TOC format")
+    return []
 
 
 # ---------------------------
@@ -70,8 +73,12 @@ def group_by_chapter(flat_topics: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 # ---------------------------
 def generate_study_schedule_from_toc(toc_data: Dict[str, Any], total_days: int) -> List[Dict[str, Any]]:
     """Distribute topics evenly across days and group by chapter."""
+    if not toc_data or total_days <= 0:
+        return []
     flat_topics = flatten_toc(toc_data)
     total_topics = len(flat_topics)
+    if total_topics == 0:
+        return []
     
     schedule = []
     

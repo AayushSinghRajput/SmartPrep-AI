@@ -41,14 +41,6 @@ export default function Navbar() {
     setMenuOpen(false);
   };
 
-  /* -------------------- Loading State -------------------- */
-  if (loading) {
-    return (
-      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md h-16 flex items-center justify-center border-b border-slate-200/50">
-        <div className="animate-spin h-5 w-5 border-2 border-indigo-600 border-t-transparent rounded-full" />
-      </nav>
-    );
-  }
 
   /* -------------------- Nav Links -------------------- */
   const centerLinks = ["/", "/about", "/contact"];
@@ -111,7 +103,12 @@ export default function Navbar() {
 
           {/* AUTH BUTTONS */}
           <div className="flex justify-end items-center gap-3">
-            {!user ? (
+            {loading ? (
+              <div className="flex items-center gap-2.5">
+                <div className="w-20 h-9 bg-slate-200/60 rounded-lg animate-pulse" />
+                <div className="w-28 h-9 bg-indigo-200/60 rounded-lg animate-pulse" />
+              </div>
+            ) : !user ? (
               <>
                 <button
                   onClick={handleLoginClick}
@@ -178,7 +175,9 @@ export default function Navbar() {
             ))}
 
             <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
-              {!user ? (
+              {loading ? (
+                <div className="w-full h-10 bg-slate-100 rounded-lg animate-pulse" />
+              ) : !user ? (
                 <>
                   <button
                     onClick={handleLoginClick}

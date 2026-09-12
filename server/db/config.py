@@ -3,10 +3,10 @@ from core.config import settings
 
 
 
-# Select MongoDB URI based on environment (development = local, production/other = Atlas)
+# Select MongoDB URI based on environment (development = local/docker, production/other = Atlas)
 if settings.ENV.lower() == "development":
-    MONGO_URI = settings.MONGO_LOCAL_URI or settings.MONGO_URI or "mongodb://localhost:27017"
-    print("📌 Connecting to Local MongoDB Compass (Development Mode)...")
+    MONGO_URI = settings.MONGO_URI or settings.MONGO_LOCAL_URI or "mongodb://localhost:27017"
+    print("📌 Connecting to MongoDB Development...")
 else:
     MONGO_URI = settings.MONGO_ATLAS_URI or settings.MONGO_URI or "mongodb://localhost:27017"
     print("☁️ Connecting to MongoDB Atlas (Production Mode)...")

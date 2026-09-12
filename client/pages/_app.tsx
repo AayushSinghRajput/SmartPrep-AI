@@ -55,8 +55,24 @@ export default function MyApp(props: AppProps) {
         {/* AppLayout provides consistent layout with navbar/footer */}
         <AppLayout {...props} />
 
-        {/* Toast notifications will appear on the top-right corner */}
-        <Toaster position="top-right" />
+        {/* Toast notifications container */}
+        <Toaster
+          position="top-right"
+          gutter={10}
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: "#ffffff",
+              color: "#0f172a",
+              border: "1px solid rgba(226, 232, 240, 0.8)",
+              boxShadow: "0 10px 30px -5px rgba(15, 23, 42, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04)",
+              borderRadius: "14px",
+              padding: "12px 16px",
+              fontSize: "13.5px",
+              fontWeight: 500,
+            },
+          }}
+        />
       </AuthProvider>
     </GoogleOAuthProvider>
   );

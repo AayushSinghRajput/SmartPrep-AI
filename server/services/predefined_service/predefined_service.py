@@ -61,25 +61,38 @@ class PredefinedPlanService:
     @staticmethod
     async def get_predefined_plan(subject: str, db) -> GetPlanResponse:
         """
-        Get a predefined study plan by subject (case-insensitive)
-        Equivalent to Express: GetPredefinedStudyPlan controller
+        Get a predefined study plan by subject (case-insensitive).
+        Auto-generates and persists default curriculum if not yet seeded.
         """
         try:
+            from services.predefined_service.default_plans import generate_subject_plan
+
             # Case-insensitive search using regex
             plan = await db.predefined_plans.find_one({
                 "subject": {"$regex": f"^{re.escape(subject)}$", "$options": "i"}
             })
             
             if not plan:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Plan not found"
-                )
+                # Generate default curated plan and persist to MongoDB
+                try:
+                    generated = generate_subject_plan(subject)
+                except KeyError:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"No predefined curriculum available for subject '{subject}'"
+                    )
+                generated["created_at"] = datetime.utcnow()
+                generated["updated_at"] = datetime.utcnow()
+                try:
+                    await db.predefined_plans.insert_one(generated)
+                except Exception as insert_err:
+                    print(f"Notice: Failed to auto-persist predefined plan: {insert_err}")
+                plan = generated
             
             # Return as response model
             return GetPlanResponse(
                 subject=plan["subject"],
-                totalDays=plan.get("totalDays", 0),
+                totalDays=plan.get("totalDays", len(plan.get("schedule", []))),
                 schedule=plan.get("schedule", [])
             )
             

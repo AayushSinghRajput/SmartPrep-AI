@@ -26,11 +26,12 @@ async def load_pdf_pages_content(
     response = requests.get(pdf_url)
     response.raise_for_status()
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-        tmp.write(response.content)
-        tmp_path = tmp.name
-
+    tmp_path = None
     try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+            tmp_path = tmp.name
+            tmp.write(response.content)
+
         loader = PyPDFLoader(tmp_path)
         docs = loader.load()
 
@@ -42,11 +43,11 @@ async def load_pdf_pages_content(
         )
 
         page_range = f"{start_page}-{end_page}"
-        ### ----- to check which content is loaded ----- ###
-        # print(f"Extracted pages {page_range} from PDF.")
-        # print(f"Raw content from fallback mode: {raw_text[:]}")
-        
         return raw_text, page_range
 
     finally:
-        os.remove(tmp_path)
+        if tmp_path and os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass

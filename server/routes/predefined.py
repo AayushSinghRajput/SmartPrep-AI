@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/ai", tags=["AI Study Plans"])
 
 # Dependency to get database
 async def get_database():
-    return db.database
+    return db
 
 @router.post(
     "/predefined-study-plan",

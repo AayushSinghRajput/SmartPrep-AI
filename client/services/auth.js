@@ -46,19 +46,30 @@ export const googleLogin = async (credential) => {
   return response.json();
 };
 
-// Function to get the currently logged-in user's data
-export const getCurrentUser = async () => {
+// Function to get the currently logged-in user's data with an abort timeout
+export const getCurrentUser = async (timeoutMs = 6000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
   try {
     const response = await fetch(`${API_URL}/auth/me`, {
       method: "GET", // GET request since we are fetching data
       credentials: "include", // Include cookies to identify user session
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     if (!response.ok) {
-      return { success: false, user: null };
+      return { success: false, user: null, status: response.status };
     }
-    return await response.json(); // Parse and return user data as JSON
+    const data = await response.json(); // Parse and return user data as JSON
+    return { ...data, status: response.status };
   } catch (error) {
-    return { success: false, user: null };
+    clearTimeout(timeoutId);
+    return {
+      success: false,
+      user: null,
+      isTimeout: error?.name === "AbortError",
+    };
   }
 };
 
