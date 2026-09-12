@@ -73,6 +73,11 @@ def root():
     return {"message": "Backend is running"}
 
 
+@app.api_route("/health", methods=["GET", "HEAD"])
+def health_check():
+    return {"status": "healthy", "service": "SmartPrep-AI Backend"}
+
+
 if __name__ == "__main__":
     import os
     import uvicorn

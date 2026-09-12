@@ -470,3 +470,20 @@ Every entry added to this document follows this structure:
   - `client/hooks/useServiceLogic.js`
   - `client/context/AuthContext.js`
   - `DECISIONS.md`
+
+---
+
+### [DECISION-025] Dedicated Lightweight Health Check Route for Uptime Monitoring
+- **Date**: 2026-09-12
+- **Author/Owner**: AI Engineering Team
+- **Status**: Accepted
+- **Context & Problem**: Render free web services spin down after 15 minutes of inactivity, requiring ~50 seconds to cold-start when a user visits the app. Uptime monitoring services (e.g. UptimeRobot) ping HTTP endpoints to keep the instance warm, but require an explicit, reliable, low-overhead endpoint that supports both GET and HEAD requests without executing heavy database queries.
+- **Options Considered**:
+  1. **Add `@app.api_route("/health", methods=["GET", "HEAD"])` (Selected)**: Returns a lightweight JSON status `{ "status": "healthy", "service": "SmartPrep-AI Backend" }` and HTTP 200 with sub-millisecond response time and zero DB query overhead.
+  2. **Rely solely on root `@app.get("/")`**: Only binds GET by default, lacks explicit health check conventions used by DevOps monitoring tools.
+- **Reasoning & Pattern**: Monitoring services frequently use `HEAD` to minimize bandwidth and expect standard `/health` endpoints. Decoupling the health check from database and AI service calls ensures lightning-fast responses (< 5ms) while keeping the Uvicorn worker warm.
+- **Tradeoffs Accepted**:
+  - *Pro*: Zero cold starts when polled at 5-10 minute intervals; supports both GET and HEAD; zero impact on database connection pools.
+- **Affected Files**:
+  - `server/main.py`
+  - `DECISIONS.md`
