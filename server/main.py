@@ -1,3 +1,17 @@
+import os
+
+try:
+    import certifi
+
+    for _var in ("SSL_CERT_FILE", "REQUESTS_CA_BUNDLE", "CURL_CA_BUNDLE"):
+        _val = os.environ.get(_var)
+        if not _val or not os.path.exists(_val):
+            os.environ[_var] = certifi.where()
+    if "SSL_CERT_DIR" in os.environ and not os.path.isdir(os.environ["SSL_CERT_DIR"]):
+        del os.environ["SSL_CERT_DIR"]
+except ImportError:
+    pass
+
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
