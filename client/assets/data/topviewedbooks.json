@@ -2,36 +2,36 @@
   {
     "id": 1,
     "subject": "Physics",
-    "author": "HSEB Curriculum",
-    "rating": "4.8",
+    "author": "NEB / +2 Science Syllabus",
+    "rating": "30-Day Plan",
     "img": "/images/physics1.jpg"
   },
   {
     "id": 2,
     "subject": "Chemistry",
-    "author": "HSEB Curriculum",
-    "rating": "4.6",
+    "author": "NEB / +2 Science Syllabus",
+    "rating": "30-Day Plan",
     "img": "/images/chemistry1.jpg"
   },
   {
     "id": 3,
     "subject": "Mathematics",
-    "author": "HSEB Curriculum",
-    "rating": "4.9",
+    "author": "NEB / +2 Science Syllabus",
+    "rating": "30-Day Plan",
     "img": "/images/maths1.jpg"
   },
   {
     "id": 4,
     "subject": "Biology",
-    "author": "HSEB Curriculum",
-    "rating": "4.5",
+    "author": "NEB / +2 Science Syllabus",
+    "rating": "30-Day Plan",
     "img": "/images/biology1.jpg"
   },
   {
     "id": 5,
     "subject": "English",
-    "author": "HSEB Curriculum",
-    "rating": "4.3",
+    "author": "NEB / +2 Science Syllabus",
+    "rating": "30-Day Plan",
     "img": "/images/English1.jpg"
   }
 ]

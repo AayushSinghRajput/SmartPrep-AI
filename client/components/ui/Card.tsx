@@ -1,5 +1,6 @@
 "use client";
 
+import React, { forwardRef } from "react";
 import Image from "next/image";
 import { FiEdit, FiTrash2, FiBookOpen } from "react-icons/fi";
 import { useState } from "react";
@@ -12,6 +13,93 @@ import chemistryImg from "../../assets/images/chemistry.webp";
 import biologyImg from "../../assets/images/biology.jpg";
 import englishImg from "../../assets/images/English.jpg";
 import aiImg from "../../assets/images/ai.jpeg";
+
+// ============================================================================
+// Generic Design System Card Primitives
+// ============================================================================
+
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "default" | "muted" | "flat" | "elevated" | "interactive";
+}
+
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className = "", variant = "default", children, ...props }, ref) => {
+    const variantStyles = {
+      default:
+        "bg-white border border-slate-200/80 shadow-xs rounded-2xl",
+      muted:
+        "bg-slate-50 border border-slate-200/80 rounded-2xl",
+      flat:
+        "bg-white border border-slate-200/70 rounded-2xl",
+      elevated:
+        "bg-white border border-slate-200/80 shadow-md shadow-slate-900/5 rounded-2xl",
+      interactive:
+        "bg-white border border-slate-200/80 shadow-xs hover:shadow-md hover:border-slate-300 transition-all duration-200 rounded-2xl cursor-pointer group",
+    };
+
+    return (
+      <div
+        ref={ref}
+        className={`${variantStyles[variant]} ${className}`}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+Card.displayName = "Card";
+
+export const CardHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className = "", ...props }, ref) => (
+    <div ref={ref} className={`p-5 sm:p-6 pb-3 ${className}`} {...props} />
+  )
+);
+CardHeader.displayName = "CardHeader";
+
+export const CardTitle = forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
+  ({ className = "", ...props }, ref) => (
+    <h3
+      ref={ref}
+      className={`text-lg font-bold text-slate-900 tracking-tight leading-snug ${className}`}
+      {...props}
+    />
+  )
+);
+CardTitle.displayName = "CardTitle";
+
+export const CardDescription = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className = "", ...props }, ref) => (
+    <p
+      ref={ref}
+      className={`text-sm text-slate-500 mt-1 leading-relaxed ${className}`}
+      {...props}
+    />
+  )
+);
+CardDescription.displayName = "CardDescription";
+
+export const CardContent = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className = "", ...props }, ref) => (
+    <div ref={ref} className={`p-5 sm:p-6 pt-0 ${className}`} {...props} />
+  )
+);
+CardContent.displayName = "CardContent";
+
+export const CardFooter = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className = "", ...props }, ref) => (
+    <div
+      ref={ref}
+      className={`p-5 sm:p-6 pt-0 border-t border-slate-100 flex items-center justify-between mt-4 ${className}`}
+      {...props}
+    />
+  )
+);
+CardFooter.displayName = "CardFooter";
+
+// ============================================================================
+// Existing StudyBookCard (Maintained for StudyBooksGrid backward-compatibility)
+// ============================================================================
 
 interface DayWiseScore {
   day: number;
@@ -35,7 +123,7 @@ interface StudyBookCardProps {
   onDelete?: (pdf_hash: string) => void;
 }
 
-export default function StudyBookCard({
+export function StudyBookCard({
   book,
   variant = "dashboard",
   onClick,
@@ -58,67 +146,63 @@ export default function StudyBookCard({
   const [uploading, setUploading] = useState(false);
 
   const performance_progress = book?.performance_progress ?? 0;
-  const studyProgress = book?.study_progress ?? 0;
+  const study_progress = book?.study_progress ?? 0;
   const pdf_hash = book?.pdf_hash ?? "";
 
-  const isLocalImage = currentImage.startsWith("/");
-
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    event.stopPropagation();
-
-    const file = event.target.files?.[0];
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file || !pdf_hash) return;
 
-    try {
-      setUploading(true);
-      const result = await updateBookImage(pdf_hash, file);
+    const previewUrl = URL.createObjectURL(file);
+    setCurrentImage(previewUrl);
+    setUploading(true);
 
-      if (result?.image_url) {
-        setCurrentImage(result.image_url);
-      } else {
-        alert("Failed to update image");
+    try {
+      const res = await updateBookImage(pdf_hash, file);
+      if (res?.image_url) {
+        setCurrentImage(res.image_url);
       }
-    } catch (error) {
-      console.error(error);
-      alert("Error updating image");
+    } catch (err) {
+      console.error("Failed to update image", err);
     } finally {
       setUploading(false);
     }
   };
 
   const handleDelete = async (e: React.MouseEvent) => {
-    e.preventDefault();
     e.stopPropagation();
-
     if (!pdf_hash) return;
 
-    const confirmed = confirm("Are you sure you want to delete this book?");
-    if (!confirmed) return;
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete "${name}"? This action cannot be undone.`
+    );
+    if (!confirmDelete) return;
 
     try {
       await deletePdfAndData(pdf_hash);
-      onDelete?.(pdf_hash);
-    } catch (error) {
-      console.error(error);
-      alert("Failed to delete book");
+      if (onDelete) onDelete(pdf_hash);
+    } catch (err) {
+      console.error("Failed to delete book", err);
+      alert("Failed to delete book. Please try again.");
     }
   };
 
-  // ================= PERFORMANCE VARIANT =================
-  if (variant === "performance") {
-    const size = 120;
-    const strokeWidth = 8;
-    const radius = (size - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference * (1 - performance_progress / 100);
+  const isLocalImage =
+    typeof currentImage === "object" ||
+    (typeof currentImage === "string" && currentImage.startsWith("/"));
 
+  const studyProgress = Math.min(Math.max(study_progress, 0), 100);
+
+  if (variant === "performance") {
+    const scores = book?.day_wise_scores || [];
     return (
-      <div className="flex flex-col items-center gap-4 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm hover:border-slate-300 transition-all">
-        <div className="relative w-[120px] h-[120px]">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden border border-slate-100 shadow-inner">
+      <div
+        onClick={onClick}
+        className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:border-slate-300 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between"
+      >
+        <div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
               <Image
                 src={currentImage}
                 alt={name}
@@ -127,52 +211,30 @@ export default function StudyBookCard({
                 unoptimized={isLocalImage}
               />
             </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-base font-bold text-slate-900 truncate">
+                {name}
+              </h3>
+              <p className="text-xs text-slate-500 font-medium">
+                {scores.length} Days Recorded
+              </p>
+            </div>
           </div>
-
-          <svg
-            width={size}
-            height={size}
-            className="absolute top-0 left-0 -rotate-90"
-          >
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              stroke="#F1F5F9"
-              strokeWidth={strokeWidth}
-              fill="transparent"
-            />
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              stroke="#4F46E5"
-              strokeWidth={strokeWidth}
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              strokeLinecap="round"
-              fill="transparent"
-            />
-          </svg>
+          <DayPerformaceBar
+            data={scores}
+          />
         </div>
-
-        <div className="text-center">
-          <h3 className="text-base font-bold text-slate-900 line-clamp-1">{name}</h3>
-          <span className="text-xs text-indigo-600 font-semibold">{performance_progress}% Score</span>
-        </div>
-        <DayPerformaceBar data={book?.day_wise_scores || []} />
       </div>
     );
   }
 
-  // ================= DASHBOARD VARIANT =================
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-2xl border border-slate-200/80 p-3 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-200 flex flex-col justify-between cursor-pointer group relative"
+      className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs hover:border-indigo-300 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between group"
     >
       <div>
-        <div className="relative w-full h-44 rounded-xl overflow-hidden bg-slate-100 border border-slate-100">
+        <div className="relative w-full h-44 rounded-xl overflow-hidden bg-slate-100 mb-3">
           <Image
             src={currentImage}
             alt={name}
@@ -198,7 +260,7 @@ export default function StudyBookCard({
                 <button
                   type="button"
                   title="Change book image"
-                  className="bg-white/90 backdrop-blur-sm p-1.5 rounded-lg text-slate-700 shadow-sm border border-slate-200/80 hover:bg-indigo-600 hover:text-white transition-all"
+                  className="bg-white/90 backdrop-blur-sm p-1.5 rounded-lg text-slate-700 shadow-xs border border-slate-200/80 hover:bg-indigo-600 hover:text-white transition-all"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -211,7 +273,7 @@ export default function StudyBookCard({
                 <button
                   type="button"
                   title="Delete book"
-                  className="bg-white/90 backdrop-blur-sm p-1.5 rounded-lg text-slate-700 shadow-sm border border-slate-200/80 hover:bg-rose-600 hover:text-white transition-all"
+                  className="bg-white/90 backdrop-blur-sm p-1.5 rounded-lg text-slate-700 shadow-xs border border-slate-200/80 hover:bg-rose-600 hover:text-white transition-all"
                   onClick={handleDelete}
                 >
                   <FiTrash2 size={13} />
@@ -221,7 +283,7 @@ export default function StudyBookCard({
           )}
         </div>
 
-        <div className="pt-3 px-1">
+        <div className="pt-1 px-1">
           <h3 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
             {name}
           </h3>
@@ -234,8 +296,8 @@ export default function StudyBookCard({
         ) : (
           <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
             <span>Ready to start</span>
-            <span className="text-indigo-600 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-              Open <FiBookOpen className="w-3 h-3" />
+            <span className="text-indigo-600 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1 font-semibold">
+              Open <FiBookOpen className="w-3.5 h-3.5" />
             </span>
           </div>
         )}
@@ -243,3 +305,5 @@ export default function StudyBookCard({
     </div>
   );
 }
+
+export default StudyBookCard;

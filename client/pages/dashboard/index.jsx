@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Head from "next/head";
 import { FiPlus } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 
 import ProtectedRoute from "../../components/ui/ProtectedRoute";
 import Sidebar from "../../components/layout/Sidebar";
+import DashboardShell from "../../components/layout/DashboardShell";
 import DashboardContent from "../../components/dashboard/DashboardContent";
 import StudyBooksGrid from "../../components/dashboard/StudyBooksGrid";
 import Service from "../service";
@@ -110,30 +112,28 @@ export default function Dashboard() {
 
   return (
     <ProtectedRoute>
-      <div className="bg-[var(--bg-page)] text-[var(--text-primary)] min-h-screen pt-16 transition-colors">
-        <div className="flex min-h-[calc(100vh-4rem)]">
-          <Sidebar
-            user={user}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            setShowServiceView={setShowServiceView}
-          />
-
-          <div className={`flex-1 relative ${isFullBleed ? "p-0 overflow-hidden" : "px-4 sm:px-6 py-6"}`}>
-            {showUploadButton && (
-              <div className="flex justify-end mb-4">
-                <button
-                  onClick={() => setShowUploadPopup(true)}
-                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-                >
-                  <FiPlus className="w-4 h-4" /> Upload New Book
-                </button>
-              </div>
-            )}
-
-            {renderContent()}
+      <Head>
+        <title>Dashboard — SmartPrep AI</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <DashboardShell
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        setShowServiceView={setShowServiceView}
+        isFullBleed={isFullBleed}
+      >
+        {showUploadButton && (
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={() => setShowUploadPopup(true)}
+              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+            >
+              <FiPlus className="w-4 h-4" /> Upload New Book
+            </button>
           </div>
-        </div>
+        )}
+
+        {renderContent()}
 
         {showUploadPopup && (
           <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
@@ -145,7 +145,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-      </div>
+      </DashboardShell>
     </ProtectedRoute>
   );
 }

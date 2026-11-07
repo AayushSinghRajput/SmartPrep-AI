@@ -7,6 +7,7 @@ import Loader from "../ui/Loader";
 import { TAB_HEADERS } from "../../lib/studygridconstants";
 import { fetchPerformance } from "../../services/performance";
 import { FiBookOpen, FiZap, FiTrendingUp, FiArrowRight, FiTarget, FiClock } from "react-icons/fi";
+import { EmptyState } from "../ui/EmptyState";
 
 interface StudyBook {
   id: number;
@@ -217,15 +218,11 @@ export default function StudyBooksGrid({
       </div>
 
       {books.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
-          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3 text-slate-400">
-            <FiBookOpen size={24} />
-          </div>
-          <h3 className="text-base font-semibold text-slate-900 mb-1">No Study Books Uploaded Yet</h3>
-          <p className="text-sm text-slate-500 max-w-sm mx-auto mb-4">
-            Upload your syllabus or textbook PDF to generate structured daily schedules and instant study materials.
-          </p>
-        </div>
+        <EmptyState
+          title="No Study Books Uploaded Yet"
+          description="Upload your syllabus or textbook PDF to generate structured daily schedules and instant study materials."
+          icon={<FiBookOpen className="w-7 h-7 text-indigo-600" />}
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
           {books.map((book) => (

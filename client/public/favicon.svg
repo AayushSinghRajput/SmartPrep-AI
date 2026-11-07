@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="favBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="50%" stop-color="#312e81" />
+      <stop offset="100%" stop-color="#4338ca" />
+    </linearGradient>
+    <linearGradient id="favWingL" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a5b4fc" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4338ca" />
+    </linearGradient>
+    <linearGradient id="favWingR" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67e8f9" />
+      <stop offset="50%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="favGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="favLower" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="50%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#312e81" />
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="128" fill="url(#favBg)" />
+
+  <g transform="scale(1.08) translate(-19, -19)">
+    <!-- Top Left Wing (Upper S) -->
+    <path
+      d="M 256 128
+         C 200 128 144 162 136 218
+         C 128 274 186 308 244 316
+         L 272 278
+         C 226 270 184 250 188 220
+         C 192 190 226 172 256 172
+         Z"
+      fill="url(#favWingL)"
+    />
+
+    <!-- Bottom Right Wing (Lower S) -->
+    <path
+      d="M 256 384
+         C 312 384 368 350 376 294
+         C 384 238 326 204 268 196
+         L 240 234
+         C 286 242 328 262 324 292
+         C 320 322 286 340 256 340
+         Z"
+      fill="url(#favLower)"
+    />
+
+    <!-- Forward Ascension Wing -->
+    <path
+      d="M 256 172
+         L 366 120
+         C 378 114 392 124 390 138
+         L 374 238
+         C 372 250 360 258 348 252
+         L 256 210
+         Z"
+      fill="url(#favWingR)"
+    />
+
+    <!-- Golden Academic Ribbon -->
+    <path
+      d="M 174 294
+         L 256 332
+         L 338 294
+         C 346 290 354 298 350 306
+         L 264 394
+         C 260 398 252 398 248 394
+         L 162 306
+         C 158 298 166 290 174 294
+         Z"
+      fill="url(#favGold)"
+    />
+
+    <!-- AI Sparkle Star -->
+    <g transform="translate(256, 256)">
+      <path
+        d="M 0 -40
+           C 0 -12 12 0 40 0
+           C 12 0 0 12 0 40
+           C 0 12 -12 0 -40 0
+           C -12 0 0 -12 0 -40
+           Z"
+        fill="#ffffff"
+      />
+      <circle cx="0" cy="0" r="8" fill="#67e8f9" />
+    </g>
+  </g>
+</svg>
+

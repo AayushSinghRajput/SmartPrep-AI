@@ -1,98 +1,105 @@
 "use client";
 
-import Image from "next/image";
+import React from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { FiArrowRight } from "react-icons/fi";
-import heroBannerImg from "../../assets/images/hero-banner.jpeg";
+import { FiArrowUpRight, FiShield, FiCheckCircle } from "react-icons/fi";
+import Textbook2DFallback from "./3d/Textbook2DFallback";
+
+// Dynamically load 3D scene without SSR
+const TextbookHero3D = dynamic(() => import("./3d/TextbookHero3D"), {
+  ssr: false,
+  loading: () => <Textbook2DFallback />,
+});
 
 export default function HeroSection({ onGetStarted }) {
-  const handleScrollToSamplePlans = () => {
-    document.getElementById("topviewbooks")?.scrollIntoView({ behavior: "smooth" });
+  const scrollToCrashPlans = () => {
+    document.getElementById("crash-plans")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
-        
-        {/* Left Column: Text & Call to Action */}
-        <motion.div
-          className="md:col-span-7"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-6">
-            <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
-            AI Learning Suite for +2 Science & Entrance Exams
-          </div>
+    <section className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24 bg-slate-50">
+      {/* Platform Consistent Ambient Diffused Lighting */}
+      <div className="absolute top-1/4 right-1/4 w-[600px] h-[500px] bg-gradient-to-br from-indigo-100/50 via-slate-100/40 to-amber-100/25 blur-3xl -z-10 rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-8 w-[400px] h-[400px] bg-indigo-50/60 blur-3xl -z-10 rounded-full pointer-events-none" />
 
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">
-            Study Smarter with <br className="hidden sm:inline" />
-            <span className="text-indigo-600">SmartPrep AI</span>
-          </h1>
-
-          <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-2xl">
-            Transform textbook PDFs into daily structured study plans, instant flashcards, and adaptive exam practice. Designed specifically for high-retention prep.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-            <button
-              onClick={onGetStarted}
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm transition-all duration-150"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+          
+          {/* ========================================================= */}
+          {/* Left Column: Editorial Heading, Subtitle, Consistent CTAs */}
+          {/* ========================================================= */}
+          <div className="lg:col-span-7 space-y-6 sm:space-y-7 text-left">
+            
+            {/* Editorial Serif Display Headline */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              Start Learning Now <FiArrowRight className="w-5 h-5" />
-            </button>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] font-bold text-slate-900 tracking-tight leading-[1.12]">
+                Turn your{" "}
+                <span className="font-editorial italic font-normal text-indigo-600">textbooks</span>
+                <br />
+                into structured
+                <br />
+                daily mastery
+                <span className="text-indigo-600">.</span>
+              </h1>
+            </motion.div>
 
-            <button
-              onClick={handleScrollToSamplePlans}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 text-base font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:text-indigo-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm transition-all duration-150"
+            {/* Supporting Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl font-normal"
             >
-              Explore Sample Plans
-            </button>
+              Transform any textbook PDF into a day-by-day study schedule, instant revision notes, and adaptive entrance quizzes built for +2 Science students in Nepal.
+            </motion.p>
+
+            {/* CTA Button Row (Platform Consistent Theme) */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.25 }}
+              className="flex flex-wrap items-center gap-3.5 pt-1"
+            >
+              {/* Primary Action Button */}
+              <button
+                onClick={onGetStarted}
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                <span>Start Free Prep</span>
+                <FiArrowUpRight className="w-4 h-4" />
+              </button>
+
+              {/* Secondary 30-Day Crash Plans Button */}
+              <button
+                onClick={scrollToCrashPlans}
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium text-slate-800 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                <span className="text-amber-500 text-base">✨</span>
+                <span>30-Day Crash Plans</span>
+              </button>
+            </motion.div>
           </div>
 
-          <div className="mt-10 pt-8 border-t border-slate-200/80 grid grid-cols-3 gap-4">
-            <div>
-              <div className="text-2xl font-bold text-slate-900">Instant</div>
-              <div className="text-xs text-slate-500 font-medium">PDF Extraction</div>
+          {/* ========================================================= */}
+          {/* Right Column: 3D Educational Knowledge Nexus */}
+          {/* ========================================================= */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="lg:col-span-5 relative flex items-center justify-center"
+          >
+            <div className="relative w-full overflow-hidden flex items-center justify-center">
+              <TextbookHero3D />
             </div>
-            <div>
-              <div className="text-2xl font-bold text-slate-900">Adaptive</div>
-              <div className="text-xs text-slate-500 font-medium">MCQ Quizzes</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-slate-900">Context</div>
-              <div className="text-xs text-slate-500 font-medium">Doubt Resolution</div>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Right Column: Hero Showcase Card */}
-        <motion.div
-          className="md:col-span-5"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-3 shadow-sm relative overflow-hidden group">
-            <div className="relative w-full h-80 sm:h-96 rounded-2xl overflow-hidden bg-slate-100">
-              <Image
-                src={heroBannerImg}
-                alt="SmartPrep AI Workspace"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-950/10 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 text-white">
-                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-600/90 backdrop-blur-sm mb-2 inline-block">
-                  Smart Prep Suite
-                </span>
-                <h3 className="text-lg font-bold">Interactive Learning Platform</h3>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

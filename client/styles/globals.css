@@ -1,119 +1,136 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   SmartPrep AI - Unified Light Design System Tokens
+   Pure Light Theme Only (WCAG AA Compliant)
+   ========================================================================== */
+
 :root,
-[data-theme="light"] {
-  --bg-page: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-card-muted: #f1f5f9;
-  --bg-navbar: rgba(255, 255, 255, 0.85);
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
-  --border-primary: #e2e8f0;
-  --border-hover: #cbd5e1;
-  --accent-primary: #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-light: #eef2ff;
-  --accent-text: #4338ca;
-  --code-bg: rgba(15, 23, 42, 0.06);
+html,
+body,
+[data-theme="light"],
+[data-theme="dark"],
+[data-theme="sepia"] {
+  /* Surface and Backgrounds */
+  --bg-page: #f8fafc;        /* Soft slate off-white canvas */
+  --bg-card: #ffffff;        /* Crisp pure white surface */
+  --bg-card-muted: #f1f5f9;  /* Muted slate card/input fill */
+  --bg-subtle: #f8fafc;
+  --bg-navbar: rgba(255, 255, 255, 0.92);
+  --bg-overlay: rgba(15, 23, 42, 0.4);
+
+  /* Typography / Text Colors */
+  --text-primary: #0f172a;    /* Deep slate slate-900 */
+  --text-secondary: #334155;  /* Slate-700 */
+  --text-muted: #64748b;      /* Slate-500 */
+  --text-inverse: #ffffff;
+
+  /* Borders & Dividers */
+  --border-primary: #e2e8f0;  /* Crisp slate-200 */
+  --border-hover: #cbd5e1;    /* Slate-300 */
+  --border-focus: #4f46e5;    /* Indigo-600 */
+
+  /* Primary Brand (Indigo) */
+  --accent-primary: #4f46e5;  /* Indigo-600 */
+  --accent-hover: #4338ca;    /* Indigo-700 */
+  --accent-light: #eef2ff;    /* Indigo-50 */
+  --accent-text: #4338ca;     /* Indigo-700 */
+
+  /* Warm Accent (Amber / Gold) */
+  --warm-accent: #f59e0b;     /* Amber-500 */
+  --warm-accent-hover: #d97706; /* Amber-600 */
+  --warm-accent-light: #fef3c7; /* Amber-100 */
+
+  /* Semantic Feedback */
+  --color-success: #10b981;
+  --color-success-bg: #ecfdf5;
+  --color-success-border: #a7f3d0;
+
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fde68a;
+
+  --color-error: #ef4444;
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fecaca;
+
+  /* Code & LaTeX Academic Notation */
+  --code-bg: rgba(15, 23, 42, 0.05);
   --code-text: #334155;
   --katex-bg: rgba(79, 70, 229, 0.04);
   --katex-border: #e0e7ff;
+
+  /* Scrollbars */
   --scrollbar-thumb: #cbd5e1;
   --scrollbar-thumb-hover: #94a3b8;
-  color-scheme: light;
-}
 
-[data-theme="dark"],
-html.dark {
-  --bg-page: #090d16;
-  --bg-card: #0f172a;
-  --bg-card-muted: #1e293b;
-  --bg-navbar: rgba(15, 23, 42, 0.88);
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --border-primary: #1e293b;
-  --border-hover: #334155;
-  --accent-primary: #6366f1;
-  --accent-hover: #818cf8;
-  --accent-light: rgba(99, 102, 241, 0.16);
-  --accent-text: #a5b4fc;
-  --code-bg: rgba(255, 255, 255, 0.1);
-  --code-text: #e2e8f0;
-  --katex-bg: rgba(99, 102, 241, 0.08);
-  --katex-border: rgba(99, 102, 241, 0.25);
-  --scrollbar-thumb: #334155;
-  --scrollbar-thumb-hover: #475569;
-  color-scheme: dark;
-}
-
-[data-theme="sepia"],
-html.sepia {
-  --bg-page: #f5edd6;
-  --bg-card: #fcf6e8;
-  --bg-card-muted: #eae0c6;
-  --bg-navbar: rgba(245, 237, 214, 0.88);
-  --text-primary: #2e2319;
-  --text-secondary: #4a3c2e;
-  --text-muted: #796653;
-  --border-primary: #e0d2b4;
-  --border-hover: #cfbe9b;
-  --accent-primary: #b45309;
-  --accent-hover: #92400e;
-  --accent-light: rgba(180, 83, 9, 0.14);
-  --accent-text: #78350f;
-  --code-bg: rgba(74, 60, 46, 0.09);
-  --code-text: #4a3c2e;
-  --katex-bg: rgba(180, 83, 9, 0.06);
-  --katex-border: rgba(180, 83, 9, 0.2);
-  --scrollbar-thumb: #cfbe9b;
-  --scrollbar-thumb-hover: #b8a581;
-  color-scheme: light;
+  color-scheme: light !important;
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+
   body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg-page);
     color: var(--text-primary);
-    transition: background-color 0.25s ease, color 0.25s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100%;
+    margin: 0;
   }
 }
 
-/* Theme transitions for containers */
-body, nav, aside, .bento-card, .reading-surface {
-  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+.font-editorial {
+  font-family: 'Newsreader', Georgia, Cambria, 'Times New Roman', serif;
 }
 
-/* Flat 2.0 Bento Grid Cards */
+/* ==========================================================================
+   Reusable Utility Styles
+   ========================================================================== */
+
+/* Clean Light Bento Cards */
 .bento-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-primary);
-  border-radius: 1rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-  transition: all 0.2s ease-in-out;
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 3px 0 rgb(15 23 42 / 0.04), 0 1px 2px -1px rgb(15 23 42 / 0.03);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .bento-card:hover {
   border-color: var(--border-hover);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  box-shadow: 0 10px 20px -3px rgb(15 23 42 / 0.06), 0 4px 6px -4px rgb(15 23 42 / 0.03);
 }
 
-/* Custom Typography for AI Messages */
+/* Glassmorphism Header */
+.glass-header {
+  background: var(--bg-navbar);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+/* Custom Typography for AI Explanations and Notes */
 .ai-prose h1, .ai-prose h2, .ai-prose h3 {
   font-weight: 700;
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   margin-bottom: 0.5rem;
-  color: #0f172a;
+  color: var(--text-primary);
+  letter-spacing: -0.015em;
 }
 
-.ai-prose h1 { font-size: 1.25rem; }
-.ai-prose h2 { font-size: 1.1rem; }
+.ai-prose h1 { font-size: 1.35rem; }
+.ai-prose h2 { font-size: 1.15rem; }
+.ai-prose h3 { font-size: 1.05rem; }
 
 .ai-prose p {
   margin-bottom: 0.75rem;
-  line-height: 1.6;
+  line-height: 1.65;
+  color: var(--text-secondary);
   word-break: break-word;
 }
 
@@ -121,40 +138,43 @@ body, nav, aside, .bento-card, .reading-surface {
   list-style-type: disc;
   margin-left: 1.25rem;
   margin-bottom: 0.75rem;
+  color: var(--text-secondary);
 }
 
 .ai-prose ol {
   list-style-type: decimal;
   margin-left: 1.25rem;
   margin-bottom: 0.75rem;
+  color: var(--text-secondary);
 }
 
 .ai-prose li {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.3rem;
+  line-height: 1.6;
 }
 
 .ai-prose strong {
   font-weight: 700;
-  color: inherit;
+  color: var(--text-primary);
 }
 
 .ai-prose em {
   font-style: italic;
 }
 
-/* For code snippets */
 .ai-prose code {
   background-color: var(--code-bg);
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-  font-family: monospace;
-  color: var(--code-text);
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875em;
+  color: #1e293b;
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-/* Centers display equations and adds breathing room */
 .ai-prose .katex-display {
-  margin: 1.5rem 0;
-  padding: 1rem;
+  margin: 1.25rem 0;
+  padding: 1rem 1.25rem;
   background: var(--katex-bg);
   border: 1px solid var(--katex-border);
   border-radius: 12px;
@@ -162,11 +182,28 @@ body, nav, aside, .bento-card, .reading-surface {
   overflow-y: hidden;
 }
 
-.sidebar-transition {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Reader Typography Scale */
+.reader-text-sm {
+  font-size: 0.925rem;
+  line-height: 1.7;
 }
 
-/* Modern Sleek Scrollbars - Clean affordance without distraction */
+.reader-text-base {
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+.reader-text-lg {
+  font-size: 1.18rem;
+  line-height: 1.85;
+}
+
+.reader-text-xl {
+  font-size: 1.3rem;
+  line-height: 1.9;
+}
+
+/* Custom Clean Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -189,62 +226,4 @@ body, nav, aside, .bento-card, .reading-surface {
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
-}
-
-/* Ensure html and body take full height */
-html, body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-/* Allow content to be scrollable */
-.scrollable {
-  overflow-y: auto;
-}
-
-/* Reading Typography Scale */
-.reader-text-sm {
-  font-size: 0.925rem;
-  line-height: 1.7;
-}
-
-.reader-text-base {
-  font-size: 1.05rem;
-  line-height: 1.8;
-}
-
-.reader-text-lg {
-  font-size: 1.18rem;
-  line-height: 1.85;
-}
-
-.reader-text-xl {
-  font-size: 1.3rem;
-  line-height: 1.9;
-}
-
-/* Glassmorphism Utilities */
-.glass-header {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-/* Smooth Focus Animations */
-.zen-enter {
-  animation: zenFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes zenFadeIn {
-  from {
-    opacity: 0.8;
-    transform: scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }

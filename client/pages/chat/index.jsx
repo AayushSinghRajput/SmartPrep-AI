@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Head from "next/head";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
@@ -99,6 +100,10 @@ export default function ChatPage() {
 
   return (
     <div className="bg-slate-50 min-h-screen pt-20 pb-8 px-4 sm:px-6 lg:px-8">
+      <Head>
+        <title>AI Study Assistant & Doubt Resolver — SmartPrep AI</title>
+        <meta name="description" content="Ask conceptual questions and receive structured step-by-step guidance based on the +2 Science curriculum." />
+      </Head>
       <div className="max-w-4xl mx-auto bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col h-[calc(100vh-7rem)] overflow-hidden">
         
         {/* HEADER */}

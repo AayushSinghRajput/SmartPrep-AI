@@ -1,132 +1,158 @@
-"use client"; // Client-side Next.js component
+"use client";
 
 import { useState, useEffect } from "react";
-import ReactMarkdown from "react-markdown"; // Render Markdown for questions and options
-import remarkMath from "remark-math"; // Enable LaTeX math in Markdown
-import rehypeKatex from "rehype-katex"; // Render LaTeX math
-import { Toaster } from "react-hot-toast"; // Toast notifications
-import { useMockTest } from "../../hooks/useMockTest"; // Custom hook for mock test state & logic
-import { useExamTimer } from "../../hooks/useExamTimer"; // Custom hook for countdown timer
-import { formatTime } from "../../utils/formatTime"; // Format seconds into mm:ss
-import { FaBrain, FaCog, FaStethoscope } from "react-icons/fa"; // Icons for UI
-import { ENGINEERING_TEST_DURATION, MEDICAL_TEST_DURATION } from "../../lib/constants"; // Exam durations
+import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import { Toaster } from "react-hot-toast";
+import { useMockTest } from "../../hooks/useMockTest";
+import { useExamTimer } from "../../hooks/useExamTimer";
+import { formatTime } from "../../utils/formatTime";
+import { FaBrain, FaCog, FaStethoscope } from "react-icons/fa";
+import { FiClock, FiCheckCircle, FiXCircle, FiMinusCircle, FiAward, FiChevronRight, FiChevronLeft } from "react-icons/fi";
+import { ENGINEERING_TEST_DURATION, MEDICAL_TEST_DURATION } from "../../lib/constants";
 
 export default function MockTest() {
-  // Destructure all state and actions from mock test hook
   const {
-    examData,           // Full exam data including questions
-    currentQuestion,    // Index of current question
-    answers,            // User's selected answers
-    score,              // Calculated score
-    scoreDetails,       // Detailed score breakdown (correct, incorrect, penalty)
-    showResult,         // Boolean: show result screen
-    isLoading,          // Boolean: network loading/submitting state
-    startTest,          // Function to start test
-    selectAnswer,       // Function to select an answer
-    nextQuestion,       // Move to next question
-    prevQuestion,       // Move to previous question
-    submitTest,         // Submit test manually
-    resetMockTest,      // Reset all mock test state
+    examData,
+    currentQuestion,
+    answers,
+    score,
+    scoreDetails,
+    showResult,
+    isLoading,
+    startTest,
+    selectAnswer,
+    nextQuestion,
+    prevQuestion,
+    submitTest,
+    resetMockTest,
   } = useMockTest();
 
+  const [countdown, setCountdown] = useState(null);
+  const [selectedExam, setSelectedExam] = useState(null);
 
-  const [countdown, setCountdown] = useState(null); // Countdown before test starts
-  const [selectedExam, setSelectedExam] = useState(null); // Currently selected exam type
-
-  // Determine initial duration based on selected exam
   const initialDuration = selectedExam === "Medical" ? MEDICAL_TEST_DURATION : ENGINEERING_TEST_DURATION;
 
-  // Exam timer hook: counts down, calls submitTest when timer hits 0
   const { timeLeft, resetTimer } = useExamTimer(Boolean(examData), () => {
     submitTest();
     resetTimer();
   }, initialDuration);
 
-  // ------------------------- COUNTDOWN EFFECT -------------------------
+  // Countdown effect
   useEffect(() => {
-    if (countdown === null) return; // Only run if countdown started
+    if (countdown === null) return;
 
     if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000); // Decrement every second
-      return () => clearTimeout(timer); // Cleanup on unmount/update
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
     } else if (countdown === 0 && selectedExam) {
-      startTest(selectedExam); // Start the test after countdown
-      setCountdown(null);      // Reset countdown
+      startTest(selectedExam);
+      setCountdown(null);
     }
   }, [countdown, selectedExam, startTest]);
 
-  // ------------------------- HANDLERS -------------------------
   const handleExamSelect = (examType) => {
-    setSelectedExam(examType); // Set chosen exam
-    setCountdown(5);            // Start 5-second countdown before test
+    setSelectedExam(examType);
+    setCountdown(5);
   };
 
   const handleManualSubmit = () => {
     const confirmSubmit = window.confirm("Are you sure you want to submit the test?");
     if (confirmSubmit) {
-      submitTest(); // Submit current answers
-      resetTimer(); // Stop the exam timer
+      submitTest();
+      resetTimer();
     }
   };
 
   const handleRetakeTest = () => {
-    resetMockTest();        // Reset all hook states (questions, answers, score, etc.)
-    setSelectedExam(null);  // Clear selected exam
-    setCountdown(null);     // Reset countdown
-    resetTimer();           // Reset timer
+    resetMockTest();
+    setSelectedExam(null);
+    setCountdown(null);
+    resetTimer();
   };
 
-  // ------------------------- EXAM OPTIONS -------------------------
   const examOptions = [
-    { key: "Engineering", title: "Engineering", subtitle: "IOE Entrance Preparation", questions: 100, duration: 120 },
-    { key: "Medical", title: "Medical", subtitle: "MBBS Entrance Preparation", questions: 200, duration: 180 },
+    {
+      key: "Engineering",
+      title: "IOE Engineering",
+      subtitle: "Tribhuvan University (Pulchowk)",
+      questions: 100,
+      duration: 120,
+      icon: FaCog,
+      iconColor: "text-indigo-600 bg-indigo-50 border-indigo-100",
+      description: "Physics (45), Chemistry (25), Mathematics (50), English (20) based on TU IOE pattern.",
+    },
+    {
+      key: "Medical",
+      title: "CEE Medical",
+      subtitle: "Medical Education Commission (MBBS/BDS)",
+      questions: 200,
+      duration: 180,
+      icon: FaStethoscope,
+      iconColor: "text-rose-600 bg-rose-50 border-rose-100",
+      description: "Zoology, Botany, Chemistry, Physics, and Mental Agility Test based on CEE pattern.",
+    },
   ];
+
+  const optionLetters = ["A", "B", "C", "D", "E", "F"];
 
   // ------------------------- RESULT SCREEN -------------------------
   if (showResult) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-emerald-50 p-4">
-        <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md w-full">
-          <h1 className="text-3xl font-bold text-emerald-600 mb-2">🎉 Test Completed</h1>
-          <p className="text-sm text-gray-500 mb-6">
-            {examData?.mock_title || `${selectedExam} Mock Exam`}
+      <div className="bg-slate-50 min-h-full py-12 px-4 sm:px-6 flex items-center justify-center">
+        <div className="bg-white p-8 sm:p-10 rounded-3xl border border-slate-200 shadow-sm text-center max-w-lg w-full">
+          <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto mb-4">
+            <FiAward className="w-8 h-8" />
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1">
+            Test Completed!
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mb-6">
+            {examData?.mock_title || `${selectedExam} Mock Examination`}
           </p>
 
-          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-6">
+          <div className="bg-emerald-50 border border-emerald-200/80 rounded-2xl p-5 mb-6">
             <p className="text-xs text-emerald-700 font-semibold uppercase tracking-wider mb-1">
               Final Net Score
             </p>
-            <p className="text-4xl font-extrabold text-emerald-700">
-              {score}
-              {scoreDetails?.maxMarks ? (
-                <span className="text-lg text-emerald-500 font-medium"> / {scoreDetails.maxMarks}</span>
-              ) : null}
-            </p>
+            <div className="flex items-baseline justify-center gap-1">
+              <span className="text-4xl font-black text-emerald-800">{score}</span>
+              {scoreDetails?.maxMarks && (
+                <span className="text-sm font-semibold text-emerald-600">
+                  / {scoreDetails.maxMarks} marks
+                </span>
+              )}
+            </div>
           </div>
 
           {scoreDetails && (
-            <div className="grid grid-cols-2 gap-3 text-left mb-6 text-sm">
-              <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <span className="text-xs text-gray-500 block">Correct Answers</span>
-                <span className="font-bold text-emerald-600">+{scoreDetails.correctCount}</span>
+            <div className="grid grid-cols-2 gap-3 text-left mb-6 text-xs sm:text-sm">
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/70">
+                <span className="text-[11px] text-slate-500 block mb-0.5">Correct Answers</span>
+                <span className="font-bold text-emerald-600 text-base">+{scoreDetails.correctCount}</span>
               </div>
-              <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <span className="text-xs text-gray-500 block">Incorrect Answers</span>
-                <span className="font-bold text-red-600">{scoreDetails.wrongCount}</span>
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/70">
+                <span className="text-[11px] text-slate-500 block mb-0.5">Incorrect Answers</span>
+                <span className="font-bold text-rose-600 text-base">{scoreDetails.wrongCount}</span>
               </div>
-              <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <span className="text-xs text-gray-500 block">Negative Penalty</span>
-                <span className="font-bold text-rose-600">-{scoreDetails.negativePenalty}</span>
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/70">
+                <span className="text-[11px] text-slate-500 block mb-0.5">Negative Penalty</span>
+                <span className="font-bold text-rose-700 text-base">-{scoreDetails.negativePenalty}</span>
               </div>
-              <div className="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <span className="text-xs text-gray-500 block">Unattempted</span>
-                <span className="font-bold text-gray-600">{scoreDetails.unattemptedCount}</span>
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200/70">
+                <span className="text-[11px] text-slate-500 block mb-0.5">Unattempted</span>
+                <span className="font-bold text-slate-600 text-base">{scoreDetails.unattemptedCount}</span>
               </div>
             </div>
           )}
 
-          <button className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 transition-colors text-white font-medium rounded-xl shadow" onClick={handleRetakeTest}>
-            Retake Test
+          <button
+            onClick={handleRetakeTest}
+            className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-sm transition-all text-sm"
+          >
+            Retake Another Mock Test
           </button>
         </div>
       </div>
@@ -135,103 +161,175 @@ export default function MockTest() {
 
   // ------------------------- MOCK TEST UI -------------------------
   return (
-    <div className="min-h-screen bg-indigo-50 flex justify-center items-center p-4">
-      <Toaster /> {/* For toast notifications */}
-      <div className="bg-white max-w-4xl w-full p-8 rounded-3xl shadow-lg">
+    <div className="bg-slate-50 min-h-full py-8 px-4 sm:px-6">
+      <Toaster position="top-right" />
+
+      <div className="max-w-4xl mx-auto">
         {!examData ? (
-          <>
-            {/* INITIAL EXAM SELECTION */}
-            <h1 className="text-3xl font-bold text-indigo-600 mb-4 text-center flex items-center justify-center gap-2">
-              <FaBrain className="w-8 h-8" /> Mock Test
-            </h1>
-            <p className="text-gray-600 mb-8 text-center">Select your exam type and start practicing with full-length mock tests.</p>
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-10 shadow-sm">
+            {/* Initial Exam Selection */}
+            <div className="text-center max-w-xl mx-auto mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center mx-auto mb-3 shadow-xs">
+                <FaBrain className="w-6 h-6" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Full-Length Entrance Mock Exam
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1.5 leading-relaxed">
+                Experience realistic timed entrance conditions with negative marking calculations and detailed analytics.
+              </p>
+            </div>
 
             {!countdown && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {examOptions.map((exam) => (
-                  <div key={exam.key} onClick={() => handleExamSelect(exam.key)}
-                       className="cursor-pointer border rounded-xl p-6 hover:shadow-lg transition text-center">
-                    {/* Icon based on exam type */}
-                    <div className="text-3xl mb-2 flex items-center justify-center gap-2">
-                      {exam.key === "Engineering" ? (
-                        <FaCog className="w-8 h-8 text-gray-700" />
-                      ) : exam.key === "Medical" ? (
-                        <FaStethoscope className="w-8 h-8 text-red-500" />
-                      ) : null}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                {examOptions.map((exam) => {
+                  const Icon = exam.icon;
+                  return (
+                    <div
+                      key={exam.key}
+                      onClick={() => handleExamSelect(exam.key)}
+                      className="cursor-pointer bg-white border border-slate-200 hover:border-indigo-500 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all group flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center border mb-4 ${exam.iconColor}`}>
+                          <Icon className="w-6 h-6" />
+                        </div>
+                        <h2 className="font-bold text-lg text-slate-900 group-hover:text-indigo-600 transition-colors">
+                          {exam.title}
+                        </h2>
+                        <p className="text-xs font-semibold text-slate-500 mt-0.5">
+                          {exam.subtitle}
+                        </p>
+                        <p className="text-xs text-slate-600 mt-3 leading-relaxed">
+                          {exam.description}
+                        </p>
+                      </div>
+
+                      <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-600">
+                        <span>{exam.questions} Questions • {exam.duration} Min</span>
+                        <span className="text-indigo-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                          Start <FiChevronRight className="w-4 h-4" />
+                        </span>
+                      </div>
                     </div>
-                    <h2 className="font-semibold text-lg">{exam.title}</h2>
-                    <p className="text-sm text-gray-500">{exam.subtitle}</p>
-                    <p className="text-sm text-gray-500">{exam.questions} Questions • {exam.duration} Minutes</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
             {/* Countdown before starting exam */}
             {countdown !== null && countdown > 0 && (
-              <div className="text-6xl font-bold text-indigo-600 my-8 text-center">{countdown}</div>
+              <div className="text-center py-12">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-2">
+                  Preparing your examination paper...
+                </span>
+                <div className="text-7xl font-black text-indigo-600 animate-bounce">
+                  {countdown}
+                </div>
+                <p className="text-xs text-slate-500 mt-4">
+                  Stay focused and keep your workspace quiet.
+                </p>
+              </div>
             )}
-          </>
+          </div>
         ) : (
-          <>
-            {/* QUESTION HEADER */}
-            <div className="flex justify-between items-center mb-4">
-              <span className="font-semibold">Q {currentQuestion + 1}/{examData.questions.length}</span>
-              <span className="font-bold text-red-600">⏱ {formatTime(timeLeft)}</span>
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-sm">
+            {/* Header: Question Counter & Timer */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold border border-indigo-100">
+                  Question {currentQuestion + 1} of {examData.questions.length}
+                </span>
+                <span className="text-xs text-slate-400 hidden sm:inline">
+                  Single Choice
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 font-mono font-bold text-sm shadow-2xs">
+                <FiClock className="w-4 h-4 text-rose-600" />
+                <span>{formatTime(timeLeft)} remaining</span>
+              </div>
             </div>
 
-            {/* PROGRESS BAR */}
-            <div className="w-full h-3 bg-gray-200 rounded-full mb-6">
-              <div className="h-3 bg-indigo-600 rounded-full"
-                   style={{ width: `${((currentQuestion + 1) / examData.questions.length) * 100}%` }} />
+            {/* Progress Bar */}
+            <div className="w-full h-2 bg-slate-100 rounded-full mb-6 overflow-hidden">
+              <div
+                className="h-full bg-indigo-600 rounded-full transition-all duration-300"
+                style={{ width: `${((currentQuestion + 1) / examData.questions.length) * 100}%` }}
+              />
             </div>
 
-            {/* QUESTION TEXT */}
-            <div className="text-lg mb-6">
+            {/* Question Text */}
+            <div className="text-base sm:text-lg font-semibold text-slate-900 mb-6 leading-relaxed">
               <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
                 {examData.questions[currentQuestion].question_text}
               </ReactMarkdown>
             </div>
 
-            {/* OPTIONS */}
-            <div className="grid gap-4 mb-6">
-              {examData.questions[currentQuestion].options.map((opt, i) => (
-                <button key={i} onClick={() => selectAnswer(opt)}
-                        className={`p-3 rounded-xl border text-left ${answers[currentQuestion] === opt ? "bg-indigo-600 text-white" : "hover:bg-indigo-50"}`}>
-                  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
-                    {opt}
-                  </ReactMarkdown>
+            {/* Options Grid */}
+            <div className="grid gap-3 mb-8">
+              {examData.questions[currentQuestion].options.map((opt, i) => {
+                const isSelected = answers[currentQuestion] === opt;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => selectAnswer(opt)}
+                    className={`p-4 rounded-xl border text-left transition-all flex items-center gap-3 ${
+                      isSelected
+                        ? "bg-indigo-50/80 border-indigo-600 text-indigo-900 font-semibold ring-1 ring-indigo-600"
+                        : "bg-white border-slate-200 hover:border-indigo-300 hover:bg-slate-50 text-slate-700"
+                    }`}
+                  >
+                    <span
+                      className={`w-7 h-7 rounded-lg text-xs font-bold flex items-center justify-center flex-shrink-0 transition-colors border ${
+                        isSelected
+                          ? "bg-indigo-600 text-white border-indigo-600"
+                          : "bg-slate-100 text-slate-600 border-slate-200"
+                      }`}
+                    >
+                      {optionLetters[i] || i + 1}
+                    </span>
+                    <div className="text-sm flex-1 leading-relaxed">
+                      <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                        {opt}
+                      </ReactMarkdown>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Footer Navigation Buttons */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
+              <button
+                onClick={prevQuestion}
+                disabled={currentQuestion === 0}
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-semibold transition"
+              >
+                <FiChevronLeft className="w-4 h-4" /> Previous
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleManualSubmit}
+                  disabled={isLoading}
+                  className="px-4 py-2.5 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 rounded-xl text-xs font-semibold disabled:opacity-50 transition"
+                >
+                  {isLoading ? "Submitting..." : "Submit Test"}
                 </button>
-              ))}
+
+                <button
+                  onClick={currentQuestion === examData.questions.length - 1 ? submitTest : nextQuestion}
+                  disabled={isLoading}
+                  className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold disabled:opacity-50 transition shadow-sm"
+                >
+                  {currentQuestion === examData.questions.length - 1
+                    ? (isLoading ? "Submitting..." : "Finish Test")
+                    : <><span>Next</span> <FiChevronRight className="w-4 h-4" /></>}
+                </button>
+              </div>
             </div>
-
-            {/* NAVIGATION BUTTONS */}
-            <div className="flex justify-between items-center mt-8">
-              <button onClick={prevQuestion} disabled={currentQuestion === 0}
-                      className={`px-6 py-2 rounded-xl ${currentQuestion === 0 ? "bg-gray-300" : "bg-gray-500 text-white"}`}>
-                Previous
-              </button>
-
-              <button
-                onClick={handleManualSubmit}
-                disabled={isLoading}
-                className="px-6 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50"
-              >
-                {isLoading ? "Submitting..." : "Submit Test"}
-              </button>
-
-              <button
-                onClick={currentQuestion === examData.questions.length - 1 ? submitTest : nextQuestion}
-                disabled={isLoading}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-xl disabled:opacity-50"
-              >
-                {currentQuestion === examData.questions.length - 1
-                  ? (isLoading ? "Submitting..." : "Submit")
-                  : "Next"}
-              </button>
-
-            </div>
-          </>
+          </div>
         )}
       </div>
     </div>

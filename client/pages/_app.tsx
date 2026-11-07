@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/context/ThemeContext"; // Theme provider for Li
 import "../styles/globals.css"; // Global Tailwind / CSS styles
 import { Toaster } from "react-hot-toast"; // Toast notification library
 import { GoogleOAuthProvider } from "@react-oauth/google"; // "Continue with Google" support
+import PublicSmoothScroll from "@/components/animations/SmoothScroll";
 
 /**
  * AppLayout Component
@@ -16,9 +17,14 @@ import { GoogleOAuthProvider } from "@react-oauth/google"; // "Continue with Goo
 function AppLayout({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
-  // Define routes where we DO NOT want to show the navbar/footer
-  const noNavbarRoutes = ["/login", "/signup"];
-  const showNavbar = !noNavbarRoutes.includes(router.pathname); // Boolean flag
+  // Define routes where we DO NOT want to show the public navbar/footer
+  const isDashboardRoute = router.pathname.startsWith("/dashboard");
+  const isAuthRoute = router.pathname.startsWith("/login") || router.pathname.startsWith("/signup");
+  const isServiceRoute = router.pathname.startsWith("/service");
+  const isChatRoute = router.pathname.startsWith("/chat");
+
+  const showNavbar = !isAuthRoute && !isDashboardRoute;
+  const showFooter = !isAuthRoute && !isDashboardRoute && !isServiceRoute && !isChatRoute;
 
   return (
     // Main layout container
@@ -26,7 +32,9 @@ function AppLayout({ Component, pageProps }: AppProps) {
       <Head>
         <title>SmartPrep AI - High Retention EdTech Platform</title>
         <meta name="description" content="Personalized AI-powered prep suite for +2 Science students and entrance exam candidates." />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
       {/* Render Navbar only on allowed routes */}
       {showNavbar && <Navbar />}
@@ -37,8 +45,8 @@ function AppLayout({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
       </main>
 
-      {/* Render Footer only on allowed routes */}
-      {showNavbar && <Footer />}
+      {/* Render Footer only on allowed public routes */}
+      {showFooter && <Footer />}
     </div>
   );
 }
@@ -55,7 +63,9 @@ export default function MyApp(props: AppProps) {
         {/* AuthProvider gives access to authentication context for all pages */}
         <AuthProvider>
           {/* AppLayout provides consistent layout with navbar/footer */}
-          <AppLayout {...props} />
+          <PublicSmoothScroll>
+            <AppLayout {...props} />
+          </PublicSmoothScroll>
 
         {/* Toast notifications container */}
         <Toaster

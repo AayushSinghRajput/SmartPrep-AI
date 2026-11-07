@@ -14,7 +14,6 @@ import Loader from "../ui/Loader";
 import MCQViewer from "../mcq/MCQViewer";
 import MarkdownContent from "./MarkdownContent";
 import ImageLightbox from "./ImageLightbox";
-import ThemeToggle from "../ui/ThemeToggle";
 import { cleanTextForSpeech, cleanText } from "../../utils/cleanTextForSpeech";
 
 export default function SubtopicViewer({
@@ -159,10 +158,6 @@ export default function SubtopicViewer({
 
         {/* Right: Reading Ergonomics Controls */}
         <div className="flex items-center gap-2">
-          
-          {/* Night Reader Theme Toggle (Light / Dark / Sepia) */}
-          <ThemeToggle variant="compact" />
-
           {/* Font Scale Button */}
           {mode !== "mcq" && (
             <button
@@ -296,11 +291,11 @@ export default function SubtopicViewer({
                 onClick={toggleMastered}
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   isMastered
-                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                     : "bg-[var(--bg-card-muted)] text-[var(--text-secondary)] hover:bg-[var(--accent-light)] border border-[var(--border-primary)]"
                 }`}
               >
-                <FiCheckCircle className={isMastered ? "text-emerald-600 dark:text-emerald-400" : "text-[var(--text-muted)]"} />
+                <FiCheckCircle className={isMastered ? "text-emerald-600" : "text-[var(--text-muted)]"} />
                 {isMastered ? "Topic Mastered" : "Mark as Mastered"}
               </button>
             </div>

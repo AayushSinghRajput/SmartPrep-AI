@@ -37,17 +37,15 @@ export default function PredefinedPlanCard({
           </div>
         )}
 
-        {/* Rating & Views */}
+        {/* Plan Duration Badge */}
         <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
-          <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-sm">
-            <span className="text-amber-500 text-2xl">
-              <FaStar />
-            </span>
+          <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm border border-slate-200/80">
+            <span className="w-2 h-2 rounded-full bg-indigo-600" />
             <span
-              className="text-sm font-bold"
+              className="text-xs font-bold"
               style={{ color: colors.neutral[800] }}
             >
-              {book.rating || "N/A"}
+              {book.rating || "30-Day Plan"}
             </span>
           </div>
         </div>

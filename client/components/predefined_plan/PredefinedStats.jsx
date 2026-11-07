@@ -62,10 +62,10 @@ export default function PredefinedStats({ showAll, onToggleShowAll, totalBooks }
             className="text-2xl font-bold"
             style={{ color: colors.primary[700] }}
           >
-            4.7
+            30
           </div>
           <div className="text-sm" style={{ color: colors.neutral[600] }}>
-            Avg Rating
+            Daily Targets
           </div>
         </div>
         <div
@@ -77,10 +77,10 @@ export default function PredefinedStats({ showAll, onToggleShowAll, totalBooks }
             className="text-2xl font-bold"
             style={{ color: colors.primary[700] }}
           >
-            75%
+            NEB
           </div>
           <div className="text-sm" style={{ color: colors.neutral[600] }}>
-            Success Rate
+            Syllabus Aligned
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Head from "next/head";
 import PostCard from "../../components/Community/PostCard";
 import { getAllPosts } from "../../services/community";
 import { useAuth } from "../../context/AuthContext";
@@ -28,6 +29,10 @@ export default function CommunityPage() {
 
   return (
     <div className="bg-slate-50 min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <Head>
+        <title>Student Community Forum — SmartPrep AI</title>
+        <meta name="description" content="Share study insights, ask doubt questions, and collaborate with fellow +2 Science students preparing for entrance exams." />
+      </Head>
       <div className="max-w-6xl mx-auto">
         <div className="mb-8 text-center max-w-xl mx-auto">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-3">

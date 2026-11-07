@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Head from "next/head";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Loader2, AlertCircle } from "lucide-react";
@@ -176,6 +177,10 @@ export default function ProgressTracker() {
 
   return (
     <div className="bg-slate-50 min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <Head>
+        <title>Academic Progress & Mastery — SmartPrep AI</title>
+        <meta name="description" content="Track your syllabus unit completion and quiz mastery across all active textbooks." />
+      </Head>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 text-center max-w-2xl mx-auto">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 mb-3">
