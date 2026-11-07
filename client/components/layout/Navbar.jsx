@@ -49,13 +49,17 @@ export default function Navbar() {
     setMenuOpen(false);
   }, [router.asPath]);
 
+  // Streamlined 4-link desktop navigation
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "How It Works", href: isHomepage ? "#how-it-works" : "/#how-it-works" },
     { name: "30-Day Plans", href: isHomepage ? "#crash-plans" : "/#crash-plans" },
-    { name: "Features", href: isHomepage ? "#features" : "/#features" },
+    { name: "How It Works", href: isHomepage ? "#how-it-works" : "/#how-it-works" },
     { name: "Pricing", href: isHomepage ? "#pricing" : "/#pricing" },
     { name: "Community", href: "/community" },
+  ];
+
+  // Extended navigation for mobile slide-out drawer
+  const drawerNavLinks = [
+    ...navLinks,
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
@@ -66,16 +70,16 @@ export default function Navbar() {
   };
 
   const isLinkActive = (href) => {
-    if (href === "/") return router.pathname === "/";
     if (href.startsWith("/#") || href.startsWith("#")) return false;
+    if (href === "/") return router.pathname === "/";
     return router.pathname.startsWith(href);
   };
 
   return (
     <>
-      {/* FLOATING CAPSULE NAVBAR (Redesigned per Reference Architecture) */}
+      {/* FLOATING CAPSULE NAVBAR (Streamlined 4-Link Architecture) */}
       <header className="fixed top-2.5 sm:top-4 left-0 right-0 z-50 px-3 sm:px-6 pointer-events-none transition-all duration-300">
-        <div className="max-w-7xl mx-auto pointer-events-auto">
+        <div className="max-w-6xl mx-auto pointer-events-auto">
           <div
             className={`
               w-full rounded-full transition-all duration-300
@@ -87,13 +91,13 @@ export default function Navbar() {
               flex items-center justify-between gap-3 sm:gap-4
             `}
           >
-            {/* BRAND LOGO with official logo.png */}
+            {/* BRAND LOGO (Acts as Home Link) */}
             <div className="flex items-center flex-shrink-0">
               <Logo variant="dark" size="md" href="/" />
             </div>
 
-            {/* DESKTOP NAVIGATION LINKS WITH ACTIVE UNDERLINE BAR */}
-            <nav className="hidden xl:flex items-center gap-1 xl:gap-2">
+            {/* DESKTOP & TABLET NAVIGATION LINKS (Fits cleanly on md+ viewports) */}
+            <nav className="hidden md:flex items-center gap-1 lg:gap-2">
               {navLinks.map((item) => {
                 const active = isLinkActive(item.href);
                 return (
@@ -101,7 +105,7 @@ export default function Navbar() {
                     key={item.name}
                     href={item.href}
                     className={`
-                      relative px-3.5 py-2 text-xs xl:text-sm font-medium transition-colors outline-none
+                      relative px-3.5 py-2 text-xs sm:text-sm font-medium transition-colors outline-none
                       ${
                         active
                           ? "text-indigo-600 font-semibold"
@@ -111,11 +115,11 @@ export default function Navbar() {
                   >
                     <span>{item.name}</span>
 
-                    {/* Active Link Underline Indicator Bar (Matching Reference) */}
+                    {/* Active Link Underline Indicator Bar */}
                     {active && (
                       <motion.div
                         layoutId="navbar-active-indicator"
-                        className="absolute bottom-0 left-2 right-2 h-[2.5px] bg-indigo-600 rounded-full"
+                        className="absolute bottom-0 left-2.5 right-2.5 h-[2.5px] bg-indigo-600 rounded-full"
                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
                       />
                     )}
@@ -124,14 +128,13 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* DESKTOP CAPSULE ACTIONS */}
-            <div className="hidden xl:flex items-center gap-3 flex-shrink-0">
+            {/* DESKTOP & TABLET ACTIONS (Visible on md+) */}
+            <div className="hidden md:flex items-center gap-3 flex-shrink-0">
               {user ? (
                 <div className="flex items-center gap-2.5">
-                  {/* Clean Brand Indigo Capsule Button (No black bg, no green dot, no arrow) */}
                   <Link
                     href="/dashboard"
-                    className="px-5 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs xl:text-sm transition-all shadow-sm shadow-indigo-600/20 hover:shadow-md hover:shadow-indigo-600/30"
+                    className="px-5 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs sm:text-sm transition-all shadow-sm shadow-indigo-600/20 hover:shadow-md hover:shadow-indigo-600/30"
                   >
                     Dashboard
                   </Link>
@@ -146,17 +149,17 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 lg:gap-3">
                   <Link
                     href="/login"
-                    className="px-3.5 py-1.5 text-xs xl:text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors"
+                    className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors"
                   >
                     Sign In
                   </Link>
 
                   <Link
                     href="/signup"
-                    className="px-5 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs xl:text-sm transition-all shadow-sm shadow-indigo-600/20 hover:shadow-md hover:shadow-indigo-600/30"
+                    className="px-5 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs sm:text-sm transition-all shadow-sm shadow-indigo-600/20 hover:shadow-md hover:shadow-indigo-600/30"
                   >
                     Start Free
                   </Link>
@@ -164,19 +167,19 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* TABLET & MOBILE CAPSULE CONTROLS (< xl e.g. Surface Pro 960px, iPad 768px/834px, phones) */}
-            <div className="flex items-center xl:hidden gap-2 sm:gap-2.5">
+            {/* MOBILE ONLY CONTROLS (< md e.g. phones under 768px) */}
+            <div className="flex items-center md:hidden gap-2">
               {user ? (
                 <Link
                   href="/dashboard"
-                  className="px-4 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-all shadow-xs"
+                  className="px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-all shadow-xs"
                 >
                   Dashboard
                 </Link>
               ) : (
                 <Link
                   href="/signup"
-                  className="px-4 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-all shadow-xs"
+                  className="px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-all shadow-xs"
                 >
                   Start Free
                 </Link>
@@ -197,10 +200,10 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* MOBILE & TABLET DRAWER */}
+      {/* MOBILE DRAWER (< md) */}
       <AnimatePresence>
         {menuOpen && (
-          <div className="fixed inset-0 z-50 xl:hidden">
+          <div className="fixed inset-0 z-50 md:hidden">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -232,7 +235,7 @@ export default function Navbar() {
 
               {/* Navigation Links */}
               <nav className="flex flex-col gap-1 flex-1">
-                {navLinks.map((item) => {
+                {drawerNavLinks.map((item) => {
                   const active = isLinkActive(item.href);
                   return (
                     <Link
