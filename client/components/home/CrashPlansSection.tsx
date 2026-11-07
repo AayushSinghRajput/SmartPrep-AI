@@ -2,18 +2,12 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  FiCalendar,
-  FiBookOpen,
   FiArrowRight,
-  FiCheckCircle,
-  FiAward,
   FiClock,
 } from "react-icons/fi";
 import Button from "../ui/Button";
-import Badge from "../ui/Badge";
 import { homepageContent } from "@/content/homepage.content";
 import { crashPlansContent } from "@/content/plans.content";
 
@@ -23,228 +17,171 @@ export default function CrashPlansSection({
   onSelectPlan?: (subject: string) => void;
 }) {
   const { crashPlans } = homepageContent;
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [selectedStream, setSelectedStream] = useState<"all" | "engineering" | "medical">("all");
+
+  const filterOptions = [
+    { id: "all", label: "All Subjects", count: 5 },
+    { id: "engineering", label: "Engineering (IOE)", count: 4 },
+    { id: "medical", label: "Medical (CEE)", count: 4 },
+  ] as const;
+
+  const filteredPlans = crashPlansContent.filter((plan) => {
+    if (selectedStream === "all") return true;
+    if (selectedStream === "engineering") {
+      return (
+        plan.entranceStreams.some((s) => s.includes("Engineering") || s.includes("IOE")) ||
+        plan.id === "physics" ||
+        plan.id === "chemistry" ||
+        plan.id === "mathematics" ||
+        plan.id === "english"
+      );
+    }
+    if (selectedStream === "medical") {
+      return (
+        plan.entranceStreams.some((s) => s.includes("Medical") || s.includes("CEE")) ||
+        plan.id === "physics" ||
+        plan.id === "chemistry" ||
+        plan.id === "biology" ||
+        plan.id === "english"
+      );
+    }
+    return true;
+  });
 
   return (
-    <section id="crash-plans" className="py-20 md:py-28 bg-[#f8fafc]">
+    <section id="crash-plans" className="pt-8 md:pt-12 pb-20 md:pb-28 bg-[#f8fafc] border-b border-slate-200/80 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 border border-amber-200 text-amber-800 mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-            {crashPlans.badge}
-          </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-            {crashPlans.heading}
+        {/* Section Header (Badge Removed, Catchy Heading & Subheading) */}
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+            30 Days to Exam Day.{" "}
+            <span className="whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-indigo-700 to-indigo-900 font-editorial italic font-normal">
+              Zero Guesswork.
+            </span>
           </h2>
-          <p className="text-slate-500 text-sm sm:text-base mt-3 leading-relaxed">
+          <p className="text-slate-500 text-sm sm:text-base mt-3 leading-relaxed max-w-2xl mx-auto">
             {crashPlans.subtitle}
           </p>
-        </div>
 
-        {/* 1. MONTHLY 4-WEEK ROADMAP */}
-        <div className="mb-16 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-xs">
-          <div className="flex items-center gap-2 mb-6">
-            <FiCalendar className="w-5 h-5 text-indigo-600" />
-            <h3 className="text-base sm:text-lg font-bold text-slate-900">
-              30-Day Master Milestone Roadmap
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
-            {crashPlans.roadmapStages.map((stage, idx) => (
-              <div
-                key={stage.week}
-                className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 relative"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-indigo-600 font-mono">
-                    {stage.week}
+          {/* Interactive Exam Stream Filter Pill Tabs */}
+          <div className="mt-6 inline-flex items-center p-1.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs">
+            {filterOptions.map((opt) => {
+              const isActive = selectedStream === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => setSelectedStream(opt.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    isActive
+                      ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/25"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                  }`}
+                >
+                  <span>{opt.label}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                      isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    {opt.count}
                   </span>
-                  <span className="text-[10px] text-slate-400 font-semibold">
-                    Days {idx * 7 + 1}–{Math.min((idx + 1) * 7 + (idx === 3 ? 2 : 0), 30)}
-                  </span>
-                </div>
-                <h4 className="text-sm font-bold text-slate-900 mb-1">
-                  {stage.title}
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  {stage.description}
-                </p>
-              </div>
-            ))}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* 2. FIVE SUBJECT CARDS (3 on top, 2 on bottom) */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h3 className="text-xl font-bold text-slate-900">Choose Your Subject Plan</h3>
-              <p className="text-xs text-slate-500 mt-0.5">Exactly 5 pre-built plans based on the NEB +2 Science syllabus.</p>
-            </div>
-            <Badge variant="outline">5 Ready Plans</Badge>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {crashPlansContent.map((plan, idx) => (
+        {/* 5 SUBJECT BLUEPRINT CARDS GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+          <AnimatePresence mode="popLayout">
+            {filteredPlans.map((plan) => (
               <motion.div
                 key={plan.id}
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.2 }}
-                className={`bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-md hover:border-slate-300 transition-all p-5 flex flex-col justify-between ${
-                  idx === 3 ? "lg:col-start-1" : ""
-                }`}
+                layout
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.25 }}
+                className="group bg-white rounded-[28px] border border-slate-200/90 p-5 sm:p-6 flex flex-col justify-between hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-950/5 hover:-translate-y-1.5 transition-all duration-300 relative"
               >
                 <div>
-                  {/* Subject Image Header */}
-                  <div className="relative h-44 rounded-2xl overflow-hidden mb-4 bg-slate-100">
+                  {/* Subject Image Header with Floating Frosted Badges */}
+                  <div className="relative h-48 rounded-2xl overflow-hidden mb-5 bg-slate-100 group-hover:shadow-md transition-shadow">
                     <Image
                       src={plan.image}
                       alt={plan.subject}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/15 to-transparent" />
-                    
-                    <div className="absolute top-3 left-3">
-                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/95 text-slate-800 shadow-2xs">
+                    {/* Gradient Scrim */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent" />
+
+                    {/* Top Chips */}
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md bg-white/95 text-slate-800 shadow-2xs border border-white/40">
                         {plan.curriculum}
+                      </span>
+                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-md bg-indigo-600/90 text-white shadow-2xs border border-indigo-400/30">
+                        30-Day Target
                       </span>
                     </div>
 
-                    <div className="absolute bottom-3 left-3 right-3 text-white">
-                      <span className="text-xs font-semibold text-indigo-200 block">
-                        {plan.duration}
-                      </span>
-                      <h4 className="text-lg font-bold">{plan.subject}</h4>
+                    {/* Bottom Subject Title & Entrance Stream */}
+                    <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white">
+                      <div className="flex items-center gap-1.5 text-xs text-indigo-200 font-medium mb-0.5">
+                        <FiClock className="w-3.5 h-3.5 text-indigo-300" />
+                        <span>Day 01 → Day 30</span>
+                      </div>
+                      <h3 className="text-xl font-extrabold tracking-tight text-white">
+                        {plan.subject}
+                      </h3>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                  {/* Subject Description */}
+                  <p className="text-xs text-slate-600 leading-relaxed mb-4 min-h-[36px]">
                     {plan.description}
                   </p>
 
-                  {/* Topic Tags */}
-                  <div className="flex flex-wrap gap-1.5 mb-5">
-                    {plan.topicsHighlight.map((topic, i) => (
-                      <span
-                        key={i}
-                        className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-700"
-                      >
-                        {topic}
-                      </span>
-                    ))}
+                  {/* Core High-Weightage Chapters */}
+                  <div className="space-y-1.5 mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                      Core Syllabus Highlights:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {plan.topicsHighlight.map((topic, i) => (
+                        <span
+                          key={i}
+                          className="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/80 text-slate-700"
+                        >
+                          {topic}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-400">
-                    Day 1 to 30
-                  </span>
+                {/* Footer Action */}
+                <div className="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
+                  <div className="text-[11px] font-semibold text-slate-400">
+                    Day 1 to Day 30
+                  </div>
+
                   <Button
                     variant="primary"
                     size="sm"
                     onClick={() => (onSelectPlan ? onSelectPlan(plan.subject) : null)}
-                    rightIcon={<FiArrowRight className="w-3.5 h-3.5" />}
+                    rightIcon={<FiArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />}
                   >
                     Start This Plan
                   </Button>
                 </div>
               </motion.div>
             ))}
-          </div>
-        </div>
-
-        {/* 3. EXAMPLE DAY CARD (Labeled "Example Day") */}
-        <div className="max-w-3xl mx-auto bg-white rounded-3xl border border-slate-200/90 shadow-md p-6 sm:p-8">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
-            <div className="flex items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                {crashPlans.exampleDay.label}
-              </span>
-              <h4 className="text-base font-bold text-slate-900">
-                Day {crashPlans.exampleDay.dayNumber} of {crashPlans.exampleDay.totalDays}: {crashPlans.exampleDay.topic}
-              </h4>
-            </div>
-            <span className="text-xs text-slate-400 font-mono">1/30 Progress</span>
-          </div>
-
-          {/* Day 1 Progress Bar */}
-          <div className="w-full bg-slate-100 rounded-full h-2 mb-6 overflow-hidden">
-            <div className="bg-indigo-600 h-2 rounded-full w-[3.33%]" />
-          </div>
-
-          {/* Subtopics Checklist */}
-          <div className="space-y-2 mb-6">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Today's Key Targets:
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              {crashPlans.exampleDay.subtopics.map((st, i) => (
-                <div
-                  key={i}
-                  className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-800 flex items-center gap-2"
-                >
-                  <FiCheckCircle className="text-emerald-500 w-3.5 h-3.5 shrink-0" />
-                  <span className="truncate">{st}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Interactive Sample MCQ */}
-          <div className="bg-indigo-50/40 border border-indigo-100 p-4 sm:p-5 rounded-2xl mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-bold text-indigo-700">Sample Entrance Practice Question</span>
-              <span className="text-[10px] text-slate-400">IOE / CEE Format</span>
-            </div>
-            <p className="text-xs sm:text-sm font-semibold text-slate-900 mb-3">
-              {crashPlans.exampleDay.sampleQuestion}
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {crashPlans.exampleDay.sampleOptions.map((opt, idx) => {
-                const isSelected = selectedOption === idx;
-                const isCorrect = idx === crashPlans.exampleDay.correctIndex;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedOption(idx)}
-                    className={`p-2.5 text-xs rounded-xl font-medium text-left border transition-all ${
-                      isSelected
-                        ? isCorrect
-                          ? "bg-emerald-50 border-emerald-300 text-emerald-800 font-bold"
-                          : "bg-rose-50 border-rose-300 text-rose-800"
-                        : "bg-white border-slate-200 text-slate-700 hover:border-slate-300"
-                    }`}
-                  >
-                    <span className="font-mono mr-1.5">{String.fromCharCode(65 + idx)}.</span>
-                    {opt}
-                  </button>
-                );
-              })}
-            </div>
-
-            {selectedOption !== null && (
-              <div className="mt-3 text-xs text-emerald-700 font-semibold flex items-center gap-1.5">
-                <FiCheckCircle className="w-4 h-4" />
-                <span>Correct relation: Torque is the rotational analogue of force (τ = I · α).</span>
-              </div>
-            )}
-          </div>
-
-          {/* Bottom Callout */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-xs text-slate-500 border-t border-slate-100 pt-4">
-            <p>Prefer to study from your own book? Create a custom plan from your PDF.</p>
-            <Link href="/signup" className="font-bold text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1">
-              Create Custom Plan <FiArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+          </AnimatePresence>
         </div>
       </div>
     </section>
   );
 }
-

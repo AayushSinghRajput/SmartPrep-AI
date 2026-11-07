@@ -8,9 +8,9 @@ export const contactContent = {
   subtitle:
     "Have questions about study schedules, PDF uploads, or technical assistance? Send us a message and we'll be glad to help.",
   contactDetails: {
-    email: "smartprep.ai@gmail.com",
-    phone: "+977 9860123456",
-    location: "Dharan, Nepal",
+    email: "soulmatelumi@gmail.com",
+    phone: "+977 9805981168",
+    location: "Kathmandu, Nepal",
     hoursPlaceholder: "Monday to Friday: 9:00 AM – 6:00 PM NPT",
     responseTime: "We typically respond within 24 hours.",
   },
@@ -33,7 +33,7 @@ export const contactContent = {
     },
     {
       q: "Can institutions request bulk onboarding?",
-      a: "Yes, send us an email at smartprep.ai@gmail.com with your institution details.",
+      a: "Yes, send us an email at soulmatelumi@gmail.com with your institution details.",
     },
   ],
 } as const;

@@ -44,7 +44,6 @@ export const homepageContent = {
   ],
 
   howItWorks: {
-    badge: "Simple 4-Step Process",
     heading: "How SmartPrep AI Works",
     subtitle: "From a dense textbook PDF to daily mastery in four straightforward steps.",
     steps: [
@@ -71,57 +70,11 @@ export const homepageContent = {
     ],
   },
 
-  customPlanDemo: {
-    badge: "Interactive Demo",
-    heading: "See a Study Plan in Action",
-    subtitle: "Watch how SmartPrep AI breaks down a textbook into clear, daily milestones.",
-    fileName: "Physics_Grade12_Textbook.pdf",
-    fileSize: "14.2 MB",
-    subject: "Physics",
-    durationDays: 10,
-    caption: "Example plan. Your actual plan is generated from your own PDF and chosen duration.",
-    ctaText: "Try it with your PDF",
-    sampleRows: [
-      {
-        day: 1,
-        topic: "Rotational Dynamics & Torque",
-        subtopics: ["Moment of Inertia of Rigid Bodies", "Rotational Kinetic Energy", "Conservation of Angular Momentum"],
-        status: "Active",
-      },
-      {
-        day: 2,
-        topic: "Simple Harmonic Motion (SHM)",
-        subtopics: ["Equation of Simple Harmonic Motion", "Energy in SHM", "Simple and Compound Pendulum"],
-        status: "Upcoming",
-      },
-      {
-        day: 3,
-        topic: "Wave Motion & Acoustics",
-        subtopics: ["Stationary Waves in Pipes & Strings", "Doppler Effect", "Beats and Resonance"],
-        status: "Upcoming",
-      },
-      {
-        day: 4,
-        topic: "Electrostatics & Capacitance",
-        subtopics: ["Gauss's Law Applications", "Electric Potential & Field", "Parallel Plate Capacitors"],
-        status: "Upcoming",
-      },
-    ],
-    sampleDayContent: {
-      day: 1,
-      topic: "Rotational Dynamics & Torque",
-      conceptSummary:
-        "Rotational dynamics extends linear mechanics to rotating systems. Angular velocity (ω), angular acceleration (α), and torque (τ = r × F) mirror force and acceleration in translational motion.",
-      keyFormula: "τ = I · α = \\frac{dL}{dt}",
-      practiceCount: "10 practice questions ready",
-    },
-  },
-
   crashPlans: {
     badge: "Ready-Made 30-Day Blueprints",
-    heading: "Started late? Your 30-day plan is ready.",
+    heading: "30 Days to Exam Day. Complete Syllabus, Zero Guesswork.",
     subtitle:
-      "Examination forms are open and entrance tests are approaching. Skip the planning phase, pick your target subject, and start studying today.",
+      "Skip the planning paralysis. Pick your high-stakes subject to unlock balanced daily targets, high-yield formulas, and entrance-tested practice from Day 1 to 30.",
     roadmapStages: [
       {
         week: "Week 1",
@@ -204,54 +157,111 @@ export const homepageContent = {
   },
 
   features: {
-    badge: "Complete Study Suite",
     heading: "Engineered for Focus, Speed & Exam Retention",
-    subtitle: "Everything +2 Science students need to prepare methodically without distractions.",
+    subtitle: "Everything +2 Science students in Nepal need to prepare methodically without distractions.",
     items: [
       {
         id: "plan-generator",
-        title: "Study Plan Generator",
-        description: "Converts textbook PDFs into structured day-wise milestones tailored to your schedule.",
+        title: "Adaptive Study Plan Engine",
+        tag: "Core Engine",
+        description: "Upload any textbook PDF to automatically calculate chapter weightage and produce a day-by-day balanced roadmap.",
         icon: "calendar",
+        highlights: [
+          "Automated day-by-day syllabus balancing",
+          "Calibrated to your exact exam date & target days",
+          "Direct chapter extraction from uploaded textbook PDF",
+        ],
       },
       {
         id: "mcq-practice",
-        title: "Adaptive MCQ Practice",
-        description: "Topic-by-topic quizzes with immediate answer feedback and step-by-step explanations.",
+        title: "Adaptive Entrance MCQs",
+        tag: "IOE & CEE Format",
+        description: "Topic-specific practice questions with instant feedback, negative marking simulation, and step-by-step solutions.",
         icon: "check-square",
+        highlights: [
+          "Topic-by-topic questions with instant textbook rationales",
+          "Negative marking simulation for IOE & CEE entrance",
+          "Accuracy benchmarks and common mistake alerts",
+        ],
       },
       {
-        id: "notes-generation",
-        title: "Smart Notes & Summaries",
-        description: "Clear concept summaries with mathematical formulas and key scientific terms.",
+        id: "formula-vault",
+        title: "High-Yield Formula Vault",
+        tag: "NEB Derivations",
+        description: "Instant access to verified formulas, derivations, and SI units directly extracted from your textbook chapters.",
         icon: "book-open",
+        highlights: [
+          "All formulas, definitions and SI units compiled",
+          "Step-by-step derivations verified for NEB board exams",
+          "Quick-revision formula sheets ready before exam day",
+        ],
       },
       {
         id: "ai-assistant",
-        title: "Context-Aware AI Tutor",
-        description: "Ask questions on complex concepts and receive explanations grounded directly in your book.",
+        title: "Grounded Textbook AI Tutor",
+        tag: "Zero Hallucinations",
+        description: "Ask questions on complex concepts and receive explanations referenced directly to your textbook's syllabus.",
         icon: "message-circle",
+        highlights: [
+          "Explanations referenced directly to your NEB book",
+          "Zero hallucinations or out-of-syllabus notations",
+          "Instant doubt resolution on tricky numericals",
+        ],
       },
       {
         id: "performance-tracking",
-        title: "Academic Performance Tracking",
-        description: "Analyze accuracy trends, quiz history, and readiness across individual subjects.",
+        title: "Diagnostic Performance Analytics",
+        tag: "Readiness Score",
+        description: "Pinpoint weak topics, track quiz accuracy trends, and know your readiness score before exam day.",
         icon: "bar-chart-2",
+        highlights: [
+          "Overall exam readiness percentage indicator",
+          "Subject-by-subject weakness diagnostics",
+          "Historical quiz attempts and accuracy tracking",
+        ],
       },
       {
-        id: "progress-tracking",
-        title: "Study Milestones & Streaks",
-        description: "Stay motivated with daily study progress tracking, completed days, and exam countdowns.",
+        id: "study-streaks",
+        title: "Study Streaks & Exam Milestones",
+        tag: "Daily Discipline",
+        description: "Build relentless daily study habits with streak tracking, completed milestones, and entrance countdowns.",
         icon: "target",
+        highlights: [
+          "Relentless daily study streak tracking",
+          "Real-time countdown timer to board and entrance exams",
+          "Daily milestone achievements to stay accountable",
+        ],
       },
     ],
   },
 
   whyDifferent: {
     badge: "Textbook Grounding",
-    heading: "Answers from your textbook, not from the whole internet.",
+    heading: "Answers from your textbook, not random internet noise.",
     explanation:
-      "General search engines give overwhelming and conflicting answers from unrelated curricula. SmartPrep AI reads your uploaded textbook PDF and uses that exact course material to generate your daily notes, study schedules, and practice questions.",
+      "General AI models and search engines pull answers from conflicting global curricula, confusing students with unfamiliar notations and out-of-syllabus methods. SmartPrep AI grounds every note, derivation, and quiz strictly in your uploaded NEB textbook.",
+    comparison: {
+      genericAi: {
+        title: "Generic AI & Web Search",
+        tag: "Unverified Fluff",
+        points: [
+          "Confusing notations from foreign boards (CBSE / Cambridge)",
+          "Overwhelming essay responses with zero syllabus boundaries",
+          "Risk of marks deduction on NEB board evaluations",
+          "No synchronization with your examination countdown",
+        ],
+      },
+      smartprepAi: {
+        title: "SmartPrep AI Grounding",
+        tag: "100% NEB Aligned",
+        points: [
+          "Strict adherence to official NEB +2 Science definitions",
+          "Exact formula notations accepted in IOE & CEE exams",
+          "Structured daily milestones matched to your exam date",
+          "Verified answer citations directly from your textbook",
+        ],
+      },
+    },
     steps: [
       { title: "Your PDF", desc: "Upload your school textbook or syllabus" },
       { title: "Smart Prep AI Reads It", desc: "Extracts chapters, topics, and definitions" },
@@ -260,9 +270,79 @@ export const homepageContent = {
   },
 
   communityPreview: {
-    badge: "Peer Study Community",
-    heading: "Learn alongside fellow +2 Science students",
-    subtitle: "Discuss tricky questions, share entrance tips, and get help when you're stuck.",
+    badge: "Peer Study Network",
+    heading: "Study together. Crack your entrance exams faster.",
+    subtitle:
+      "Join ambitious +2 Science students across Nepal preparing for NEB board, IOE Engineering, and CEE Medical exams. Ask doubts, share formulas, and discuss past questions.",
+    threads: [
+      {
+        id: "physics-1",
+        subject: "Physics",
+        stream: "IOE Engineering",
+        badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200",
+        author: "Aayush S.",
+        college: "St. Xavier's / NEB Gr 12",
+        avatarBg: "bg-indigo-600",
+        timeAgo: "25 mins ago",
+        question:
+          "Why does the moment of inertia change with the axis of rotation even when the mass and body shape are completely identical?",
+        replyCount: 4,
+        likes: 38,
+        topReply: {
+          author: "Bikram K.",
+          college: "Pulchowk Campus Aspirant",
+          avatarBg: "bg-emerald-600",
+          content:
+            "Moment of inertia measures how mass is spatially distributed relative to that specific rotation axis (I = Σ mᵢ · rᵢ²). Shifting the axis changes the perpendicular distance rᵢ of each mass particle, altering the body's resistance to angular acceleration.",
+          isVerified: true,
+        },
+      },
+      {
+        id: "chemistry-1",
+        subject: "Chemistry",
+        stream: "CEE Medical",
+        badgeColor: "bg-amber-50 text-amber-700 border-amber-200",
+        author: "Prashant M.",
+        college: "Prasadi Academy",
+        avatarBg: "bg-amber-600",
+        timeAgo: "1 hour ago",
+        question:
+          "Why does formaldehyde (HCHO) undergo the Cannizzaro reaction instead of Aldol condensation?",
+        replyCount: 6,
+        likes: 42,
+        topReply: {
+          author: "Anjali T.",
+          college: "IOM Entrance Ranker",
+          avatarBg: "bg-rose-600",
+          content:
+            "Aldol condensation strictly requires an α-hydrogen to generate the enolate nucleophile. Since formaldehyde lacks α-carbons and α-hydrogens, it undergoes self oxidation-reduction (Cannizzaro) in concentrated alkali instead!",
+          isVerified: true,
+        },
+      },
+      {
+        id: "math-1",
+        subject: "Mathematics",
+        stream: "IOE Engineering",
+        badgeColor: "bg-sky-50 text-sky-700 border-sky-200",
+        author: "Rohan D.",
+        college: "Trinity Int'l College",
+        avatarBg: "bg-sky-600",
+        timeAgo: "3 hours ago",
+        question:
+          "What is the quickest shortcut to solve definite integrals of type ∫_0^(π/2) sin^n x cos^m x dx in the IOE 140-mark paper?",
+        replyCount: 5,
+        likes: 54,
+        topReply: {
+          author: "Suman B.",
+          college: "IOE Computer Engineering",
+          avatarBg: "bg-indigo-600",
+          content:
+            "Use Wallis' reduction formula! For integer powers, it solves these in under 20 seconds without tedious trigonometric substitutions or integration by parts.",
+          isVerified: true,
+        },
+      },
+    ],
+    // Backwards compatibility with examplePost
     examplePost: {
       author: "Science Student",
       subjectTag: "Physics · Rotational Dynamics",
@@ -273,24 +353,11 @@ export const homepageContent = {
       topReply: {
         author: "Peer Reviewer",
         content:
-          "Moment of inertia represents how mass is distributed relative to the chosen axis ($I = \\sum m r^2$). Changing the axis changes the distance $r$ of each mass element from that axis.",
+          "Moment of inertia represents how mass is distributed relative to the chosen axis (I = Σ m r²). Changing the axis changes the distance r of each mass element from that axis.",
       },
     },
-    ctaText: "Join the Community",
+    ctaText: "Join the Student Community",
     ctaHref: "/community",
-  },
-
-  earlyAccess: {
-    badge: "Early Access Community",
-    heading: "Be among our first students.",
-    subtitle: "We are currently welcoming early users preparing for upcoming board and entrance exams.",
-    benefits: [
-      "Immediate access to all 5 ready-made 30-day crash plans.",
-      "Custom study plan generation from your uploaded textbook PDFs.",
-      "Help shape new study features and practice tools through direct feedback.",
-    ],
-    ctaText: "Get Early Access Free",
-    ctaHref: "/signup",
   },
 
   faq: {

@@ -7,13 +7,11 @@ import { useAuth } from "../context/AuthContext";
 import HeroSection from "../components/home/HeroSection";
 import ProofStrip from "../components/home/ProofStrip";
 import HowItWorksSection from "../components/home/HowItWorksSection";
-import CustomPlanDemo from "../components/home/CustomPlanDemo";
 import CrashPlansSection from "../components/home/CrashPlansSection";
 import FeaturesBento from "../components/home/FeaturesBento";
 import WhyDifferent from "../components/home/WhyDifferent";
 import CommunityPreview from "../components/home/CommunityPreview";
 import PricingSection from "../components/home/PricingSection";
-import EarlyAccessSection from "../components/home/EarlyAccessSection";
 import FaqSection from "../components/home/FaqSection";
 import FinalCtaSection from "../components/home/FinalCtaSection";
 import StudyPlanModal from "../components/predefined_plan/StudyPlanModal";
@@ -90,10 +88,7 @@ export default function Home() {
         {/* 3.3 How It Works (4 Steps) */}
         <HowItWorksSection />
 
-        {/* 3.4 Custom Study Plan Interactive Demo */}
-        <CustomPlanDemo onTryWithPdf={handleGetStarted} />
-
-        {/* 3.5 Thirty-Day Crash Plans & Master Roadmap */}
+        {/* 3.4 Thirty-Day Crash Plans & Master Roadmap */}
         <CrashPlansSection onSelectPlan={handleSelectPlan} />
 
         {/* 3.6 Six-Card Bento Features Grid */}
@@ -108,10 +103,7 @@ export default function Home() {
         {/* 3.9 Honest Pre-Launch Pricing */}
         <PricingSection />
 
-        {/* 3.10 Early Access */}
-        <EarlyAccessSection />
-
-        {/* 3.11 Accessible FAQ Accordion */}
+        {/* 3.10 Accessible FAQ Accordion */}
         <FaqSection />
 
         {/* 3.12 Final CTA Banner */}
