@@ -62,7 +62,7 @@ export default function LessonViewer({
           <button
             type="button"
             onClick={() => toggleComplete(lessonId)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${
               isCompleted
                 ? "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200/80 border border-slate-200"
@@ -86,7 +86,7 @@ export default function LessonViewer({
             type="button"
             onClick={handleCopyNotes}
             title="Copy lesson notes to clipboard"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200/80 border border-slate-200 transition-all outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200/80 border border-slate-200 transition-all outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
           >
             {copied ? (
               <>
@@ -142,7 +142,7 @@ export default function LessonViewer({
           <button
             type="button"
             onClick={() => goToLesson(prevLesson)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-slate-50 transition-all text-xs sm:text-sm font-bold group outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-slate-50 transition-all text-xs sm:text-sm font-bold group outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
           >
             <FiArrowLeft className="w-4 h-4 text-slate-400 group-hover:-translate-x-0.5 transition-transform" />
             <div className="text-left">
@@ -162,7 +162,7 @@ export default function LessonViewer({
           <button
             type="button"
             onClick={() => goToLesson(nextLesson)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all text-xs sm:text-sm font-bold group outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all text-xs sm:text-sm font-bold group outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
           >
             <div className="text-right">
               <div className="text-[10px] text-indigo-200 font-normal">

@@ -42,7 +42,7 @@ export default function FaqSection() {
                 <button
                   type="button"
                   onClick={() => toggleAccordion(idx)}
-                  className="w-full p-5 text-left flex items-center justify-between gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  className="w-full p-5 text-left flex items-center justify-between gap-4 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
                   aria-expanded={isOpen}
                 >
                   <span className="text-sm sm:text-base font-bold text-slate-900 leading-snug">

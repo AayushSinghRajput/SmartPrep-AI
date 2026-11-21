@@ -82,6 +82,33 @@ body,
     min-height: 100%;
     margin: 0;
   }
+
+  /* Universal Pointer Cursor for Interactive Elements */
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  input[type="checkbox"],
+  input[type="radio"],
+  select,
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+
+  /* Disabled State Cursor Behavior */
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input[type="button"]:disabled,
+  input[type="submit"]:disabled,
+  input[type="reset"]:disabled,
+  input[type="checkbox"]:disabled,
+  input[type="radio"]:disabled,
+  select:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 .font-editorial {

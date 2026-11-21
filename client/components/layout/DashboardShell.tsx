@@ -59,7 +59,7 @@ export default function DashboardShell({
           {/* Mobile Menu Trigger */}
           <button
             onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-            className="md:hidden p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            className="md:hidden p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
             aria-label="Toggle navigation drawer"
           >
             {mobileDrawerOpen ? <FiX size={20} /> : <FiMenu size={20} />}
@@ -94,7 +94,7 @@ export default function DashboardShell({
             <button
               onClick={handleSignOut}
               title="Sign Out"
-              className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+              className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
               aria-label="Sign Out"
             >
               <FiLogOut className="w-4 h-4" />

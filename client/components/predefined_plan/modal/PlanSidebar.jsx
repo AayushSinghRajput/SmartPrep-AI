@@ -33,7 +33,7 @@ export default function PlanSidebar({
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
             >
               <FiX className="w-3.5 h-3.5" />
             </button>
@@ -64,7 +64,7 @@ export default function PlanSidebar({
                 <button
                   type="button"
                   onClick={() => handleToggleDay(dayData.day, dayData)}
-                  className={`w-full px-4 py-3.5 flex items-center justify-between text-left transition-colors duration-200 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                  className={`w-full px-4 py-3.5 flex items-center justify-between text-left transition-colors duration-200 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${
                     isOpen ? "bg-indigo-600 text-white" : "text-slate-800"
                   }`}
                 >
@@ -143,7 +143,7 @@ export default function PlanSidebar({
                                         day: dayData.day,
                                       });
                                     }}
-                                    className={`w-full px-3 py-2.5 text-xs rounded-xl text-left flex items-center justify-between transition-all duration-150 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${
+                                    className={`w-full px-3 py-2.5 text-xs rounded-xl text-left flex items-center justify-between transition-all duration-150 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer ${
                                       isSelected
                                         ? "bg-white text-indigo-700 font-bold shadow-sm border border-indigo-200 translate-x-0.5"
                                         : "text-slate-600 hover:text-slate-900 hover:bg-white/80 border border-transparent"

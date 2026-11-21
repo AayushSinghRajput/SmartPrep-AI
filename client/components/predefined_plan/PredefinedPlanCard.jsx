@@ -156,7 +156,7 @@ export default function PredefinedPlanCard({
             <button
               onClick={() => onViewDetails(book.subject, book.id)}
               disabled={isLoading || isAnyLoading}
-              className="w-full bg-indigo-600 text-white px-8 py-3 rounded-lg shadow-[3px_3px_6.4px_1px_#9E9999] transition-shadow duration-300 hover:shadow-[5px_5px_8px_2px_rgba(139,92,246,0.75)] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="w-full bg-indigo-600 text-white px-8 py-3 rounded-lg shadow-[3px_3px_6.4px_1px_#9E9999] transition-shadow duration-300 hover:shadow-[5px_5px_8px_2px_rgba(139,92,246,0.75)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
             >
               {isLoading ? (
                 <>

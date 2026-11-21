@@ -157,7 +157,7 @@ export default function StudyBooksGrid({
               </span>
               <button
                 onClick={() => onBookClick?.(activeBook)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm transition-all duration-150"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm transition-all duration-150 cursor-pointer"
               >
                 Resume Learning <FiArrowRight className="w-4 h-4" />
               </button>

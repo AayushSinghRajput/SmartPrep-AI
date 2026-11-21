@@ -50,7 +50,7 @@ export default function ModalHeader({
         <button
           onClick={onClose}
           aria-label="Close modal"
-          className="p-2.5 rounded-full text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+          className="p-2.5 rounded-full text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-200 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 cursor-pointer"
         >
           <FiX className="w-5 h-5" />
         </button>

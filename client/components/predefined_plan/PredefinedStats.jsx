@@ -15,7 +15,7 @@ export default function PredefinedStats({ showAll, onToggleShowAll, totalBooks }
     >
       <button
         onClick={onToggleShowAll}
-        className="px-8 py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 mx-auto shadow-lg hover:shadow-xl active:scale-95 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        className="px-8 py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 mx-auto shadow-lg hover:shadow-xl active:scale-95 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer"
         style={{
           background: showAll ? colors.neutral[100] : colors.primary[50],
           color: showAll ? colors.neutral[700] : colors.primary[700],

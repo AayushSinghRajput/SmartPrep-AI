@@ -142,7 +142,7 @@ export default function Navbar() {
                   <button
                     onClick={handleSignOut}
                     title="Sign Out"
-                    className="p-2 rounded-full text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                    className="p-2 rounded-full text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                     aria-label="Sign Out"
                   >
                     <FiLogOut className="w-4 h-4" />
@@ -188,7 +188,7 @@ export default function Navbar() {
               {/* Hamburger Toggle Button */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="p-2 rounded-full text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="p-2 rounded-full text-slate-700 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={menuOpen}
               >
@@ -287,7 +287,7 @@ export default function Navbar() {
                         setMenuOpen(false);
                         handleSignOut();
                       }}
-                      className="w-full text-center py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-full transition-colors"
+                      className="w-full text-center py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-full transition-colors cursor-pointer"
                     >
                       Sign Out
                     </button>

@@ -68,7 +68,7 @@ export default function HeroSection({ onGetStarted }) {
               {/* Primary Action Button */}
               <button
                 onClick={onGetStarted}
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
               >
                 <span>Start Free Prep</span>
                 <FiArrowUpRight className="w-4 h-4" />
@@ -77,7 +77,7 @@ export default function HeroSection({ onGetStarted }) {
               {/* Secondary 30-Day Crash Plans Button */}
               <button
                 onClick={scrollToCrashPlans}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium text-slate-800 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-medium text-slate-800 bg-white hover:bg-slate-50 border border-slate-200/90 shadow-2xs transition-all hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer"
               >
                 <span className="text-amber-500 text-base">✨</span>
                 <span>30-Day Crash Plans</span>
