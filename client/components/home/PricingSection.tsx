@@ -2,15 +2,33 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FiCheck, FiArrowRight, FiStar, FiMail, FiShield, FiLock } from "react-icons/fi";
 import Button from "../ui/Button";
 import { pricingContent } from "@/content/pricing.content";
 import showToast from "../ui/Toast";
+import { useAuth } from "@/context/AuthContext";
 
-export default function PricingSection() {
+interface PricingSectionProps {
+  onGetStarted?: () => void;
+}
+
+export default function PricingSection({ onGetStarted }: PricingSectionProps) {
+  const router = useRouter();
+  const { user, openAuthModal } = useAuth();
   const [waitlistEmail, setWaitlistEmail] = useState("");
   const [waitlistSuccess, setWaitlistSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleCtaClick = () => {
+    if (onGetStarted) {
+      onGetStarted();
+    } else if (user) {
+      router.push("/dashboard");
+    } else {
+      openAuthModal("signup");
+    }
+  };
 
   const handleWaitlistSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,16 +149,15 @@ export default function PricingSection() {
                       <span>Instant Free Access • No Card Needed</span>
                     </div>
 
-                    <Link href="/signup" className="w-full block">
-                      <Button
-                        variant="primary"
-                        size="md"
-                        className="w-full"
-                        rightIcon={<FiArrowRight className="w-4 h-4" />}
-                      >
-                        {tier.ctaText}
-                      </Button>
-                    </Link>
+                    <Button
+                      variant="primary"
+                      size="md"
+                      onClick={handleCtaClick}
+                      className="w-full cursor-pointer"
+                      rightIcon={<FiArrowRight className="w-4 h-4" />}
+                    >
+                      {tier.ctaText}
+                    </Button>
 
                     <p className="text-[11px] text-slate-400 text-center font-medium">
                       Free forever for +2 Science students in Nepal.

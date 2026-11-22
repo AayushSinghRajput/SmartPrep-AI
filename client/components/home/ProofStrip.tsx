@@ -2,6 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useAuth } from "@/context/AuthContext";
 
 /**
  * Redesigned ProofStrip Section
@@ -27,6 +29,9 @@ interface FeatureCard {
 }
 
 export default function ProofStrip() {
+  const router = useRouter();
+  const { user, openAuthModal } = useAuth();
+
   const baseCards: FeatureCard[] = [
     {
       id: "textbook-sync",
@@ -250,13 +255,24 @@ export default function ProofStrip() {
 
               {/* Bottom Row: Underlined Explore Link (Matching Reference Architecture) */}
               <div className="relative z-10 pt-2 border-t border-slate-100/90">
-                <Link
-                  href={card.actionHref}
-                  className="inline-flex items-center text-xs sm:text-sm font-semibold text-slate-800 hover:text-indigo-600 underline underline-offset-4 decoration-slate-300 hover:decoration-indigo-500 transition-colors"
-                >
-                  <span>{card.actionText}</span>
-                  <span className="ml-1 text-[11px] transition-transform group-hover:translate-x-0.5">↗</span>
-                </Link>
+                {card.actionHref === "/signup" ? (
+                  <button
+                    type="button"
+                    onClick={() => (user ? router.push("/dashboard") : openAuthModal("signup"))}
+                    className="inline-flex items-center text-xs sm:text-sm font-semibold text-slate-800 hover:text-indigo-600 underline underline-offset-4 decoration-slate-300 hover:decoration-indigo-500 transition-colors cursor-pointer"
+                  >
+                    <span>{card.actionText}</span>
+                    <span className="ml-1 text-[11px] transition-transform group-hover:translate-x-0.5">↗</span>
+                  </button>
+                ) : (
+                  <Link
+                    href={card.actionHref}
+                    className="inline-flex items-center text-xs sm:text-sm font-semibold text-slate-800 hover:text-indigo-600 underline underline-offset-4 decoration-slate-300 hover:decoration-indigo-500 transition-colors"
+                  >
+                    <span>{card.actionText}</span>
+                    <span className="ml-1 text-[11px] transition-transform group-hover:translate-x-0.5">↗</span>
+                  </Link>
+                )}
               </div>
             </div>
           ))}

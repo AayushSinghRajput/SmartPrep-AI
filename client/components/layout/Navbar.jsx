@@ -18,7 +18,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, openAuthModal } = useAuth();
 
   const isHomepage = router.pathname === "/";
 
@@ -150,19 +150,21 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2 lg:gap-3">
-                  <Link
-                    href="/login"
-                    className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors"
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal("signin")}
+                    className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors cursor-pointer"
                   >
                     Sign In
-                  </Link>
+                  </button>
 
-                  <Link
-                    href="/signup"
-                    className="px-5 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs sm:text-sm transition-all shadow-sm shadow-indigo-600/20 hover:shadow-md hover:shadow-indigo-600/30"
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal("signup")}
+                    className="px-5 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs sm:text-sm transition-all shadow-sm shadow-indigo-600/20 hover:shadow-md hover:shadow-indigo-600/30 cursor-pointer"
                   >
                     Start Free
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -177,12 +179,13 @@ export default function Navbar() {
                   Dashboard
                 </Link>
               ) : (
-                <Link
-                  href="/signup"
-                  className="px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-all shadow-xs"
+                <button
+                  type="button"
+                  onClick={() => openAuthModal("signup")}
+                  className="px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-all shadow-xs cursor-pointer"
                 >
                   Start Free
-                </Link>
+                </button>
               )}
 
               {/* Hamburger Toggle Button */}
@@ -294,20 +297,26 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
-                    <Link
-                      href="/login"
-                      onClick={() => setMenuOpen(false)}
-                      className="w-full text-center py-2.5 rounded-full bg-slate-50 border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-100 transition-colors"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        openAuthModal("signin");
+                      }}
+                      className="w-full text-center py-2.5 rounded-full bg-slate-50 border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-100 transition-colors cursor-pointer"
                     >
                       Sign In
-                    </Link>
-                    <Link
-                      href="/signup"
-                      onClick={() => setMenuOpen(false)}
-                      className="w-full text-center py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors shadow-xs"
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        openAuthModal("signup");
+                      }}
+                      className="w-full text-center py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors shadow-xs cursor-pointer"
                     >
                       Start Free Plan
-                    </Link>
+                    </button>
                   </>
                 )}
               </div>

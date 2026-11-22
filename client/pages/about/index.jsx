@@ -17,12 +17,24 @@ import {
   FiHeart,
   FiUsers,
 } from "react-icons/fi";
+import { useRouter } from "next/router";
 import Button from "@/components/ui/Button";
 import studentAnimation from "@/animations/student.json";
 import { aboutContent } from "@/content/about.content";
+import { useAuth } from "@/context/AuthContext";
 
 export default function AboutPage() {
+  const router = useRouter();
+  const { user, openAuthModal } = useAuth();
   const { hero, mission, problem, values, teamPlaceholder } = aboutContent;
+
+  const handleCtaClick = () => {
+    if (user) {
+      router.push("/dashboard");
+    } else {
+      openAuthModal("signup");
+    }
+  };
 
   return (
     <>
@@ -199,15 +211,15 @@ export default function AboutPage() {
               Upload your textbook or jump straight into a ready-made 30-day crash plan for NEB +2 Science.
             </p>
             <div className="pt-2">
-              <Link href="/signup">
-                <Button
-                  variant="accent"
-                  size="lg"
-                  rightIcon={<FiArrowRight className="w-4 h-4" />}
-                >
-                  Get Started Free
-                </Button>
-              </Link>
+              <Button
+                variant="accent"
+                size="lg"
+                onClick={handleCtaClick}
+                className="cursor-pointer"
+                rightIcon={<FiArrowRight className="w-4 h-4" />}
+              >
+                Get Started Free
+              </Button>
             </div>
           </section>
         </div>

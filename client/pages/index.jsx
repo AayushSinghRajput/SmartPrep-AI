@@ -21,7 +21,7 @@ import { showToast } from "../components/ui/Toast";
 
 export default function Home() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, openAuthModal } = useAuth();
 
   // State for 30-Day Plan Modal Preview
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -32,7 +32,7 @@ export default function Home() {
     if (user) {
       router.push("/dashboard");
     } else {
-      router.push("/signup");
+      openAuthModal("signup");
     }
   };
 
@@ -102,7 +102,7 @@ export default function Home() {
         <CommunityPreview />
 
         {/* 3.9 Honest Pre-Launch Pricing */}
-        <PricingSection />
+        <PricingSection onGetStarted={handleGetStarted} />
 
         {/* 3.10 Accessible FAQ Accordion */}
         <FaqSection />

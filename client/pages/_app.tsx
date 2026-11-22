@@ -9,6 +9,7 @@ import "../styles/globals.css"; // Global Tailwind / CSS styles
 import originalToast, { Toaster, ToastBar } from "react-hot-toast"; // Toast notification library
 import { GoogleOAuthProvider } from "@react-oauth/google"; // "Continue with Google" support
 import PublicSmoothScroll from "@/components/animations/SmoothScroll";
+import AuthModal from "@/components/auth/AuthModal";
 
 /**
  * AppLayout Component
@@ -47,6 +48,9 @@ function AppLayout({ Component, pageProps }: AppProps) {
 
       {/* Render Footer only on allowed public routes */}
       {showFooter && <Footer />}
+
+      {/* Global Auth Modal Popup */}
+      <AuthModal />
     </div>
   );
 }

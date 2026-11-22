@@ -16,6 +16,11 @@ const AuthContext = createContext({
   loginWithGoogle: async () => {}, // "Continue with Google" function
   register: async () => {}, // registration function
   logout: async () => {}, // logout function
+  authModalOpen: false,
+  authModalMode: "signin", // "signin" | "signup"
+  openAuthModal: (mode = "signin") => {},
+  closeAuthModal: () => {},
+  setAuthModalMode: (mode = "signin") => {},
 });
 
 // Custom hook to access AuthContext easily
@@ -27,9 +32,20 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState("signin");
   const router = useRouter();
   const revalidateSeqRef = useRef(0);
   const loginReqSeqRef = useRef(0);
+
+  const openAuthModal = (mode = "signin") => {
+    setAuthModalMode(mode === "signup" ? "signup" : "signin");
+    setAuthModalOpen(true);
+  };
+
+  const closeAuthModal = () => {
+    setAuthModalOpen(false);
+  };
 
   // On mount, restore cached user from sessionStorage immediately (0ms) and revalidate with server
   useEffect(() => {
@@ -107,6 +123,7 @@ export const AuthProvider = ({ children }) => {
           sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data.user));
         } catch (e) {}
         setLoading(false);
+        setAuthModalOpen(false);
         router.push("/dashboard");
         return { success: true };
       }
@@ -135,6 +152,7 @@ export const AuthProvider = ({ children }) => {
           sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data.user));
         } catch (e) {}
         setLoading(false);
+        setAuthModalOpen(false);
         router.push("/dashboard");
         return { success: true };
       }
@@ -163,6 +181,7 @@ export const AuthProvider = ({ children }) => {
           sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data.user));
         } catch (e) {}
         setLoading(false);
+        setAuthModalOpen(false);
         router.push("/dashboard");
         return { success: true };
       }
@@ -199,7 +218,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, register, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        loginWithGoogle,
+        register,
+        logout,
+        authModalOpen,
+        authModalMode,
+        openAuthModal,
+        closeAuthModal,
+        setAuthModalMode,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
