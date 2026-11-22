@@ -1,0 +1,52 @@
+name: Branch Rules Enforcement
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+    branches:
+      - main
+      - dev
+
+jobs:
+  enforce-branch-rules:
+    name: Validate Branch Merge Rules
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect PR Branches
+        run: |
+          echo "=========================================================="
+          echo "Checking Repository Branching Rules:"
+          echo "Target Base Branch: ${{ github.base_ref }}"
+          echo "Source Head Branch: ${{ github.head_ref }}"
+          echo "=========================================================="
+
+      - name: Enforce Main Branch Merge Policy
+        if: github.base_ref == 'main'
+        run: |
+          if [ "${{ github.head_ref }}" != "dev" ]; then
+            echo "::error title=Branch Policy Violation::❌ Direct pull requests to 'main' from '${{ github.head_ref }}' are forbidden!"
+            echo "----------------------------------------------------------------------"
+            echo "BRANCHING POLICY ERROR:"
+            echo "All feature, bugfix, and chore branches MUST first be merged into 'dev'."
+            echo "Direct merges into 'main' are strictly reserved for the 'dev' branch."
+            echo ""
+            echo "Current target branch: ${{ github.base_ref }}"
+            echo "Current source branch: ${{ github.head_ref }}"
+            echo ""
+            echo "Action Required:"
+            echo "1. Change the base/target branch of this Pull Request to 'dev'."
+            echo "2. Once changes are merged and validated on 'dev', create a PR from 'dev' to 'main'."
+            echo "----------------------------------------------------------------------"
+            exit 1
+          else
+            echo "::notice::✅ Valid: Production release PR from 'dev' to 'main'."
+          fi
+
+      - name: Validate Dev Branch Merge Policy
+        if: github.base_ref == 'dev'
+        run: |
+          if [ "${{ github.head_ref }}" == "main" ]; then
+            echo "::warning title=Reverse Merge Detected::Pull request from 'main' into 'dev'. If syncing latest production changes, consider rebasing or merging main locally."
+          else
+            echo "::notice::✅ Valid: PR into 'dev' from '${{ github.head_ref }}'."
+          fi

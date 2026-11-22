@@ -3,6 +3,7 @@
 <div align="center">
 
 ![SmartPrep Banner](https://img.shields.io/badge/SmartPrep-AI%20Learning%20Platform-blue?style=for-the-badge)
+[![CI/CD Pipeline](https://github.com/AayushSinghRajput/SmartPrep-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/AayushSinghRajput/SmartPrep-AI/actions/workflows/ci.yml)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5.3-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
@@ -10,7 +11,7 @@
 
 **An intelligent study companion that transforms textbooks into personalized learning experiences**
 
-[Features](#-features) • [Architecture](#-architecture) • [Installation](#-installation) • [Usage](#-usage) • [Tech Stack](#-tech-stack)
+[Features](#-features) • [Architecture](#-architecture) • [CI/CD Pipeline](CI_CD.md) • [Installation](#-installation) • [Usage](#-usage) • [Tech Stack](#-tech-stack)
 
 </div>
 
