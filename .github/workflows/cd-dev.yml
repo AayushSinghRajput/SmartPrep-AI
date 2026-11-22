@@ -1,0 +1,47 @@
+name: Continuous Deployment (Dev / Staging)
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+concurrency:
+  group: cd-dev-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy-dev:
+    name: Deploy to Dev / Staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Trigger Render Dev Deployment (Backend)
+        run: |
+          if [ -n "${{ secrets.RENDER_DEV_DEPLOY_HOOK_URL }}" ]; then
+            echo "Triggering Render Dev deploy hook..."
+            curl -s -f -X POST "${{ secrets.RENDER_DEV_DEPLOY_HOOK_URL }}"
+            echo "Render Dev deploy hook triggered successfully."
+          else
+            echo "RENDER_DEV_DEPLOY_HOOK_URL secret not configured. Skipping Render Dev deploy webhook."
+          fi
+
+      - name: Trigger Vercel Dev Deployment (Frontend)
+        run: |
+          if [ -n "${{ secrets.VERCEL_DEV_DEPLOY_HOOK_URL }}" ]; then
+            echo "Triggering Vercel Dev deploy hook..."
+            curl -s -f -X POST "${{ secrets.VERCEL_DEV_DEPLOY_HOOK_URL }}"
+            echo "Vercel Dev deploy hook triggered successfully."
+          else
+            echo "VERCEL_DEV_DEPLOY_HOOK_URL secret not configured. Vercel automatically deploys preview/branch deployments if GitHub integration is active."
+          fi
+
+      - name: Dev Deployment Summary
+        run: |
+          echo "### 🚀 Development Deployment Triggered" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** \`dev\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Actor:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY

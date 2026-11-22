@@ -1,0 +1,47 @@
+name: Continuous Deployment (Production)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: cd-prod-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Trigger Render Production Deployment (Backend)
+        run: |
+          if [ -n "${{ secrets.RENDER_PROD_DEPLOY_HOOK_URL }}" ]; then
+            echo "Triggering Render Production deploy hook..."
+            curl -s -f -X POST "${{ secrets.RENDER_PROD_DEPLOY_HOOK_URL }}"
+            echo "Render Production deploy hook triggered successfully."
+          else
+            echo "RENDER_PROD_DEPLOY_HOOK_URL secret not configured. (Render can also automatically deploy on push to main if auto-deploy is enabled)."
+          fi
+
+      - name: Trigger Vercel Production Deployment (Frontend)
+        run: |
+          if [ -n "${{ secrets.VERCEL_PROD_DEPLOY_HOOK_URL }}" ]; then
+            echo "Triggering Vercel Production deploy hook..."
+            curl -s -f -X POST "${{ secrets.VERCEL_PROD_DEPLOY_HOOK_URL }}"
+            echo "Vercel Production deploy hook triggered successfully."
+          else
+            echo "VERCEL_PROD_DEPLOY_HOOK_URL secret not configured. (Vercel automatically deploys production on push to main if connected to this repository)."
+          fi
+
+      - name: Production Deployment Summary
+        run: |
+          echo "### 🌟 Production Deployment Triggered" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** \`main\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Actor:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp:** $(date -u)" >> $GITHUB_STEP_SUMMARY

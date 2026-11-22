@@ -51,7 +51,8 @@ The CI/CD pipeline consists of three modular workflows located in `.github/workf
 | :--- | :--- | :--- |
 | **`branch-rules.yml`** | PR opened / edited / synced (`main`, `dev`) | Enforces branch hierarchy policy. Blocks any PR targeting `main` unless its head branch is `dev`. |
 | **`ci.yml`** | PR & Push (`dev`, `main`) | Automated testing matrix: Node.js 20 typecheck & Next.js build, Python 3.11 lint & pytest, and Docker compose validation. |
-| **`cd.yml`** | Push (`dev`, `main`) or Manual dispatch | Triggers deployment hooks for Staging (`dev`) and Production (`main`) on Render and Vercel. |
+| **`cd-dev.yml`** | Push to `dev` or Manual dispatch | Triggers deployment hooks for Development / Staging environment on Render and Vercel. |
+| **`cd-prod.yml`** | Push to `main` or Manual dispatch | Triggers deployment hooks for Production environment on Render and Vercel. |
 
 ---
 
