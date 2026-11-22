@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Head from "next/head";
 import { FiPlus } from "react-icons/fi";
-import { toast } from "react-hot-toast";
+import { toast } from "../../utils/toast";
 
 import ProtectedRoute from "../../components/ui/ProtectedRoute";
 import Sidebar from "../../components/layout/Sidebar";

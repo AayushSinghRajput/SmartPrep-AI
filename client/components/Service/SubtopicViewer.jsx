@@ -37,6 +37,7 @@ export default function SubtopicViewer({
   const [fontSize, setFontSize] = useState("base"); // "sm" | "base" | "lg" | "xl"
   const [isMastered, setIsMastered] = useState(Boolean(subtopic?.completed));
   const utteranceRef = useRef(null);
+  const charIndexRef = useRef(0);
 
   useEffect(() => {
     setValidImages(Array.isArray(subtopic?.images) ? subtopic.images : []);
@@ -47,6 +48,8 @@ export default function SubtopicViewer({
     if (typeof window !== "undefined" && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
+    charIndexRef.current = 0;
+    utteranceRef.current = null;
     setIsSpeaking(false);
   }, [subtopic]);
 
@@ -67,60 +70,81 @@ export default function SubtopicViewer({
       }))
     : [];
 
+  // Speech synthesis cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   const handleImageError = (index) => {
     setValidImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleVoiceToggle = (rate = speechRate) => {
+  const speakFromIndex = (startIndex = 0, rate = speechRate) => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
     const synth = window.speechSynthesis;
+    synth.cancel();
 
-    if (synth.speaking && isSpeaking) {
-      synth.pause();
+    if (typeof subtopic?.content !== "string") return;
+    const fullText = cleanTextForSpeech(subtopic.content);
+    const textToSpeak = fullText.slice(startIndex).trim();
+    if (!textToSpeak) {
+      charIndexRef.current = 0;
       setIsSpeaking(false);
       return;
     }
 
-    if (synth.paused && utteranceRef.current) {
-      synth.resume();
+    setTimeout(() => {
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.rate = rate;
+      utterance.pitch = 1;
+
+      utterance.onboundary = (event) => {
+        if (typeof event.charIndex === "number") {
+          charIndexRef.current = startIndex + event.charIndex;
+        }
+      };
+
+      utterance.onend = () => {
+        utteranceRef.current = null;
+        charIndexRef.current = 0;
+        setIsSpeaking(false);
+      };
+
+      utterance.onerror = (e) => {
+        if (e.error !== "interrupted" && e.error !== "canceled") {
+          console.warn("Speech synthesis error:", e);
+        }
+        utteranceRef.current = null;
+        setIsSpeaking(false);
+      };
+
+      utteranceRef.current = utterance;
+      synth.speak(utterance);
       setIsSpeaking(true);
+    }, 20);
+  };
+
+  const handleVoiceToggle = () => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    const synth = window.speechSynthesis;
+
+    if (isSpeaking) {
+      synth.cancel();
+      setIsSpeaking(false);
       return;
     }
 
-    if (synth.paused && !utteranceRef.current) {
-      synth.cancel();
-    }
-
-    if (typeof subtopic?.content === "string") {
-      const text = cleanTextForSpeech(subtopic.content);
-      synth.cancel();
-
-      setTimeout(() => {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = rate;
-        utterance.pitch = 1;
-
-        utterance.onend = () => {
-          utteranceRef.current = null;
-          setIsSpeaking(false);
-        };
-
-        utterance.onerror = () => {
-          utteranceRef.current = null;
-          setIsSpeaking(false);
-        };
-
-        utteranceRef.current = utterance;
-        synth.speak(utterance);
-        setIsSpeaking(true);
-      }, 0);
-    }
+    speakFromIndex(charIndexRef.current, speechRate);
   };
 
-  const handleSpeechRateChange = (rate) => {
-    setSpeechRate(rate);
+  const handleSpeechRateChange = (newRate) => {
+    setSpeechRate(newRate);
     if (isSpeaking) {
-      handleVoiceToggle(rate);
+      speakFromIndex(charIndexRef.current, newRate);
     }
   };
 
@@ -175,12 +199,14 @@ export default function SubtopicViewer({
               {[0.8, 1, 1.25, 1.5].map((rate) => (
                 <button
                   key={rate}
+                  type="button"
                   onClick={() => handleSpeechRateChange(rate)}
-                  className={`px-1.5 py-0.5 text-[11px] font-semibold rounded ${
+                  className={`px-1.5 py-0.5 text-[11px] font-semibold rounded transition-colors ${
                     speechRate === rate
-                      ? "bg-indigo-600 text-white"
+                      ? "bg-indigo-600 text-white shadow-xs"
                       : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                   }`}
+                  title={`Play at ${rate}x speed`}
                 >
                   {rate}x
                 </button>
@@ -191,7 +217,8 @@ export default function SubtopicViewer({
           {/* TTS Toggle */}
           {typeof subtopic?.content === "string" && mode !== "mcq" && (
             <button
-              onClick={() => handleVoiceToggle(speechRate)}
+              type="button"
+              onClick={handleVoiceToggle}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-xs transition-all ${
                 isSpeaking
                   ? "bg-indigo-600 text-white animate-pulse"
@@ -202,7 +229,7 @@ export default function SubtopicViewer({
               {isSpeaking ? (
                 <>
                   <FiPause className="w-3.5 h-3.5" />
-                  <span>Listening</span>
+                  <span>Pause</span>
                 </>
               ) : (
                 <>

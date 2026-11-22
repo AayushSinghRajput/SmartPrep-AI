@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 export const showToast = {
   success: (message: string) => {
     return toast.success(message, {
+      duration: 3500,
       style: {
         border: "1px solid #a7f3d0",
         background: "#ffffff",
@@ -21,6 +22,7 @@ export const showToast = {
 
   error: (message: string) => {
     return toast.error(message, {
+      duration: 4500,
       style: {
         border: "1px solid #fecaca",
         background: "#ffffff",
@@ -35,6 +37,7 @@ export const showToast = {
 
   info: (message: string) => {
     return toast(message, {
+      duration: 3500,
       icon: "ℹ️",
       style: {
         border: "1px solid #bfdbfe",

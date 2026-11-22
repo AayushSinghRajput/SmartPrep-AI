@@ -16,10 +16,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    # LLM providers
-    LLM_PROVIDER: str = "gemini"
+    # LLM providers (auto | deepseek | groq | gemini | azure)
+    LLM_PROVIDER: str = "auto"
     GOOGLE_API_KEY: str | None = None
+    DEEPSEEK_API_KEY: str | None = None
+    DEEPSEEK_BASE_URL: str = "https://api.deepseek.com"
+    DEEPSEEK_MODEL: str = "deepseek-chat"
     GROQ_API_KEY: str | None = None
+    GROQ_MODEL: str = "qwen/qwen3.6-27b"
     AZURE_OPENAI_API_KEY: str | None = None
     AZURE_OPENAI_ENDPOINT: str | None = None
     AZURE_OPENAI_DEPLOYMENT: str | None = None

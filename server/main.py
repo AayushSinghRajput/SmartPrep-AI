@@ -36,6 +36,12 @@ from services.scheduler_service.scheduler_service import start_scheduler
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     start_scheduler()
+    try:
+        from db.config import db
+        from services.predefined_service.predefined_service import PredefinedPlanService
+        await PredefinedPlanService.seed_predefined_plans(db)
+    except Exception as e:
+        print(f"Notice: Predefined plans seeder encountered an issue: {e}")
     yield
 
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { FiLoader, FiUploadCloud, FiFileText, FiCheck, FiCalendar, FiBook } from "react-icons/fi";
 import { FaBookOpen } from "react-icons/fa";
 import { motion } from "framer-motion";
-import toast, { Toaster } from "react-hot-toast";
+import { toast } from "../../utils/toast";
 import { uploadPdfAndGenerateSchedule } from "../../services/pdf";
 
 export default function UploadUI({ onUploadSuccess }) {
@@ -74,8 +74,6 @@ export default function UploadUI({ onUploadSuccess }) {
 
   return (
     <div className="relative w-full max-w-lg mx-auto">
-      <Toaster position="top-right" reverseOrder={false} />
-
       {/* Loading Overlay */}
       {loading && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm rounded-2xl border border-indigo-100 p-6 text-center">

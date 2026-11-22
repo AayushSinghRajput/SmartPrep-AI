@@ -10,9 +10,10 @@ import { useModalKeyboardFocus } from "./hooks/useModalKeyboardFocus";
 import { usePlanScheduleFilter } from "./hooks/usePlanScheduleFilter";
 import { toast } from "../../utils/toast";
 
-export default function StudyPlanModal({ plan, onClose }) {
-  const schedule = plan?.schedule || [];
-  const modalRef = useModalKeyboardFocus(Boolean(plan), onClose);
+export default function StudyPlanModal({ plan, selectedPlan, onClose, isOpen }) {
+  const activePlan = plan || selectedPlan;
+  const schedule = activePlan?.schedule || [];
+  const modalRef = useModalKeyboardFocus(Boolean(activePlan), onClose);
 
   const [searchQuery, setSearchQuery] = useState("");
   const { allLessons, filteredSchedule } = usePlanScheduleFilter(schedule, searchQuery);
@@ -22,7 +23,7 @@ export default function StudyPlanModal({ plan, onClose }) {
   const [completedSubtopics, setCompletedSubtopics] = useState(() => new Set());
   const [copied, setCopied] = useState(false);
 
-  const planIdentity = plan?.id || plan?._id || plan?.subject || plan?.pdf_hash;
+  const planIdentity = activePlan?.id || activePlan?._id || activePlan?.subject || activePlan?.pdf_hash;
   const prevPlanIdentityRef = useRef(planIdentity);
 
   // Reset plan-scoped state when the plan identity changes
@@ -114,7 +115,7 @@ export default function StudyPlanModal({ plan, onClose }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (!plan) return null;
+  if ((isOpen !== undefined && !isOpen) || !activePlan) return null;
 
   const totalLessonsCount = allLessons.length;
   const completedCount = completedSubtopics.size;
@@ -123,11 +124,13 @@ export default function StudyPlanModal({ plan, onClose }) {
 
   return (
     <div
+      data-lenis-prevent="true"
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md transition-opacity duration-300"
       onClick={onClose}
     >
       <motion.div
         ref={modalRef}
+        data-lenis-prevent="true"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -140,14 +143,14 @@ export default function StudyPlanModal({ plan, onClose }) {
         className="bg-white w-full max-w-6xl h-[92vh] rounded-3xl overflow-hidden shadow-2xl flex flex-col border border-slate-200/80 outline-none"
       >
         <ModalHeader
-          subject={plan.subject}
+          subject={activePlan.subject}
           completedCount={completedCount}
           totalLessonsCount={totalLessonsCount}
           progressPercent={progressPercent}
           onClose={onClose}
         />
 
-        <div className="flex flex-1 overflow-hidden bg-slate-50">
+        <div className="flex flex-1 overflow-hidden bg-slate-50 min-h-0 h-full">
           <PlanSidebar
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -162,13 +165,17 @@ export default function StudyPlanModal({ plan, onClose }) {
             completedSubtopics={completedSubtopics}
           />
 
-          <main className="flex-1 bg-white overflow-y-auto flex flex-col custom-scrollbar selection:bg-indigo-100 selection:text-indigo-900">
+          <main
+            data-lenis-prevent="true"
+            onWheel={(e) => e.stopPropagation()}
+            className="flex-1 bg-white overflow-y-auto min-h-0 flex flex-col custom-scrollbar selection:bg-indigo-100 selection:text-indigo-900 overscroll-contain"
+          >
             <AnimatePresence mode="wait">
               {selectedSubtopic ? (
                 <LessonViewer
                   key={selectedSubtopic.id || selectedSubtopic.title}
                   selectedSubtopic={selectedSubtopic}
-                  subject={plan.subject}
+                  subject={activePlan.subject}
                   activeDay={currentLessonDay}
                   formattedDescription={formattedDescription}
                   completedSubtopics={completedSubtopics}
@@ -182,7 +189,7 @@ export default function StudyPlanModal({ plan, onClose }) {
               ) : (
                 <PlanEmptyState
                   schedule={schedule}
-                  subject={plan.subject}
+                  subject={activePlan.subject}
                   onStart={() => {
                     if (allLessons[0]) goToLesson(allLessons[0]);
                   }}

@@ -9,6 +9,29 @@ from schemas.predefined_plan import (
 
 class PredefinedPlanService:
     """Service class containing business logic - equivalent to Express controllers"""
+
+    @staticmethod
+    async def seed_predefined_plans(db):
+        """
+        Seeds all default curricula (Physics, Chemistry, Mathematics, Biology, English)
+        into the MongoDB predefined_plans collection if not already present.
+        """
+        from services.predefined_service.default_plans import generate_subject_plan
+
+        subjects = ["Physics", "Chemistry", "Mathematics", "Biology", "English"]
+        for subj in subjects:
+            existing = await db.predefined_plans.find_one({
+                "subject": {"$regex": f"^{re.escape(subj)}$", "$options": "i"}
+            })
+            if not existing:
+                try:
+                    plan_data = generate_subject_plan(subj)
+                    plan_data["created_at"] = datetime.utcnow()
+                    plan_data["updated_at"] = datetime.utcnow()
+                    await db.predefined_plans.insert_one(plan_data)
+                    print(f"✅ Auto-seeded {subj} 30-day curriculum into DB")
+                except Exception as e:
+                    print(f"⚠️ Notice: could not auto-seed {subj}: {e}")
     
     @staticmethod
     async def create_predefined_plan(plan_data: dict, db) -> CreatePlanResponse:

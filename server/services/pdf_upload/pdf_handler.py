@@ -10,7 +10,10 @@ from db.cloudinary import (
     delete_file_from_cloudinary,
 )
 from services.pdf_upload.pdf_loader import extract_toc
-from services.pdf_upload.study_scheduler import generate_study_schedule_from_toc
+from services.pdf_upload.study_scheduler import (
+    generate_study_schedule_from_toc,
+    flatten_toc,
+)
 from services.pdf_upload.fallback_scheduler import generate_schedule_from_pages
 from services.pdf_upload_ocr.ocr_service import is_scanned_pdf, make_searchable_pdf
 
@@ -25,6 +28,20 @@ async def process_pdf_upload(pdf_bytes: bytes, book_name: str, user_id: str):
     # 1. Check if this user already uploaded this file
     user_pdf = await db.pdfs.find_one({"original_hash": original_hash, "user_id": user_id})
     if user_pdf:
+        # Check if the cached TOC is deficient (<= 2 topics on a document that has more content)
+        cached_toc = user_pdf.get("toc")
+        flat = flatten_toc(cached_toc) if cached_toc else []
+        if len(flat) <= 2:
+            print("🔄 Refreshing deficient cached TOC with full multi-page extractor...")
+            new_toc = extract_toc(pdf_bytes)
+            if new_toc and len(flatten_toc(new_toc)) > len(flat):
+                user_pdf["toc"] = new_toc
+                await db.pdfs.update_one(
+                    {"_id": user_pdf["_id"]},
+                    {"$set": {"toc": new_toc}}
+                )
+                await db.schedules.delete_many({"pdf_hash": user_pdf["pdf_hash"]})
+
         return {
             "pdf_hash": user_pdf["pdf_hash"],
             "toc_data": user_pdf.get("toc"),
@@ -117,11 +134,18 @@ async def resolve_or_create_schedule(pdf_hash: str, days: int, toc_data: dict, p
     """
     schedule_doc = await db.schedules.find_one({"pdf_hash": pdf_hash, "days": days})
     if schedule_doc:
-        return {
-            "schedule": schedule_doc["schedule"],
-            "is_fallback": schedule_doc.get("is_fallback", False),
-            "cached": True,
-        }
+        cached_sched = schedule_doc.get("schedule", [])
+        # Check if cached schedule is corrupted (e.g. missing days, fewer days than requested, or non-consecutive days)
+        is_corrupted = (
+            len(cached_sched) != days or
+            any(d.get("day") != idx + 1 for idx, d in enumerate(cached_sched))
+        )
+        if not is_corrupted and cached_sched:
+            return {
+                "schedule": cached_sched,
+                "is_fallback": schedule_doc.get("is_fallback", False),
+                "cached": True,
+            }
 
     is_fallback = False
     try:

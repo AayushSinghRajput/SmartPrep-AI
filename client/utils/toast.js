@@ -38,7 +38,8 @@ export const toast = (message, options = {}) => {
 // Success Toast
 toast.success = (message, options = {}) => {
   return originalToast.success(message, {
-    duration: 3500,
+    ...options,
+    duration: options.duration ?? 3500,
     style: {
       ...baseStyle,
       border: "1px solid rgba(16, 185, 129, 0.3)",
@@ -49,14 +50,14 @@ toast.success = (message, options = {}) => {
       primary: "#10b981",
       secondary: "#ffffff",
     },
-    ...options,
   });
 };
 
 // Error Toast
 toast.error = (message, options = {}) => {
   return originalToast.error(message, {
-    duration: 4500,
+    ...options,
+    duration: options.duration ?? 4500,
     style: {
       ...baseStyle,
       border: "1px solid rgba(244, 63, 94, 0.3)",
@@ -67,14 +68,14 @@ toast.error = (message, options = {}) => {
       primary: "#f43f5e",
       secondary: "#ffffff",
     },
-    ...options,
   });
 };
 
 // Info Toast
 toast.info = (message, options = {}) => {
   return originalToast(message, {
-    duration: 3500,
+    ...options,
+    duration: options.duration ?? 3500,
     icon: <FiInfo className="w-5 h-5 text-indigo-600 shrink-0" />,
     style: {
       ...baseStyle,
@@ -82,14 +83,14 @@ toast.info = (message, options = {}) => {
       background: "#ffffff",
       ...options.style,
     },
-    ...options,
   });
 };
 
 // Warning Toast
 toast.warning = (message, options = {}) => {
   return originalToast(message, {
-    duration: 4000,
+    ...options,
+    duration: options.duration ?? 4000,
     icon: <FiAlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />,
     style: {
       ...baseStyle,
@@ -97,19 +98,18 @@ toast.warning = (message, options = {}) => {
       background: "#ffffff",
       ...options.style,
     },
-    ...options,
   });
 };
 
 // Loading Toast
 toast.loading = (message, options = {}) => {
   return originalToast.loading(message, {
+    ...options,
     style: {
       ...baseStyle,
       border: "1px solid rgba(226, 232, 240, 0.8)",
       ...options.style,
     },
-    ...options,
   });
 };
 
@@ -119,11 +119,19 @@ toast.promise = (promise, messages, options = {}) => {
     promise,
     messages,
     {
+      ...options,
+      success: {
+        duration: 3500,
+        ...options.success,
+      },
+      error: {
+        duration: 4500,
+        ...options.error,
+      },
       style: {
         ...baseStyle,
         ...options.style,
       },
-      ...options,
     }
   );
 };

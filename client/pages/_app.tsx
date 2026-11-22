@@ -6,7 +6,7 @@ import Footer from "../components/layout/Footer"; // Custom Footer component
 import { AuthProvider } from "@/context/AuthContext"; // Context provider for authentication
 import { ThemeProvider } from "@/context/ThemeContext"; // Theme provider for Light, Dark, and Sepia
 import "../styles/globals.css"; // Global Tailwind / CSS styles
-import { Toaster } from "react-hot-toast"; // Toast notification library
+import originalToast, { Toaster, ToastBar } from "react-hot-toast"; // Toast notification library
 import { GoogleOAuthProvider } from "@react-oauth/google"; // "Continue with Google" support
 import PublicSmoothScroll from "@/components/animations/SmoothScroll";
 
@@ -83,8 +83,24 @@ export default function MyApp(props: AppProps) {
               fontSize: "13.5px",
               fontWeight: 500,
             },
+            success: {
+              duration: 3500,
+            },
+            error: {
+              duration: 4500,
+            },
           }}
-        />
+        >
+          {(t) => (
+            <div
+              onClick={() => originalToast.dismiss(t.id)}
+              style={{ cursor: "pointer" }}
+              title="Click to dismiss"
+            >
+              <ToastBar toast={t} />
+            </div>
+          )}
+        </Toaster>
         </AuthProvider>
       </ThemeProvider>
     </GoogleOAuthProvider>

@@ -23,7 +23,12 @@ async def generate_topic_content(
 
     is_fallback = schedule_doc.get("is_fallback", False)
 
-    day = schedule_doc["schedule"][day_number - 1]
+    day = next((d for d in schedule_doc.get("schedule", []) if d.get("day") == day_number), None)
+    if not day and 0 <= day_number - 1 < len(schedule_doc.get("schedule", [])):
+        day = schedule_doc["schedule"][day_number - 1]
+    if not day:
+        raise ValueError(f"Day {day_number} not found in schedule")
+
     topic = day["topics"][topic_index]
     subtopic = topic["subtopics"][subtopic_index]
 

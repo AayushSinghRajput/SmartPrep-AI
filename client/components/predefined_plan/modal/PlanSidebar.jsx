@@ -18,9 +18,9 @@ export default function PlanSidebar({
   completedSubtopics,
 }) {
   return (
-    <aside className="w-full md:w-80 lg:w-96 border-r border-slate-200 bg-white flex flex-col shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+    <aside className="w-full md:w-80 lg:w-96 border-r border-slate-200 bg-white flex flex-col shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] h-full min-h-0">
       {/* Search / Filter Input */}
-      <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+      <div className="p-4 border-b border-slate-100 bg-slate-50/50 shrink-0">
         <div className="relative">
           <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
           <input
@@ -42,7 +42,12 @@ export default function PlanSidebar({
       </div>
 
       {/* Days Accordion List */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-2.5 custom-scrollbar">
+      <div
+        data-lenis-prevent="true"
+        onWheel={(e) => e.stopPropagation()}
+        className="flex-1 overflow-y-auto min-h-0 p-4 space-y-2.5 custom-scrollbar overscroll-contain"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
         {filteredSchedule && filteredSchedule.length > 0 ? (
           filteredSchedule.map((dayData) => {
             const isOpen = expandedDay === dayData.day;

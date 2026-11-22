@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
-import { Toaster } from "react-hot-toast";
 import { useMockTest } from "../../hooks/useMockTest";
 import { useExamTimer } from "../../hooks/useExamTimer";
 import { formatTime } from "../../utils/formatTime";
@@ -162,8 +161,6 @@ export default function MockTest() {
   // ------------------------- MOCK TEST UI -------------------------
   return (
     <div className="bg-slate-50 min-h-full py-8 px-4 sm:px-6">
-      <Toaster position="top-right" />
-
       <div className="max-w-4xl mx-auto">
         {!examData ? (
           <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-10 shadow-sm">

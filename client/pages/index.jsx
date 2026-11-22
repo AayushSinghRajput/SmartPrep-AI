@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import HeroSection from "../components/home/HeroSection";
 import ProofStrip from "../components/home/ProofStrip";
@@ -110,11 +111,16 @@ export default function Home() {
         <FinalCtaSection onGetStarted={handleGetStarted} />
 
         {/* 30-Day Plan Detail Modal */}
-        <StudyPlanModal
-          isOpen={isPlanModalOpen}
-          onClose={() => setIsPlanModalOpen(false)}
-          selectedPlan={selectedPlan}
-        />
+        <AnimatePresence>
+          {isPlanModalOpen && selectedPlan && (
+            <StudyPlanModal
+              isOpen={isPlanModalOpen}
+              plan={selectedPlan}
+              selectedPlan={selectedPlan}
+              onClose={() => setIsPlanModalOpen(false)}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </>
   );

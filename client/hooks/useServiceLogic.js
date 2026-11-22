@@ -82,8 +82,10 @@ export function useServiceLogic(planData, mode = "study") {
     };
   }, [planData, planIdentity]);
 
-  const getSubtopic = (dayNum, topicIdx, subtopicIdx) =>
-    localSchedule?.[dayNum - 1]?.topics?.[topicIdx]?.subtopics?.[subtopicIdx] || null;
+  const getSubtopic = (dayNum, topicIdx, subtopicIdx) => {
+    const dayData = localSchedule.find((d) => d.day === dayNum) || localSchedule?.[dayNum - 1];
+    return dayData?.topics?.[topicIdx]?.subtopics?.[subtopicIdx] || null;
+  };
 
   const isContentEmpty = (subtopic) =>
     !subtopic?.content || (typeof subtopic.content === "string" && subtopic.content.trim() === "");
@@ -124,11 +126,17 @@ export function useServiceLogic(planData, mode = "study") {
         subtopicIdx,
       };
 
-      const updatedSchedule = [...localSchedule];
-      if (updatedSchedule[dayNum - 1]?.topics?.[topicIdx]?.subtopics?.[subtopicIdx]) {
-        updatedSchedule[dayNum - 1].topics[topicIdx].subtopics[subtopicIdx] = updatedSubtopic;
-        setLocalSchedule(updatedSchedule);
-      }
+      const updatedSchedule = localSchedule.map((d) => {
+        if (d.day === dayNum && d.topics?.[topicIdx]?.subtopics?.[subtopicIdx]) {
+          const newTopics = [...d.topics];
+          const newSubs = [...newTopics[topicIdx].subtopics];
+          newSubs[subtopicIdx] = updatedSubtopic;
+          newTopics[topicIdx] = { ...newTopics[topicIdx], subtopics: newSubs };
+          return { ...d, topics: newTopics };
+        }
+        return d;
+      });
+      setLocalSchedule(updatedSchedule);
       setSelectedSubtopic(updatedSubtopic);
     } catch {
       if (requestId === activeRequestIdRef.current) toast.error("Failed to load content");

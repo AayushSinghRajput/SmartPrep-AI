@@ -7,6 +7,10 @@ export function useModalKeyboardFocus(isOpen, onClose) {
   useEffect(() => {
     if (!isOpen) return;
 
+    // Lock body scroll while modal is active
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     // Save previous active element to restore focus on close
     previousActiveElement.current = document.activeElement;
 
@@ -62,6 +66,7 @@ export function useModalKeyboardFocus(isOpen, onClose) {
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      document.body.style.overflow = originalOverflow;
       window.removeEventListener("keydown", handleKeyDown);
       if (previousActiveElement.current && previousActiveElement.current.focus) {
         previousActiveElement.current.focus();
