@@ -18,7 +18,8 @@ from prompts.chat.context import build_context_prompt
 # -------------------------
 # LLM
 # -------------------------
-llm = get_llm(temperature=0.3)
+def get_chat_llm():
+    return get_llm(temperature=0.3)
 
 
 # -------------------------
@@ -126,7 +127,8 @@ async def chat_node(state: ChatState) -> ChatState:
     await save_message(user_id, pdf_hash, "user", user_message.content)
 
     # 5️⃣ Call LLM
-    response = llm.invoke(messages)
+    chat_llm = get_chat_llm()
+    response = chat_llm.invoke(messages)
 
     # 6️⃣ Save assistant message
     await save_message(user_id, pdf_hash, "assistant", response.content)

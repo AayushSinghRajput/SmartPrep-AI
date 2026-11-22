@@ -65,9 +65,10 @@ def get_llm(
     # -------------------------------
     elif selected_provider == "gemini":
         print("Using Google Gemini LLM")
+        api_key = settings.GOOGLE_API_KEY or "dummy_key_for_environment"
         llm = ChatGoogleGenerativeAI(
             model="gemini-3.8-flash",
-            google_api_key=settings.GOOGLE_API_KEY,
+            google_api_key=api_key,
             temperature=temperature,
         )
 

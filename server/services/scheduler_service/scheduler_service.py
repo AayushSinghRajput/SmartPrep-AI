@@ -25,11 +25,12 @@ async def scheduled_scrape():
 # Start scheduler: runs every midnight
 # -----------------------------
 def start_scheduler():
-    scheduler.add_job(
-        lambda: asyncio.create_task(scheduled_scrape()),  # run async function safely
-        trigger="cron",
-        hour=0,
-        minute=0
-    )
-    scheduler.start()
-    print("Scheduler started ⏰, scraping every midnight")
+    if not scheduler.running:
+        scheduler.add_job(
+            lambda: asyncio.create_task(scheduled_scrape()),  # run async function safely
+            trigger="cron",
+            hour=0,
+            minute=0
+        )
+        scheduler.start()
+        print("Scheduler started ⏰, scraping every midnight")
