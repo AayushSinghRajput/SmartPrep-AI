@@ -1,5 +1,13 @@
 from fastapi import APIRouter, Depends, Body, Response
-from services.auth.auth_service import register_user, login_user, google_login_user, logout_user
+from services.auth.auth_service import (
+    register_user,
+    login_user,
+    google_login_user,
+    github_login_user,
+    send_email_otp,
+    verify_email_otp,
+    logout_user,
+)
 from middleware.auth_middleware import get_current_user
 
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
@@ -30,6 +38,30 @@ async def google_login(
     credential: str = Body(..., embed=True)
 ):
     return await google_login_user(response, credential)
+
+
+@router.post("/github", status_code=200)
+async def github_login(
+    response: Response,
+    code: str = Body(..., embed=True)
+):
+    return await github_login_user(response, code)
+
+
+@router.post("/otp/send", status_code=200)
+async def request_otp(
+    email: str = Body(..., embed=True)
+):
+    return await send_email_otp(email)
+
+
+@router.post("/otp/verify", status_code=200)
+async def verify_otp(
+    response: Response,
+    email: str = Body(...),
+    otp: str = Body(...)
+):
+    return await verify_email_otp(response, email, otp)
 
 
 @router.get("/me", status_code=200)

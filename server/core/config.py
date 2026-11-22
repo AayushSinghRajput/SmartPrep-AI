@@ -40,6 +40,15 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     GOOGLE_OAUTH_CLIENT_ID: str | None = None
 
+    # GitHub OAuth
+    GITHUB_CLIENT_ID: str | None = None
+    GITHUB_CLIENT_SECRET: str | None = None
+
+    # Email OTP Service (Resend)
+    RESEND_API_KEY: str | None = None
+    EMAIL_FROM: str = "SmartPrep AI <onboarding@resend.dev>"
+
+
     #Cloudinary
     CLOUDINARY_CLOUD_NAME : str | None = None
     CLOUDINARY_API_KEY : str | None = None

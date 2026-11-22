@@ -46,6 +46,46 @@ export const googleLogin = async (credential) => {
   return response.json();
 };
 
+// Function to log in via "Continue with GitHub"
+// Accepts the authorization code returned by GitHub OAuth
+export const githubLogin = async (code) => {
+  const response = await fetch(`${API_URL}/auth/github`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ code }),
+  });
+  return response.json();
+};
+
+// Function to request a 6-digit Email OTP verification code
+export const sendOtp = async (email) => {
+  const response = await fetch(`${API_URL}/auth/otp/send`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ email }),
+  });
+  return response.json();
+};
+
+// Function to verify 6-digit Email OTP and log in / register
+export const verifyOtp = async (email, otp) => {
+  const response = await fetch(`${API_URL}/auth/otp/verify`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ email, otp }),
+  });
+  return response.json();
+};
+
 // Function to get the currently logged-in user's data with an abort timeout
 export const getCurrentUser = async (timeoutMs = 6000) => {
   const controller = new AbortController();

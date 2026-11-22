@@ -64,3 +64,6 @@ def test_app_routes_registered():
     route_paths = [getattr(route, "path", "") for route in app.routes]
     assert "/" in route_paths
     assert "/health" in route_paths
+    assert "/api/auth/github" in route_paths
+    assert "/api/auth/otp/send" in route_paths
+    assert "/api/auth/otp/verify" in route_paths
