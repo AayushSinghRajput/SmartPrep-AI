@@ -61,9 +61,16 @@ def test_health_check_endpoint_direct():
 def test_app_routes_registered():
     """Verify FastAPI application and its core router paths exist."""
     from main import app
-    route_paths = [getattr(route, "path", "") for route in app.routes]
-    assert "/" in route_paths
-    assert "/health" in route_paths
-    assert "/api/auth/github" in route_paths
-    assert "/api/auth/otp/send" in route_paths
-    assert "/api/auth/otp/verify" in route_paths
+    from routes.auth import router as auth_router
+
+    # Direct routes registered on app
+    app_paths = [getattr(route, "path", "") for route in app.routes]
+    assert "/" in app_paths
+    assert "/health" in app_paths
+
+    # Auth routes registered on auth_router
+    auth_paths = [getattr(route, "path", "") for route in auth_router.routes]
+    assert "/api/auth/github" in auth_paths
+    assert "/api/auth/otp/send" in auth_paths
+    assert "/api/auth/otp/verify" in auth_paths
+
