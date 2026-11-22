@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser, registerUser, googleLogin, getCurrentUser, logoutUser } from "../services/auth";
+import { loginUser, registerUser, googleLogin, githubLogin, sendOtp, verifyOtp, getCurrentUser, logoutUser } from "../services/auth";
 
 const STORAGE_KEY = "smartprep_user";
 
@@ -14,6 +14,9 @@ const AuthContext = createContext({
   loading: true,         // whether auth state is being initialized
   login: async () => {}, // login function
   loginWithGoogle: async () => {}, // "Continue with Google" function
+  loginWithGithub: async () => {}, // "Continue with GitHub" function
+  requestOtp: async () => {},      // Request 6-digit OTP code
+  loginWithOtp: async () => {},    // Verify OTP and log in
   register: async () => {}, // registration function
   logout: async () => {}, // logout function
   authModalOpen: false,
@@ -165,6 +168,74 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ---------------------------
+  // Continue with GitHub
+  // ---------------------------
+  const loginWithGithub = async (code) => {
+    const currentSeq = ++loginReqSeqRef.current;
+    try {
+      const data = await githubLogin(code);
+      if (currentSeq !== loginReqSeqRef.current) {
+        return { success: false, message: "Request cancelled." };
+      }
+      if (data.success) {
+        revalidateSeqRef.current += 1;
+        setUser(data.user);
+        try {
+          sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data.user));
+        } catch (e) {}
+        setLoading(false);
+        setAuthModalOpen(false);
+        router.push("/dashboard");
+        return { success: true };
+      }
+      return { success: false, message: data.message };
+    } catch (error) {
+      if (currentSeq !== loginReqSeqRef.current) return { success: false, message: "Request cancelled." };
+      return { success: false, message: "GitHub sign-in failed. Please try again." };
+    }
+  };
+
+  // ---------------------------
+  // Request Email OTP
+  // ---------------------------
+  const requestOtp = async (email) => {
+    try {
+      const data = await sendOtp(email);
+      return data;
+    } catch (error) {
+      return { success: false, message: "Failed to send verification code. Please try again." };
+    }
+  };
+
+  // ---------------------------
+  // Verify Email OTP & Login
+  // ---------------------------
+  const loginWithOtp = async (email, otp) => {
+    const currentSeq = ++loginReqSeqRef.current;
+    try {
+      const data = await verifyOtp(email, otp);
+      if (currentSeq !== loginReqSeqRef.current) {
+        return { success: false, message: "Request cancelled." };
+      }
+      if (data.success) {
+        revalidateSeqRef.current += 1;
+        setUser(data.user);
+        try {
+          sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data.user));
+        } catch (e) {}
+        setLoading(false);
+        setAuthModalOpen(false);
+        router.push("/dashboard");
+        return { success: true };
+      }
+      return { success: false, message: data.message };
+    } catch (error) {
+      if (currentSeq !== loginReqSeqRef.current) return { success: false, message: "Request cancelled." };
+      return { success: false, message: "Verification failed. Please try again." };
+    }
+  };
+
+  // ---------------------------
   // Register
   // ---------------------------
   const register = async (userData) => {
@@ -224,6 +295,9 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         loginWithGoogle,
+        loginWithGithub,
+        requestOtp,
+        loginWithOtp,
         register,
         logout,
         authModalOpen,
