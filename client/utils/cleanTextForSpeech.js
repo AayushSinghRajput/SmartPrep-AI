@@ -15,6 +15,7 @@ export const cleanTextForSpeech = (text = "") =>
     .replace(/!\[.*?\]\(.*?\)/g, "") // Remove images (![alt](url))
     .replace(/\[(.*?)\]\(.*?\)/g, "$1") // Convert links ([text](url) → text)
     .replace(/[-_*]{2,}/g, "") // Remove separators (---, ___, ***)
+    .replace(/\|+/g, " ") // Replace table pipes with space so speech doesn't pronounce "pipe"
     .replace(/\n+/g, " ") // Replace multiple newlines with a single space
     .replace(/\s+/g, " ") // Remove extra spaces
     .trim(); // Trim leading and trailing spaces

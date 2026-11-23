@@ -11,6 +11,26 @@ import {
   fetchDaySpecialContent,
 } from "./useServiceNavigation";
 
+const loadMasteredSet = (fileHash) => {
+  if (typeof window === "undefined" || !fileHash) return new Set();
+  try {
+    const raw = localStorage.getItem(`smartprep_mastered_${fileHash}`);
+    return raw ? new Set(JSON.parse(raw)) : new Set();
+  } catch (e) {
+    return new Set();
+  }
+};
+
+const saveMasteredKey = (fileHash, key) => {
+  if (typeof window === "undefined" || !fileHash) return;
+  try {
+    const raw = localStorage.getItem(`smartprep_mastered_${fileHash}`);
+    const set = raw ? new Set(JSON.parse(raw)) : new Set();
+    set.add(key);
+    localStorage.setItem(`smartprep_mastered_${fileHash}`, JSON.stringify([...set]));
+  } catch (e) {}
+};
+
 export function useServiceLogic(planData, mode = "study") {
   const [localSchedule, setLocalSchedule] = useState([]);
   const [selectedSubtopic, setSelectedSubtopic] = useState(null);
@@ -57,8 +77,27 @@ export function useServiceLogic(planData, mode = "study") {
       setLocalSchedule([]);
       return;
     }
-    // Keep schedule available immediately even if performance loading fails
-    setLocalSchedule(planData.schedule);
+
+    // Merge persistent mastered topics into initial schedule
+    const masteredSet = loadMasteredSet(planIdentity);
+    const scheduleWithMastered = (planData.schedule || []).map((d) => ({
+      ...d,
+      topics: (d.topics || []).map((t, tIdx) => ({
+        ...t,
+        subtopics: (t.subtopics || []).map((s, sIdx) => {
+          const isMastered =
+            Boolean(s.completed) ||
+            masteredSet.has(`${d.day}_${tIdx}_${sIdx}`) ||
+            masteredSet.has(`${d.day}_${s.title}`);
+          return {
+            ...s,
+            completed: isMastered,
+          };
+        }),
+      })),
+    }));
+
+    setLocalSchedule(scheduleWithMastered);
 
     let isMounted = true;
     const loadPerformance = async () => {
@@ -159,6 +198,60 @@ export function useServiceLogic(planData, mode = "study") {
     }
   };
 
+  const markSubtopicMastered = async ({ dayNum, topicIdx, subtopicIdx, title }) => {
+    const fileHash = metaData.fileHash;
+    const keyByIdx = `${dayNum}_${topicIdx}_${subtopicIdx}`;
+    const keyByTitle = `${dayNum}_${title}`;
+
+    saveMasteredKey(fileHash, keyByIdx);
+    if (title) saveMasteredKey(fileHash, keyByTitle);
+
+    let updatedSchedule = localSchedule.map((d) => {
+      if (d.day === dayNum && d.topics?.[topicIdx]?.subtopics?.[subtopicIdx]) {
+        const newTopics = [...d.topics];
+        const newSubs = [...newTopics[topicIdx].subtopics];
+        newSubs[subtopicIdx] = { ...newSubs[subtopicIdx], completed: true };
+        newTopics[topicIdx] = { ...newTopics[topicIdx], subtopics: newSubs };
+        return { ...d, topics: newTopics };
+      }
+      return d;
+    });
+
+    setLocalSchedule(updatedSchedule);
+
+    setSelectedSubtopic((prev) => {
+      if (!prev) return prev;
+      return { ...prev, completed: true };
+    });
+
+    // Count how many days in updatedSchedule are fully completed
+    const masteredDaysCount = updatedSchedule.filter((d) => {
+      const subs = d.topics?.flatMap((t) => t.subtopics || []) || [];
+      return subs.length > 0 && subs.every((s) => s.completed);
+    }).length;
+
+    // Check if this specific day is now fully mastered
+    const currentDayItem = updatedSchedule.find((d) => d.day === dayNum);
+    const allDaySubtopics = currentDayItem?.topics?.flatMap((t) => t.subtopics || []) || [];
+    const isDayFullyMastered = allDaySubtopics.length > 0 && allDaySubtopics.every((s) => s.completed);
+
+    if (isDayFullyMastered) {
+      toast.success(`Day ${dayNum} completely mastered! 🎉`);
+    }
+
+    if (masteredDaysCount > 0) {
+      try {
+        await updateProgress({
+          pdf_hash: fileHash,
+          completed_days: masteredDaysCount,
+          total_days: updatedSchedule.length,
+        });
+      } catch (e) {
+        console.error("Progress update failed", e);
+      }
+    }
+  };
+
   const goToSubtopic = async (direction) => {
     if (!selectedSubtopic) return;
     const { currentDay, topicIdx, subtopicIdx } = selectedSubtopic;
@@ -166,20 +259,6 @@ export function useServiceLogic(planData, mode = "study") {
     if (direction === "next") {
       const target = calculateNextTarget(currentDay, topicIdx, subtopicIdx, localSchedule);
       if (!target) return;
-
-      if (target.dayCompleted) {
-        try {
-          await updateProgress({
-            pdf_hash: metaData.fileHash,
-            completed_days: currentDay,
-            total_days: localSchedule.length,
-          });
-          toast.success(`Day ${currentDay} completed 🎉`);
-        } catch (err) {
-          console.error(err);
-          toast.error("Failed to update progress");
-        }
-      }
 
       if (target.endOfSchedule) return;
       await handleSubtopicClick(target.dayNum, target.topicIdx, target.subtopicIdx);
@@ -246,6 +325,7 @@ export function useServiceLogic(planData, mode = "study") {
     actions: {
       toggleDayExpand, toggleTopicExpand, handleSubtopicClick, goToSubtopic,
       handleDayClick, goToNextDay, goToPreviousDay, updateDayPerformance,
+      markSubtopicMastered,
     },
   };
 }

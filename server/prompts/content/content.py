@@ -11,6 +11,7 @@ def content_prompt(content: str) -> str:
 # - Bullet points
 # - Examples
 # - Key takeaways
+# - Tables (when comparing concepts or summarizing metrics, format as standard Markdown tables with each row on its own line and a blank line before and after)
 # - Response text content similar to number of words in PDF content
 
 # Use markdown formatting.

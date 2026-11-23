@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { toast } from "react-hot-toast";
 import {
   FiVolume2,
   FiPause,
@@ -36,6 +37,7 @@ export default function SubtopicViewer({
   const [speechRate, setSpeechRate] = useState(1);
   const [fontSize, setFontSize] = useState("base"); // "sm" | "base" | "lg" | "xl"
   const [isMastered, setIsMastered] = useState(Boolean(subtopic?.completed));
+  const [isMarking, setIsMarking] = useState(false);
   const utteranceRef = useRef(null);
   const charIndexRef = useRef(0);
 
@@ -43,6 +45,7 @@ export default function SubtopicViewer({
     setValidImages(Array.isArray(subtopic?.images) ? subtopic.images : []);
     setActiveImageIndex(null);
     setIsMastered(Boolean(subtopic?.completed));
+    setIsMarking(false);
 
     // Stop speech synthesis when subtopic changes
     if (typeof window !== "undefined" && window.speechSynthesis) {
@@ -155,8 +158,29 @@ export default function SubtopicViewer({
     setFontSize(sequence[nextIndex]);
   };
 
-  const toggleMastered = () => {
-    setIsMastered(!isMastered);
+  const handleMarkMastered = () => {
+    if (isMastered || isMarking) return;
+    setIsMarking(true);
+    setIsMastered(true);
+
+    if (actions?.markSubtopicMastered) {
+      actions.markSubtopicMastered({
+        dayNum: subtopic.currentDay || day,
+        topicIdx: subtopic.topicIdx,
+        subtopicIdx: subtopic.subtopicIdx,
+        title: subtopic.title,
+      });
+    }
+
+    toast.success("Topic Mastered! 🎉");
+
+    // Automatically advance to the immediate next page in sequence
+    setTimeout(() => {
+      setIsMarking(false);
+      if (onNext) {
+        onNext();
+      }
+    }, 600);
   };
 
   return (
@@ -312,18 +336,29 @@ export default function SubtopicViewer({
             {/* Mastery Celebration Pill */}
             <div className="mt-10 pt-6 border-t border-[var(--border-primary)] flex items-center justify-between">
               <span className="text-xs text-[var(--text-muted)]">
-                Marking concepts helps the AI optimize your spaced review schedule.
+                {isMastered
+                  ? "✓ You have already mastered this concept. Excellent work!"
+                  : "Marking concepts helps the AI optimize your spaced review schedule."}
               </span>
               <button
-                onClick={toggleMastered}
+                type="button"
+                onClick={handleMarkMastered}
+                disabled={isMastered || isMarking}
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                   isMastered
-                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                    : "bg-[var(--bg-card-muted)] text-[var(--text-secondary)] hover:bg-[var(--accent-light)] border border-[var(--border-primary)]"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200 cursor-default opacity-90 shadow-none pointer-events-none"
+                    : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 cursor-pointer shadow-xs active:scale-95"
                 }`}
+                title={isMastered ? "Topic is already mastered" : "Mark as Mastered"}
               >
-                <FiCheckCircle className={isMastered ? "text-emerald-600" : "text-[var(--text-muted)]"} />
-                {isMastered ? "Topic Mastered" : "Mark as Mastered"}
+                <FiCheckCircle className={isMastered ? "text-emerald-600" : "text-indigo-600"} />
+                <span>
+                  {isMastered
+                    ? "Topic Mastered ✓"
+                    : isMarking
+                    ? "Mastering..."
+                    : "Mark as Mastered"}
+                </span>
               </button>
             </div>
           </>
