@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { DASHBOARD_TABS } from "../../lib/constants";
-import { formatAcademicId, getCleanUsername } from "../../lib/utils";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 export default function Sidebar({
@@ -23,10 +22,6 @@ export default function Sidebar({
       setInternalCollapsed(!internalCollapsed);
     }
   };
-
-  const username = getCleanUsername(user);
-  const userInitial = username.charAt(0).toUpperCase() || "S";
-  const academicId = formatAcademicId(user?._id || user?.id, user?.createdAt);
 
   return (
     <aside
@@ -59,31 +54,6 @@ export default function Sidebar({
           >
             {isCollapsed ? <FiChevronRight size={16} /> : <FiChevronLeft size={16} />}
           </button>
-        </div>
-
-        {/* USER PROFILE SECTION */}
-        <div
-          className={`mb-4 p-2.5 rounded-2xl bg-slate-50 border border-slate-200/80 transition-all ${
-            isCollapsed ? "text-center" : "flex items-center gap-3"
-          }`}
-        >
-          <div className="w-9 h-9 rounded-xl bg-indigo-600 flex-shrink-0 flex items-center justify-center text-sm font-bold text-white shadow-xs">
-            {userInitial}
-          </div>
-
-          {!isCollapsed && (
-            <div className="min-w-0 flex-1">
-              <h3 className="font-bold text-slate-900 text-xs sm:text-sm truncate">
-                {username}
-              </h3>
-              <p className="text-[11px] font-semibold text-indigo-600 truncate">
-                {user?.publicMetadata?.role || "NEB +2 Student"}
-              </p>
-              <p className="text-[10px] font-mono text-slate-400 truncate">
-                {academicId}
-              </p>
-            </div>
-          )}
         </div>
 
         {/* NAVIGATION TAB BUTTONS */}

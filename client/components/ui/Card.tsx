@@ -2,7 +2,7 @@
 
 import React, { forwardRef } from "react";
 import Image from "next/image";
-import { FiEdit, FiTrash2, FiBookOpen } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiBookOpen, FiZap, FiCheckCircle } from "react-icons/fi";
 import { useState } from "react";
 import { updateBookImage, deletePdfAndData } from "../../services/pdf";
 import CylindricalProgress from "./CylindricalProgress";
@@ -198,7 +198,7 @@ export function StudyBookCard({
     return (
       <div
         onClick={onClick}
-        className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:border-slate-300 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between"
+        className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs hover:border-indigo-300 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between group"
       >
         <div>
           <div className="flex items-center gap-3 mb-4">
@@ -207,22 +207,48 @@ export function StudyBookCard({
                 src={currentImage}
                 alt={name}
                 fill
-                className="object-cover"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
                 unoptimized={isLocalImage}
               />
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="text-base font-bold text-slate-900 truncate">
+              <h3 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
                 {name}
               </h3>
-              <p className="text-xs text-slate-500 font-medium">
-                {scores.length} Days Recorded
-              </p>
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                <span className="text-xs text-slate-500 font-medium">
+                  {scores.length} {scores.length === 1 ? "Quiz Assessment" : "Quiz Assessments"} Recorded
+                </span>
+                {studyProgress > 0 && (
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    {studyProgress}% Studied
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-          <DayPerformaceBar
-            data={scores}
-          />
+
+          {scores.length > 0 ? (
+            <DayPerformaceBar data={scores} />
+          ) : (
+            <div className="mt-3 p-4 rounded-xl bg-slate-50/80 border border-slate-200/70 text-center">
+              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2">
+                <FiZap className="w-4 h-4" />
+              </div>
+              <p className="text-xs font-bold text-slate-800">
+                Quiz Analytics Pending
+              </p>
+              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                {studyProgress > 0
+                  ? "Great job finishing Day 1 study material! Take the Day 1 Practice Quiz to record test scores and unlock retention analytics."
+                  : "Complete Day 1 and submit the practice quiz to record your retention and score analytics."}
+              </p>
+              <div className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 group-hover:text-indigo-700 group-hover:translate-x-0.5 transition-all">
+                <span>Take Practice Quiz</span>
+                <span>→</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );

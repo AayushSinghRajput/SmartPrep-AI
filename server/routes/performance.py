@@ -3,7 +3,10 @@ from schemas.performance import (
     SubmitMCQScoreRequest,
     SubmitMCQScoreResponse
 )
-from services.performance_service.performance_service import submit_mcq_score
+from services.performance_service.performance_service import (
+    submit_mcq_score,
+    get_dashboard_stats
+)
 from middleware.auth_middleware import get_current_user
 from db.config import db
 
@@ -45,3 +48,14 @@ async def get_performance(pdf_hash: str, user=Depends(get_current_user)):
     if not perf:
         return {"day_wise_scores": []}
     return {"day_wise_scores": perf.get("day_wise_scores", [])}
+
+
+# ---------------------------
+# Get dynamic dashboard stats
+# ---------------------------
+@router.get("/dashboard-stats")
+async def get_user_dashboard_stats(user=Depends(get_current_user)):
+    try:
+        return await get_dashboard_stats(user["id"])
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

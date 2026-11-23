@@ -16,14 +16,26 @@ export default function Service({
   onBack,
 }) {
   const [isZenMode, setIsZenMode] = useState(false);
+  const [currentMode, setCurrentMode] = useState(() => {
+    if (activeTab === "mcq" || activeTab === "notes") return activeTab;
+    if (activeTab === "performance") return "mcq";
+    return "study";
+  });
 
-  const mode =
-    activeTab === "mcq" || activeTab === "notes" ? activeTab : "study";
+  useEffect(() => {
+    if (activeTab === "mcq" || activeTab === "notes") {
+      setCurrentMode(activeTab);
+    } else if (activeTab === "performance") {
+      setCurrentMode("mcq");
+    } else {
+      setCurrentMode("study");
+    }
+  }, [activeTab]);
 
-  const { state, actions } = useServiceLogic(planData, mode);
+  const { state, actions } = useServiceLogic(planData, currentMode);
 
   const { welcomeHeading, welcomeDescription } = getWelcomeText({
-    mode,
+    mode: currentMode,
     state,
   });
 
@@ -40,9 +52,9 @@ export default function Service({
           📚
         </div>
         <h3 className="text-xl font-bold text-slate-900 mb-2">
-          {mode === "study"
+          {currentMode === "study"
             ? "No Schedule Available"
-            : `No ${mode.toUpperCase()} data available`}
+            : `No ${currentMode.toUpperCase()} data available`}
         </h3>
         <p className="text-sm text-slate-500 max-w-sm mb-6">
           Upload a textbook PDF or syllabus to generate your personalized AI study schedule.
@@ -100,7 +112,45 @@ export default function Service({
         </div>
 
         {/* Right workspace quick toggles */}
+        {/* Right workspace quick toggles */}
         <div className="flex items-center gap-2">
+          {/* Workspace Mode Switcher */}
+          <div className="flex items-center bg-[var(--bg-card-muted)] border border-[var(--border-primary)] p-0.5 rounded-xl">
+            <button
+              type="button"
+              onClick={() => setCurrentMode("study")}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                currentMode === "study"
+                  ? "bg-indigo-600 text-white shadow-xs"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              Study Notes
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrentMode("mcq")}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                currentMode === "mcq"
+                  ? "bg-indigo-600 text-white shadow-xs"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              Daily Quiz
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrentMode("notes")}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                currentMode === "notes"
+                  ? "bg-indigo-600 text-white shadow-xs"
+                  : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              Smart Notes
+            </button>
+          </div>
+
           <button
             onClick={() => setIsZenMode(!isZenMode)}
             className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border transition-colors ${
@@ -138,7 +188,7 @@ export default function Service({
           loadingContent={state.loadingContent}
           metaData={state.metaData}
           actions={actions}
-          mode={mode}
+          mode={currentMode}
           selectedDay={state.selectedDay}
           isCollapsed={isZenMode}
           onToggleCollapse={() => setIsZenMode(!isZenMode)}
@@ -158,26 +208,26 @@ export default function Service({
                   subtopic={state.selectedSubtopic}
                   loadingContent={state.loadingContent}
                   hasPrevious={
-                    mode === "notes" || mode === "mcq"
+                    currentMode === "notes" || currentMode === "mcq"
                       ? hasPreviousDay
                       : state.hasPrevious
                   }
                   hasNext={
-                    mode === "notes" || mode === "mcq"
+                    currentMode === "notes" || currentMode === "mcq"
                       ? hasNextDay
                       : state.hasNext
                   }
                   onPrevious={
-                    mode === "notes" || mode === "mcq"
+                    currentMode === "notes" || currentMode === "mcq"
                       ? actions.goToPreviousDay
                       : () => actions.goToSubtopic("previous")
                   }
                   onNext={
-                    mode === "notes" || mode === "mcq"
+                    currentMode === "notes" || currentMode === "mcq"
                       ? actions.goToNextDay
                       : () => actions.goToSubtopic("next")
                   }
-                  mode={mode}
+                  mode={currentMode}
                   pdfHash={state.metaData.fileHash}
                   day={state.selectedDay}
                   actions={actions}
@@ -195,7 +245,7 @@ export default function Service({
         </main>
 
         {/* Floating Chat Widget */}
-        {mode === "study" && !isZenMode && (
+        {currentMode === "study" && !isZenMode && (
           <ChatWidget
             metaData={state.metaData}
             selectedSubtopic={state.selectedSubtopic}

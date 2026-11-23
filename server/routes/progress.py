@@ -15,12 +15,13 @@ async def update_progress(
     Progress is calculated as: completed_days / total_days * 100
     """
     try:
-        study_progress = await update_user_progress(
+        result = await update_user_progress(
             user_id=user["id"],
             pdf_hash=payload.pdf_hash,
             total_days=payload.total_days,
+            completed_days=payload.completed_days,
         )
-        return {"study_progress": study_progress}
+        return result
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

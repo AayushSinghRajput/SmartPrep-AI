@@ -3,9 +3,14 @@ from db.config import db
 
 study_progress = db.study_progress
 
-async def update_user_progress(user_id: str, pdf_hash: str, total_days: int) -> float:
+async def update_user_progress(
+    user_id: str,
+    pdf_hash: str,
+    total_days: int,
+    completed_days: int = None
+) -> dict:
     """
-    Increments completed_days for a user & pdf,
+    Updates completed_days and study_progress for a user & pdf,
     stores progress in study_progress collection.
     """
 
@@ -14,15 +19,15 @@ async def update_user_progress(user_id: str, pdf_hash: str, total_days: int) -> 
         "pdf_hash": pdf_hash
     })
 
-    if progress_doc:
-        completed_days = min(
-            progress_doc.get("completed_days", 0) + 1,
-            total_days
-        )
+    if completed_days is not None:
+        # Explicit count of completed days from schedule state
+        final_completed = max(0, min(int(completed_days), int(total_days)))
+    elif progress_doc:
+        final_completed = min(int(progress_doc.get("completed_days", 0)), int(total_days))
     else:
-        completed_days = 1
+        final_completed = 1
 
-    study_progress = round((completed_days / total_days) * 100, 2)
+    study_progress = round((final_completed / total_days) * 100, 2) if total_days > 0 else 0.0
 
     await db.study_progress.update_one(
         {
@@ -31,13 +36,17 @@ async def update_user_progress(user_id: str, pdf_hash: str, total_days: int) -> 
         },
         {
             "$set": {
-                "completed_days": completed_days,
+                "completed_days": final_completed,
                 "total_days": total_days,
                 "study_progress": study_progress,
                 "updated_at": datetime.utcnow()
             }
         },
-        upsert=True  # 🔥 key line
+        upsert=True
     )
 
-    return study_progress
+    return {
+        "study_progress": study_progress,
+        "completed_days": final_completed,
+        "total_days": total_days
+    }

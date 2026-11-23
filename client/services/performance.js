@@ -58,6 +58,23 @@ export const fetchPerformance = async (pdfHash) => {
 };
 
 // ---------------------------
+// Fetch dynamic dashboard stats
+// ---------------------------
+// Aggregates user streak, overall prep progress, and quiz accuracy.
+export const fetchDashboardStats = async () => {
+  try {
+    const response = await fetch(`${API_URL}/performance/dashboard-stats`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+      credentials: "include",
+    });
+    return await handleResponse(response);
+  } catch (error) {
+    return null;
+  }
+};
+
+// ---------------------------
 // Submit MCQ Score
 // ---------------------------
 // Sends the user's MCQ test results to the backend.
