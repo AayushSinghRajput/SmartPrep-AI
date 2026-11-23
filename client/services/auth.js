@@ -2,6 +2,27 @@
 // otherwise defaults to local development server
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
+// Helper to safely parse JSON and normalize backend error responses
+const parseApiResponse = async (response, defaultErrorMessage) => {
+  try {
+    const data = await response.json();
+    if (!response.ok) {
+      return {
+        success: false,
+        statusCode: response.status,
+        message: data?.detail || data?.message || defaultErrorMessage,
+      };
+    }
+    return data;
+  } catch (error) {
+    return {
+      success: false,
+      statusCode: response.status,
+      message: defaultErrorMessage,
+    };
+  }
+};
+
 // ======================== AUTHENTICATION ROUTES =========================
 
 // Function to log in a user
@@ -15,7 +36,7 @@ export const loginUser = async (credentials) => {
     credentials: "include", // Include cookies for authentication
     body: JSON.stringify(credentials), // Convert JS object to JSON string
   });
-  return response.json(); // Parse and return response as JSON
+  return parseApiResponse(response, "Invalid email or password.");
 };
 
 // Function to register a new user
@@ -29,7 +50,7 @@ export const registerUser = async (userData) => {
     credentials: "include", // Include cookies if any for session handling
     body: JSON.stringify(userData), // Convert JS object to JSON string
   });
-  return response.json(); // Return server response as JSON
+  return parseApiResponse(response, "Registration failed. Please try again.");
 };
 
 // Function to log in (or register, on first use) via "Continue with Google"
@@ -43,7 +64,7 @@ export const googleLogin = async (credential) => {
     credentials: "include", // Include cookies for authentication
     body: JSON.stringify({ credential }),
   });
-  return response.json();
+  return parseApiResponse(response, "Google sign-in failed.");
 };
 
 // Function to log in via "Continue with GitHub"
@@ -57,7 +78,7 @@ export const githubLogin = async (code) => {
     credentials: "include",
     body: JSON.stringify({ code }),
   });
-  return response.json();
+  return parseApiResponse(response, "GitHub sign-in failed.");
 };
 
 // Function to request a 6-digit Email OTP verification code
@@ -70,7 +91,7 @@ export const sendOtp = async (email) => {
     credentials: "include",
     body: JSON.stringify({ email }),
   });
-  return response.json();
+  return parseApiResponse(response, "Failed to send verification code.");
 };
 
 // Function to verify 6-digit Email OTP and log in / register
@@ -83,7 +104,7 @@ export const verifyOtp = async (email, otp) => {
     credentials: "include",
     body: JSON.stringify({ email, otp }),
   });
-  return response.json();
+  return parseApiResponse(response, "Invalid or expired verification code.");
 };
 
 // Function to get the currently logged-in user's data with an abort timeout

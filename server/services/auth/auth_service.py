@@ -8,6 +8,9 @@ from core.config import settings
 import random
 from datetime import datetime, timedelta, timezone
 import requests
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 # MongoDB collections
 users_collection = db["users"]
@@ -271,36 +274,148 @@ async def github_login_user(response: Response, code: str):
 
 
 # ---------------------------
+# Helper: Send Email via SMTP (Gmail / Custom SMTP)
+# ---------------------------
+def _send_via_smtp(recipient_email: str, subject: str, html_body: str, otp_code: str) -> tuple[bool, str | None]:
+    """
+    Sends email via standard SMTP (e.g. Gmail with App Password).
+    Supports TLS (port 587) and SSL (port 465).
+    """
+    try:
+        from_email = (settings.SMTP_USER or "").strip()
+        from_name = (settings.SMTP_FROM_NAME or "SmartPrep AI").strip()
+
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = f"{from_name} <{from_email}>"
+        msg["To"] = recipient_email
+
+        plain_text = (
+            f"Your SmartPrep AI Verification Code is: {otp_code}\n\n"
+            f"This code will expire in 10 minutes.\n"
+            f"If you did not request this verification code, please ignore this email."
+        )
+        msg.attach(MIMEText(plain_text, "plain"))
+        msg.attach(MIMEText(html_body, "html"))
+
+        host = (settings.SMTP_HOST or "smtp.gmail.com").strip()
+        port = int(settings.SMTP_PORT or 587)
+        password = (settings.SMTP_PASSWORD or "").strip()
+
+        if port == 465:
+            with smtplib.SMTP_SSL(host, port, timeout=12) as server:
+                server.login(from_email, password)
+                server.sendmail(from_email, [recipient_email], msg.as_string())
+        else:
+            with smtplib.SMTP(host, port, timeout=12) as server:
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+                server.login(from_email, password)
+                server.sendmail(from_email, [recipient_email], msg.as_string())
+
+        print(f"[SMTP Success] Verification email sent to {recipient_email} via {host}")
+        return True, None
+    except smtplib.SMTPAuthenticationError as e:
+        err_msg = (
+            "Gmail SMTP Authentication failed. Please check your SMTP_USER and SMTP_PASSWORD. "
+            "Ensure you are using a 16-character Google App Password (not your normal Gmail password)."
+        )
+        print(f"[SMTP Auth Error] {e}")
+        return False, err_msg
+    except Exception as e:
+        print(f"[SMTP Dispatch Error] {e}")
+        return False, f"SMTP dispatch failed: {e}"
+
+
+# ---------------------------
 # Helper: Send Email OTP
 # ---------------------------
-def _send_otp_email(recipient_email: str, otp_code: str) -> bool:
+def _send_otp_email(recipient_email: str, otp_code: str) -> tuple[bool, str | None]:
     """
-    Sends OTP verification code via Resend or SMTP.
-    Falls back gracefully to console logging in development mode.
+    Sends OTP verification code via Gmail SMTP or Resend API.
+    Returns (True, None) if email is successfully sent, or (False, error_message) on failure.
     """
     subject = f"Your SmartPrep AI Verification Code: {otp_code}"
+    
+    sender = (settings.EMAIL_FROM or "").strip()
+    if not sender:
+        sender = "SmartPrep AI <onboarding@resend.dev>"
+    elif "<" not in sender and "@" in sender:
+        sender = f"SmartPrep AI <{sender}>"
+
     html_body = f"""
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px;">
-        <h2 style="color: #4f46e5; margin-top: 0;">SmartPrep AI</h2>
-        <p style="color: #334155; font-size: 14px;">Use the verification code below to sign in to your study workspace:</p>
-        <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 18px; text-align: center; margin: 20px 0;">
-            <span style="font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #0f172a;">{otp_code}</span>
-        </div>
-        <p style="color: #64748b; font-size: 12px; line-height: 1.5; margin-bottom: 0;">This code will expire in 10 minutes. If you did not request this, you can safely ignore this email.</p>
-    </div>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Your Verification Code</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f8fafc; padding: 32px 16px;">
+        <tr>
+          <td align="center">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 480px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+              <tr>
+                <td style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); padding: 28px 24px; text-align: center;">
+                  <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">SmartPrep AI</h1>
+                  <p style="color: #e0e7ff; margin: 6px 0 0 0; font-size: 13px;">Your Intelligent Exam Preparation Companion</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 32px 28px;">
+                  <h2 style="color: #0f172a; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">Verification Code</h2>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+                    Please use the following 6-digit one-time code to authenticate your SmartPrep AI workspace:
+                  </p>
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 24px;">
+                    <tr>
+                      <td align="center" style="background-color: #f1f5f9; border: 1.5px dashed #6366f1; border-radius: 12px; padding: 20px;">
+                        <span style="font-family: 'Courier New', Courier, monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #1e1b4b; display: inline-block;">
+                          {otp_code}
+                        </span>
+                      </td>
+                    </tr>
+                  </table>
+                  <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 0 0 12px 0;">
+                    ⏳ This code expires in <strong>10 minutes</strong>.
+                  </p>
+                  <p style="color: #94a3b8; font-size: 12px; line-height: 1.5; margin: 0;">
+                    If you did not request this verification code, please ignore this email. Your account remains secure.
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f8fafc; border-top: 1px solid #f1f5f9; padding: 16px 28px; text-align: center;">
+                  <p style="color: #94a3b8; font-size: 11px; margin: 0;">
+                    &copy; SmartPrep AI &bull; Secure Authentication Service
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
     """
 
-    # 1. Send via Resend API if configured
+    # 1. Prefer SMTP (Gmail SMTP) if configured
+    if settings.SMTP_USER and settings.SMTP_PASSWORD and settings.SMTP_USER.strip() and settings.SMTP_PASSWORD.strip():
+        return _send_via_smtp(recipient_email, subject, html_body, otp_code)
+
+    # 2. Send via Resend API if configured
     if settings.RESEND_API_KEY and settings.RESEND_API_KEY.strip():
         try:
             res = requests.post(
                 "https://api.resend.com/emails",
                 headers={
-                    "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+                    "Authorization": f"Bearer {settings.RESEND_API_KEY.strip()}",
                     "Content-Type": "application/json"
                 },
                 json={
-                    "from": settings.EMAIL_FROM,
+                    "from": sender,
                     "to": [recipient_email],
                     "subject": subject,
                     "html": html_body
@@ -308,17 +423,31 @@ def _send_otp_email(recipient_email: str, otp_code: str) -> bool:
                 timeout=10
             )
             if res.status_code in (200, 201):
-                return True
-            print(f"Notice: Resend email failed with status {res.status_code}: {res.text}")
-        except Exception as e:
-            print(f"Notice: Resend email dispatch failed: {e}")
+                return True, None
 
-    # 2. Development Fallback (Console Print)
-    print(f"\n=======================================================")
-    print(f"🔐 [SmartPrep AI OTP] Email: {recipient_email}")
-    print(f"🔑 Verification Code: {otp_code}")
-    print(f"=======================================================\n")
-    return True
+            error_data = {}
+            try:
+                error_data = res.json()
+            except Exception:
+                pass
+            
+            error_msg = error_data.get("message") or f"Resend API returned status code {res.status_code}"
+            print(f"[Resend Error] Status {res.status_code}: {error_msg}")
+            return False, error_msg
+        except Exception as e:
+            print(f"[Resend Error] Dispatch exception: {e}")
+            return False, str(e)
+
+    # 3. Fallback for local development if NO SMTP or Resend credentials are configured
+    if not IS_PRODUCTION:
+        print(f"\n=======================================================")
+        print(f"⚠️ [DEV WARNING - NO EMAIL CREDENTIALS CONFIGURED]")
+        print(f"📧 Recipient: {recipient_email}")
+        print(f"🔑 Verification Code: {otp_code}")
+        print(f"=======================================================\n")
+        return True, None
+
+    return False, "Email service (Gmail SMTP or Resend) is not configured on the server."
 
 
 # ---------------------------
@@ -332,15 +461,30 @@ async def send_email_otp(email: str):
             detail="Valid email address is required"
         )
 
-    # Invalidate older pending OTPs for this email
+    code = f"{random.randint(100000, 999999)}"
+    now = datetime.now(timezone.utc)
+    expires_at = now + timedelta(minutes=10)
+
+    # Dispatch email via Resend
+    success, error_msg = _send_otp_email(email, code)
+    if not success:
+        if error_msg and "testing emails" in error_msg.lower():
+            detail = (
+                f"{error_msg} "
+                "To deliver OTPs to any email address, verify your domain at resend.com/domains and update EMAIL_FROM."
+            )
+        else:
+            detail = error_msg or "Failed to deliver verification code to your email."
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=detail
+        )
+
+    # Invalidate older pending OTPs for this email after dispatch succeeds
     await otp_collection.update_many(
         {"email": email, "used": False},
         {"$set": {"used": True}}
     )
-
-    code = f"{random.randint(100000, 999999)}"
-    now = datetime.now(timezone.utc)
-    expires_at = now + timedelta(minutes=10)
 
     await otp_collection.insert_one({
         "email": email,
@@ -350,17 +494,11 @@ async def send_email_otp(email: str):
         "used": False
     })
 
-    _send_otp_email(email, code)
-
-    res = {
+    return {
         "success": True,
         "statusCode": 200,
         "message": f"Verification code sent to {email}"
     }
-    if not IS_PRODUCTION:
-        res["dev_otp"] = code
-
-    return res
 
 
 # ---------------------------

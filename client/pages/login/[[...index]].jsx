@@ -30,7 +30,6 @@ export default function Login() {
   // OTP State
   const [otpStep, setOtpStep] = useState("send"); // "send" | "verify"
   const [otpCode, setOtpCode] = useState("");
-  const [devOtp, setDevOtp] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
 
   const [error, setError] = useState("");
@@ -43,7 +42,6 @@ export default function Login() {
     setError("");
     setPassword("");
     setOtpCode("");
-    setDevOtp("");
     setOtpStep("send");
   }, [authMethod]);
 
@@ -104,9 +102,6 @@ export default function Login() {
         toast.error(res.message || "Failed to send code");
       } else {
         toast.success(`Verification code sent to ${trimmedEmail}`);
-        if (res.dev_otp) {
-          setDevOtp(res.dev_otp);
-        }
         setOtpStep("verify");
         setResendTimer(60);
       }
@@ -388,19 +383,10 @@ export default function Login() {
                   placeholder="000000"
                   required
                 />
+                <p className="text-center text-xs text-slate-500 mt-2">
+                  Enter the 6-digit code sent to your email inbox.
+                </p>
               </div>
-
-              {devOtp && (
-                <div className="flex items-center justify-center">
-                  <button
-                    type="button"
-                    onClick={() => setOtpCode(devOtp)}
-                    className="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/80 rounded-full px-3 py-1 font-mono transition-colors cursor-pointer"
-                  >
-                    🧪 Dev Code: <span className="font-bold">{devOtp}</span> (Click to auto-fill)
-                  </button>
-                </div>
-              )}
 
               <Button
                 type="submit"
