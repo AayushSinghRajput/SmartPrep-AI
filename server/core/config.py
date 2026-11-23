@@ -44,7 +44,12 @@ class Settings(BaseSettings):
     GITHUB_CLIENT_ID: str | None = None
     GITHUB_CLIENT_SECRET: str | None = None
 
-    # Email OTP Service (Resend)
+    # Email Delivery Service (Gmail SMTP & Resend)
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+    SMTP_FROM_NAME: str = "SmartPrep AI"
     RESEND_API_KEY: str | None = None
     EMAIL_FROM: str = "SmartPrep AI <onboarding@resend.dev>"
 
